@@ -1,0 +1,796 @@
+{
+    "Senin":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Selasa":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Rabu":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan Rabu",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Kamis":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Fake Farhan",
+                    "uid": 1471424098750959616
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Fake Farhan",
+                    "uid": 1471424098750959616
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Jumat":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Sabtu":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    },
+    "Minggu":{
+        "msu":{
+            "subuh":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "dzuhur":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "ashar":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Pembaca Hadits":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "maghrib":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            },
+            "isya":{
+                "Imam":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Muadzin":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                },
+                "Badal":{
+                    "nama": "Farhan",
+                    "uid": 462953636230856715
+                }
+            }
+        }
+    }
+}
