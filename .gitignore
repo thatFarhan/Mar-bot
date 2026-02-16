@@ -1,3 +1,11 @@
 .env
 discord.log
+jadwal_petugas.json
+jadwal_sholat.json
+nama_asli.json
 jadwal_hariini.json
+src/__pycache__
+src/commands/__pycache__
+src/data/__pycache__
+src/events/__pycache__
+src/views/__pycache__
