@@ -9,6 +9,7 @@ from global_vars import global_vars
 async def new_system_day():
     # update system date
     global_vars.system_date=datetime.now(SYSTEM_TIMEZONE).date().day-1
+    global_vars.notification_ids.clear()
 
     # send daily
     channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)

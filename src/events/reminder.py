@@ -2,7 +2,7 @@ import discord
 from datetime import datetime, timedelta
 from data.loader import jadwal
 from global_vars import global_vars, scheduler
-from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL
+from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
 from views.quick_confirmation_buttons import QuickConfirmationButtons
 from events.on_sale_notification import on_sale_noti
 from commands.sell import emergency_sell
@@ -53,6 +53,14 @@ async def send_reminder(sholat: str):
 
                     scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                 elif petugas['need_sub']:
+                    key = f"{tugas}_{sholat}_{tempat}"
+                    if key in global_vars.notification_ids:
+                        channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
+                        noti_id = global_vars.notification_ids[key]
+                        message = await channel.fetch_message(noti_id)
+
+                        await message.delete()
+                    
                     await on_sale_noti(tugas, sholat, tempat, emergency=True)
 
         embed.add_field(

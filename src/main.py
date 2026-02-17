@@ -32,8 +32,11 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
 
-    new_system_day.start()
-    new_actual_day.start()
+    if not new_system_day.is_running:
+        new_system_day.start()
+
+    if not new_actual_day.is_running:
+        new_actual_day.start()
 
     if not scheduler.running:
         scheduler.start()
