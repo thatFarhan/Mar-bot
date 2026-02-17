@@ -28,18 +28,18 @@ def build_schedule_and_tags(tempat: str, system_day_name: str):
 
 async def send_daily_schedule(target):
     if target:
-        system_day_name=jadwal.jadwal_sholat_bulanini[global_vars.system_date]['hari']
+        global_vars.system_day_name=jadwal.jadwal_sholat_bulanini[global_vars.system_date]['hari']
 
         embeds=[]
         tags=set()
-        for tempat in jadwal.jadwal_petugas[system_day_name]:
-            schedule_and_tags=build_schedule_and_tags(tempat, system_day_name)
+        for tempat in jadwal.jadwal_petugas[global_vars.system_day_name]:
+            schedule_and_tags=build_schedule_and_tags(tempat, global_vars.system_day_name)
             embeds.append(schedule_and_tags[0])
             for tag in schedule_and_tags[1]:
                 tags.add(tag)
 
         await target.send(
-            content=f"# 💫 Jadwal hari {system_day_name}\n## 🌃 Lailatukumus Sa'idah Ikhwan~\nBerikut adalah jadwal petugas untuk esok hari. Mohon untuk konfirmasi kehadiran jika bisa berhadir atau request pengganti jika tidak.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}\n\n",
+            content=f"# 💫 Jadwal hari {global_vars.system_day_name}\n## 🌃 Lailatukumus Sa'idah Ikhwan~\nBerikut adalah jadwal petugas untuk esok hari. Mohon untuk konfirmasi kehadiran jika bisa berhadir atau request pengganti jika tidak.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}\n\n",
             embeds=embeds,
             view=ConfirmationButtons()
         )
