@@ -23,6 +23,7 @@ def set_reminders():
         print(schedule)
 
 async def send_reminder(sholat: str):
+    global_vars.reminder_sent[sholat] = True
     embed=discord.Embed(
         title=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
         color=discord.Color.green()
@@ -70,3 +71,7 @@ async def send_reminder(sholat: str):
             content=f"**⚠️ PERHATIAN (KONFIRMASI) ⚠️**\n\nNama di bawah ini belum melakukan konfirmasi. harap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
             view=QuickConfirmationButtons(sholat)
         )
+
+def reset_reminder_sent():
+    for sholat in ('subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'):
+        global_vars.reminder_sent[sholat] = False

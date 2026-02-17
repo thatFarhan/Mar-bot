@@ -8,7 +8,7 @@ from config import bot, ACTUAL_TIMEZONE, GUILD_ID, token
 from events.daily_tasks import new_actual_day, new_system_day
 from events.reminder import set_reminders, scheduler
 
-from commands.admin import resend, rewrite, testschedule
+from commands.admin import dailyschedule, rewritejson, testreminder
 from commands.confirm import confirm, confirm_all
 from commands.sell import sell, sellall
 from commands.extras import jadwalsholat

@@ -5,6 +5,7 @@ from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
 from data.loader import jadwal
 from data.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
+from global_vars import global_vars
 
 @bot.tree.command(name="sell", description="Merequest pengganti untuk suatu jadwal antum di hari ini", guild=GUILD_ID)
 @app_commands.describe(tugas="Tugas yang mana?", sholat="Sholat apa?", tempat="Dimana?")
@@ -16,7 +17,8 @@ async def sell(interaction: discord.Interaction, tugas: TugasEnum, sholat: Shola
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
     if (petugas['uid'] == interaction.user.id or petugas['uid_sub'] == interaction.user.id) and not petugas['need_sub']:
         update_to_sell(tugas, sholat, tempat)
-        await on_sale_noti(tugas.value, sholat.value, tempat.value)
+        emergency = global_vars.reminder_sent[sholat.value]
+        await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
         with open('jadwal_hariini.json', 'w') as file:
             json.dump(jadwal.jadwal_hariini, file, indent=2)
 
@@ -37,7 +39,8 @@ async def sell_all(interaction: discord.Interaction):
                 
                 petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
                 if (petugas['uid'] == interaction.user.id or petugas['uid_sub'] == interaction.user.id) and not petugas['need_sub']:
-                    update_to_sell(tugas, sholat, tempat)
+                    emergency = global_vars.reminder_sent[sholat]
+                    update_to_sell(tugas, sholat, tempat, emergency=emergency)
                     await on_sale_noti(tugas, sholat, tempat)
                     sold_anything = True
         
