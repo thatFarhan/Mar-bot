@@ -9,13 +9,14 @@ class GlobalVars:
         self.actual_date = None
         self.system_day_name = None
         self.reminder_sent = None
+        self.notification_ids = None
 
 global_vars = GlobalVars()
 
-global_vars.actual_date=datetime.now(ACTUAL_TIMEZONE).date().day-1
-global_vars.system_date=datetime.now(SYSTEM_TIMEZONE).date().day-1
+global_vars.actual_date = datetime.now(ACTUAL_TIMEZONE).date().day-1
+global_vars.system_date = datetime.now(SYSTEM_TIMEZONE).date().day-1
 
-global_vars.system_day_name=jadwal.jadwal_sholat_bulanini[global_vars.system_date]['hari']
+global_vars.system_day_name = jadwal.jadwal_sholat_bulanini[global_vars.system_date]['hari']
 
 global_vars.reminder_sent = {
     "subuh": False,
@@ -24,5 +25,7 @@ global_vars.reminder_sent = {
     "maghrib": False,
     "isya": False
 }
+
+global_vars.notification_ids = dict()
 
 scheduler = AsyncIOScheduler(timezone=ACTUAL_TIMEZONE)

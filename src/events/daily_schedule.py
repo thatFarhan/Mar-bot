@@ -6,7 +6,7 @@ from views.confirmation_buttons import ConfirmationButtons
 from global_vars import global_vars
 
 def build_schedule_and_tags(tempat: str, system_day_name: str):
-    jadwal=discord.Embed(
+    schedule=discord.Embed(
             title=TEMPAT_TITLE[tempat],
             color=discord.Color.green()
         )
@@ -18,13 +18,13 @@ def build_schedule_and_tags(tempat: str, system_day_name: str):
             field_values.append(f"**{tugas}:** {jadwal.jadwal_petugas[system_day_name][tempat][sholat][tugas]['nama']}")
             tags.add(f"<@{jadwal.jadwal_petugas[system_day_name][tempat][sholat][tugas]['uid']}>")
 
-        jadwal.add_field(
+        schedule.add_field(
             name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
             value="\n".join(field_values),
             inline=True
         )
     
-    return [jadwal, tags]
+    return [schedule, tags]
 
 async def send_daily_schedule(target):
     if target:

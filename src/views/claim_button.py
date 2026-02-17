@@ -2,6 +2,7 @@ import discord
 import json
 from data.loader import jadwal
 from data.updater import update_to_claim, update_to_confirm
+from global_vars import global_vars
 
 class ClaimButton(discord.ui.View):
     def __init__(self, tugas: str, sholat: str, tempat: str, embed_desc: str):
@@ -29,9 +30,12 @@ class ClaimButton(discord.ui.View):
             json.dump(jadwal.jadwal_hariini, file, indent=2)
 
         embed = discord.Embed(
-            title=f"Detail Jadwal",
+            title="Detail Jadwal",
             color=discord.Color.green(),
             description=embed_desc
         )
         content=f"**✅ Jadwal telah diklaim oleh {jadwal.nama_asli[str(interaction.user.id)]} ✅**"
+
+        global_vars.notification_ids.pop(f"{tugas}_{sholat}_{tempat}", None)
+        
         await interaction.response.edit_message(content=content, embed=embed, view=None)

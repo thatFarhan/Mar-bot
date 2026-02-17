@@ -27,4 +27,5 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     else:
         content=f"**📢 {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti! 📢**\n{tags}"
 
-    await target.send(content=content, embed=embed, view=ClaimButton(tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
+    message = await target.send(content=content, embed=embed, view=ClaimButton(tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
+    global_vars.notification_ids[f"{tugas}_{sholat}_{tempat}"] = message.id

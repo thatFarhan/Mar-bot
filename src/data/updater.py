@@ -6,30 +6,30 @@ def update_to_sell(tugas: str, sholat: str, tempat: str):
     if tugas == 'Pembaca Hadits': return
 
     petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
-    petugas.update({"confirmed": False})
-    petugas.update({"need_sub": True})
-    petugas.update({"nama_sub": None})
-    petugas.update({"uid_sub": None})
+    petugas["confirmed"] = False
+    petugas["need_sub"] = True
+    petugas["nama_sub"] = None
+    petugas["uid_sub"] = None
 
     if scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
         scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
         
 def update_to_confirm(tugas: str, sholat: str, tempat: str):
     petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
-    petugas.update({"confirmed": True})
-    petugas.update({"need_sub": False})
-    petugas.update({"nama_sub": None})
-    petugas.update({"uid_sub": None})
+    petugas["confirmed"] = True
+    petugas["need_sub"] = False
+    petugas["nama_sub"] = None
+    petugas["uid_sub"] = None
 
     if scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
         scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
 
 def update_to_claim(tugas: str, sholat: str, tempat: str, uid: int):
     petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
-    petugas.update({"confirmed": True})
-    petugas.update({"need_sub": False})
-    petugas.update({"nama_sub": jadwal.nama_asli[str(uid)]})
-    petugas.update({"uid_sub": uid})
+    petugas["confirmed"] = True
+    petugas["need_sub"] = False
+    petugas["nama_sub"] = jadwal.nama_asli[str(uid)]
+    petugas["uid_sub"] = uid
 
     if scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
         scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
