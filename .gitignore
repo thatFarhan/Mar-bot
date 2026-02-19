@@ -1,6 +1,5 @@
 .env
 discord.log
-jadwal_hariini.json
 src/__pycache__
 src/commands/__pycache__
 src/data/__pycache__
