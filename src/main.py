@@ -29,10 +29,10 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
 
-    if str(date.today()) not in jadwal.presensi_petugas:
+    if str(date.today()) not in jadwal.presensi_rawatib:
         write_todays_pic()
         
-    jadwal.jadwal_hariini = load_json("src/data/presensi_petugas.json")[str(date.today())]
+    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[str(date.today())]
 
     if not new_system_day.is_running:
         new_system_day.start()
