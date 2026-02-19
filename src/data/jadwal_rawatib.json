@@ -1,0 +1,632 @@
+{
+    "Senin":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Selasa":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Rabu":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Kamis":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Jumat":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        },
+        "tult":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Sabtu":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    },
+    "Minggu":{
+        "msu":{
+            "subuh":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "dzuhur":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "ashar":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                },
+                "Pembaca Hadits": {
+                    "id_anggota": 1
+                }
+            },
+            "maghrib":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            },
+            "isya":{
+                "Imam": {
+                    "id_anggota": 1
+                },
+                "Muadzin": {
+                    "id_anggota": 1
+                },
+                "Badal": {
+                    "id_anggota": 1
+                }
+            }
+        }
+    }
+}
