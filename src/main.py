@@ -1,17 +1,14 @@
 import discord
-from datetime import datetime
+from datetime import datetime, date
 import logging
 
 # file imports
 from config import bot, ACTUAL_TIMEZONE, GUILD_ID, token
-
-from events.daily_tasks import new_actual_day, new_system_day
+from data.loader import jadwal, load_json
+from events.daily_tasks import new_actual_day, new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 
-from commands.admin import dailyschedule, rewritejson, testreminder, resetremindersent
-from commands.confirm import confirm, confirm_all
-from commands.sell import sell, sellall
-from commands.extras import jadwalsholat
+from commands import admin, confirm, extras, sell
 
 handler=logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -31,6 +28,11 @@ async def on_ready():
         print(f"Synced {len(synced)} commands to guild {guild.id}")
     except Exception as e:
         print(f"Error syncing commands: {e}")
+
+    if str(date.today()) not in jadwal.presensi_petugas:
+        write_todays_pic()
+        
+    jadwal.jadwal_hariini = load_json("src/data/presensi_petugas.json")[str(date.today())]
 
     if not new_system_day.is_running:
         new_system_day.start()

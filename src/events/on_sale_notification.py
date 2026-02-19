@@ -8,7 +8,11 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     if tugas == 'Pembaca Hadits': return
 
     target=bot.get_channel(SUB_REQUESTS_CHANNEL)
-    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]}\nTempat: {tempat.upper()}\nPetugas Default: {jadwal.jadwal_hariini[tempat][sholat][tugas]['nama']}"
+
+    id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
+    nama_petugas_default = jadwal.anggota[id_anggota]['nama']
+    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]
+    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.upper()}\nPetugas Default: {nama_petugas_default}"
 
     embed=discord.Embed(
         title="Detail Jadwal", 
@@ -20,7 +24,9 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     if tugas == "Muadzin" or emergency:
         tags = "@everyone"
     else:
-        tags = f"Badal: <@{jadwal.jadwal_hariini[tempat][sholat]['Badal']['uid']}>"
+        id_badal = jadwal.jadwal_hariini[tempat][sholat]['Badal']['id_anggota']
+        uid_badal = jadwal.anggota[id_badal]['uid']
+        tags = f"Badal: <@{uid_badal}>"
 
     if emergency:
         content=f"## 🚨 PERHATIAN (PENGGANTI) 🚨\n**{tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!**\n{tags}"

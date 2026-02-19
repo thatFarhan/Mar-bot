@@ -3,7 +3,7 @@ from config import bot, GUILD_ID, TugasEnum, SholatEnum, TempatEnum, SUB_REQUEST
 from events.daily_schedule import send_daily_schedule, write_todays_pic
 from global_vars import scheduler, global_vars
 from events.reminder import send_reminder, reset_reminder_sent
-from data.loader import jadwal
+from data.loader import jadwal, save_presence
 from data.updater import update_to_sell, update_to_confirm, update_to_claim
 from events.on_sale_notification import on_sale_noti
 import discord
@@ -45,8 +45,7 @@ async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: 
     update_to_sell(tugas, sholat, tempat)
     emergency = global_vars.reminder_sent[sholat.value]
     await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-    with open('jadwal_hariini.json', 'w') as file:
-        json.dump(jadwal.jadwal_hariini, file, indent=2)
+    save_presence(jadwal.jadwal_hariini)
 
     await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
 
@@ -58,8 +57,7 @@ async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, shola
         return
     
     update_to_confirm(tugas.value, sholat.value, tempat.value)
-    with open('jadwal_hariini.json', 'w') as file:
-        json.dump(jadwal.jadwal_hariini, file, indent=2)
+    save_presence(jadwal.jadwal_hariini)
 
     await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
 
@@ -73,6 +71,7 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
         return
 
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
+    detail_petugas = jadwal.anggota[petugas['id_anggota']]
 
     if petugas["confirmed"]:
         await interaction.followup.send("Jadwal tersebut sudah diklaim")
@@ -82,19 +81,26 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
         await interaction.followup.send("Jadwal tersebut belum di-sell")
         return
 
-    if petugas['uid'] == pengganti.id:
+    if detail_petugas['uid'] == pengganti.id:
         update_to_confirm(tugas.value, sholat.value, tempat.value)
+        nama_pengklaim = detail_petugas['nama']
     else:
-        update_to_claim(tugas.value, sholat.value, tempat.value, pengganti.id)
+        for id in range(1, len(jadwal.anggota)):
+            if pengganti.id == jadwal.anggota[id]['uid']:
+                nama_pengklaim = jadwal.anggota[id]['nama']
+                update_to_claim(tugas, sholat, tempat, id)
+                break
+        # for else = will run when for is completed without break
+        else:
+            await interaction.followup.send("Akun tercantum belum teregistrasi sebagai akun anggota", ephemeral=True)
+            return
 
-    with open('jadwal_hariini.json', 'w') as file:
-        json.dump(jadwal.jadwal_hariini, file, indent=2)
+    save_presence(jadwal.jadwal_hariini)
 
     key = f"{tugas.value}_{sholat.value}_{tempat.value}"
-    real_name = jadwal.nama_asli[str(pengganti.id)]
 
     if key not in global_vars.notification_ids:
-        await interaction.followup.send(f"Berhasil mengklaim untuk {real_name}, namun notifikasi request pengganti tidak ditemukan")
+        await interaction.followup.send(f"Berhasil mengklaim untuk {nama_pengklaim}, namun notifikasi request pengganti tidak ditemukan")
         return
     
     noti_id = global_vars.notification_ids[key]
@@ -102,7 +108,9 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
     channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
     message = await channel.fetch_message(noti_id)
 
-    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas.value}\nSholat: {sholat.value.capitalize()}\nWaktu Sholat: {jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat.value]}\nTempat: {tempat.value.upper()}\nPetugas Default: {jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]['nama']}"
+    nama_petugas_default = jadwal.anggota[jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]['id_anggota']]['nama']
+    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat.value]
+    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas.value}\nSholat: {sholat.value.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.value.upper()}\nPetugas Default: {nama_petugas_default}"
 
     embed = discord.Embed(
         title="Detail Jadwal",
@@ -110,10 +118,10 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
         description=embed_desc
     )
 
-    content=f"**✅ Jadwal telah diklaim oleh {real_name} ✅**"
+    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim} ✅**"
 
     await message.edit(content=content, embed=embed, view=None)
 
-    await interaction.followup.send(f"Berhasil mengklaim untuk {real_name}")
+    await interaction.followup.send(f"Berhasil mengklaim untuk {nama_pengklaim}")
 
     global_vars.notification_ids.pop(f"{tugas.value}_{sholat.value}_{tempat.value}", None)

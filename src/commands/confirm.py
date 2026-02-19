@@ -2,7 +2,7 @@ from discord import app_commands
 import discord
 import json
 from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
-from data.loader import jadwal
+from data.loader import jadwal, save_presence
 from data.updater import update_to_confirm
 
 @bot.tree.command(name="confirm", description="Mengonfirmasi presensi suatu jadwal antum di hari ini", guild=GUILD_ID)
@@ -13,19 +13,17 @@ async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: Sh
         return
     
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
-    if petugas['uid'] == interaction.user.id and not petugas['confirmed']:
+    detail_petugas = jadwal.anggota[petugas['id_anggota']]
+
+    if detail_petugas['uid'] == interaction.user.id and not petugas['confirmed']:
         update_to_confirm(tugas.value, sholat.value, tempat.value)
-        with open('jadwal_hariini.json', 'w') as file:
-            json.dump(jadwal.jadwal_hariini, file, indent=2)
+        save_presence(jadwal.jadwal_hariini)
 
         await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
     else:
         await interaction.response.send_message(f"Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
 @bot.tree.command(name="confirmall", description="Mengonfirmasi presensi untuk seluruh jadwal antum hari ini", guild=GUILD_ID)
-async def confirmall(interaction: discord.Interaction):
-    await confirm_all(interaction)
-
 async def confirm_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     confirmed_anything = False
@@ -33,13 +31,13 @@ async def confirm_all(interaction: discord.Interaction):
         for sholat in jadwal.jadwal_hariini[tempat]:
             for tugas in jadwal.jadwal_hariini[tempat][sholat]:
                 petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
-                if petugas['uid'] == interaction.user.id and not petugas['confirmed']:
+                detail_petugas = jadwal.anggota[petugas['id_anggota']]
+                if detail_petugas['uid'] == interaction.user.id and not petugas['confirmed']:
                     update_to_confirm(tugas, sholat, tempat)
                     confirmed_anything = True
         
     if confirmed_anything:
-        with open('jadwal_hariini.json', 'w') as file:
-            json.dump(jadwal.jadwal_hariini, file, indent=2)
+        save_presence(jadwal.jadwal_hariini)
         await interaction.followup.send(content="Berhasil mengonfirmasi seluruh jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
     else:
         await interaction.followup.send(content="Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal hari ini", ephemeral=True)
@@ -52,14 +50,14 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
             continue
 
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-            petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
+            petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
+            detail_petugas = jadwal.anggota[petugas['id_anggota']]
 
-            if petugas['uid'] != interaction.user.id or petugas['confirmed']:
+            if detail_petugas['uid'] != interaction.user.id or petugas['confirmed']:
                 continue
 
             update_to_confirm(tugas, sholat, tempat)
-            with open('jadwal_hariini.json', 'w') as file:
-                json.dump(jadwal.jadwal_hariini, file, indent=2)
+            save_presence(jadwal.jadwal_hariini)
 
             await interaction.followup.send(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
             return

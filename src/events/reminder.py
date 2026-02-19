@@ -38,15 +38,17 @@ async def send_reminder(sholat: str):
 
         list_petugas=[]
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-            petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
-            if petugas['uid_sub'] is not None:
-                list_petugas.append(f"**{tugas}:** {petugas['nama_sub']}")
-                tags.add(f"<@{petugas['uid_sub']}>")
+            petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
+            if petugas['id_sub'] is not None:
+                anggota = jadwal.anggota['id_sub']
+                list_petugas.append(f"**{tugas}:** {anggota['nama']}")
+                tags.add(f"<@{anggota['uid']}>")
             else:
-                list_petugas.append(f"**{tugas}:** {petugas['nama']}")
-                tags.add(f"<@{petugas['uid']}>")
+                anggota = jadwal.anggota['id_anggota']
+                list_petugas.append(f"**{tugas}:** {anggota['nama']}")
+                tags.add(f"<@{anggota['uid']}>")
                 if not petugas['confirmed'] and not petugas['need_sub']:
-                    tags_need_confirmation.add(f"<@{petugas['uid']}>")
+                    tags_need_confirmation.add(f"<@{anggota['uid']}>")
 
                     # auto sell after 10 minutes if there's no confirmation
                     run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)

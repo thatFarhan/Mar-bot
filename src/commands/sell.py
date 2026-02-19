@@ -2,7 +2,7 @@ import discord
 import json
 from discord import app_commands
 from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
-from data.loader import jadwal
+from data.loader import jadwal, save_presence
 from data.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
 from global_vars import global_vars
@@ -15,21 +15,19 @@ async def sell(interaction: discord.Interaction, tugas: TugasEnum, sholat: Shola
         return
 
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
-    if (petugas['uid'] == interaction.user.id or petugas['uid_sub'] == interaction.user.id) and not petugas['need_sub']:
+    detail_petugas = jadwal.anggota[petugas['id_anggota']]
+    detail_pengganti = jadwal.anggota[petugas['id_sub']]
+    if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
         update_to_sell(tugas, sholat, tempat)
         emergency = global_vars.reminder_sent[sholat.value]
         await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-        with open('jadwal_hariini.json', 'w') as file:
-            json.dump(jadwal.jadwal_hariini, file, indent=2)
+        save_presence(jadwal.jadwal_hariini)
 
         await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
     else:
         await interaction.response.send_message(f"Antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
 @bot.tree.command(name="sellall", description="Merequest pengganti untuk seluruh jadwal antum di hari ini", guild=GUILD_ID)
-async def sellall(interaction: discord.Interaction):
-    await sell_all(interaction)
-
 async def sell_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     sold_anything = False
@@ -38,15 +36,16 @@ async def sell_all(interaction: discord.Interaction):
             for tugas in jadwal.jadwal_hariini[tempat][sholat]:
                 
                 petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
-                if (petugas['uid'] == interaction.user.id or petugas['uid_sub'] == interaction.user.id) and not petugas['need_sub']:
+                detail_petugas = jadwal.anggota[petugas['id_anggota']]
+                detail_pengganti = jadwal.anggota[petugas['id_sub']]
+                if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
                     emergency = global_vars.reminder_sent[sholat]
                     update_to_sell(tugas, sholat, tempat, emergency=emergency)
                     await on_sale_noti(tugas, sholat, tempat)
                     sold_anything = True
         
     if sold_anything:
-        with open('jadwal_hariini.json', 'w') as file:
-            json.dump(jadwal.jadwal_hariini, file, indent=2)
+        save_presence(jadwal.jadwal_hariini)
 
         await interaction.followup.send(content="Berhasil meminta pengganti untuk seluruh jadwal antum hari ini", ephemeral=True)
     else:
@@ -60,15 +59,16 @@ async def quick_sell(interaction: discord.Interaction, sholat: str):
             continue
 
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-            petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
-
             if tugas == 'Pembaca Hadits': continue
 
-            if (petugas['uid'] == interaction.user.id or petugas['uid_sub'] == interaction.user.id) and not petugas['need_sub']:
+            petugas=jadwal.jadwal_hariini[tempat][sholat][tugas]
+            detail_petugas = jadwal.anggota[petugas['id_anggota']]
+            detail_pengganti = jadwal.anggota[petugas['id_sub']]
+
+            if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
                 update_to_sell(tugas, sholat, tempat)
                 await on_sale_noti(tugas, sholat, tempat, emergency=True)
-                with open('jadwal_hariini.json', 'w') as file:
-                    json.dump(jadwal.jadwal_hariini, file, indent=2)
+                save_presence(jadwal.jadwal_hariini)
 
                 await interaction.followup.send(f"Berhasil meminta pengganti untuk {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}", ephemeral=True)
                 return
@@ -78,6 +78,5 @@ async def quick_sell(interaction: discord.Interaction, sholat: str):
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
     update_to_sell(tugas, sholat, tempat)
+    save_presence(jadwal.jadwal_hariini)
     await on_sale_noti(tugas, sholat, tempat, emergency=True)
-    with open('jadwal_hariini.json', 'w') as file:
-        json.dump(jadwal.jadwal_hariini, file, indent=2)
