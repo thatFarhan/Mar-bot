@@ -4,7 +4,7 @@ from commands.sell import quick_sell
 
 class QuickConfirmationButtons(discord.ui.View):
     def __init__(self, sholat: str):
-        super().__init__()
+        super().__init__(timeout=None)
         self.sholat = sholat
 
     @discord.ui.button(label="Konfirmasi", style=discord.ButtonStyle.green)

@@ -28,6 +28,9 @@ async def sell(interaction: discord.Interaction, tugas: TugasEnum, sholat: Shola
         await interaction.response.send_message(f"Antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
 @bot.tree.command(name="sellall", description="Merequest pengganti untuk seluruh jadwal antum di hari ini", guild=GUILD_ID)
+async def sellall(interaction: discord.Interaction):
+    await sell_all(interaction)
+
 async def sell_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     sold_anything = False

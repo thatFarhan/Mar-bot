@@ -1,18 +1,23 @@
 import json
-from datetime import date
+from datetime import datetime
+from config import SYSTEM_TIMEZONE
 
 def load_json(filename):
     with open(filename) as f:
         return json.load(f)
     
+def save_json(filename, new_data):
+    with open(filename, 'w') as f:
+        json.dump(new_data, f, indent=4)
+    
 def save_presence(jadwal_hariini):
-    jadwal.presensi_rawatib[str(date.today())] = jadwal_hariini
+    system_date = str(datetime.now(SYSTEM_TIMEZONE).date())
+    jadwal.presensi_rawatib[system_date] = jadwal_hariini
 
-    with open('src/data/presensi_rawatib.json', 'w') as file:
-        json.dump(jadwal.presensi_rawatib, file, indent=2)
+    save_json("src/data/presensi_rawatib.json", jadwal.presensi_rawatib)
 
     jadwal.presensi_rawatib = load_json("src/data/presensi_rawatib.json")
-    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[str(date.today())]
+    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[system_date]
     
 class Jadwal():
     def __init__(self):

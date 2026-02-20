@@ -1,4 +1,3 @@
-import json
 from data.loader import jadwal
 from global_vars import scheduler
 

@@ -24,6 +24,9 @@ async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: Sh
         await interaction.response.send_message(f"Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
 @bot.tree.command(name="confirmall", description="Mengonfirmasi presensi untuk seluruh jadwal antum hari ini", guild=GUILD_ID)
+async def confirmall(interaction: discord.Interaction):
+    await confirm_all(interaction)
+
 async def confirm_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     confirmed_anything = False

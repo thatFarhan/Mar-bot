@@ -3,12 +3,13 @@ from datetime import datetime, date
 import logging
 
 # file imports
-from config import bot, ACTUAL_TIMEZONE, GUILD_ID, token
+from config import bot, ACTUAL_TIMEZONE, SYSTEM_TIMEZONE, GUILD_ID, token
 from data.loader import jadwal, load_json
 from events.daily_tasks import new_actual_day, new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
+from views.confirmation_buttons import ConfirmationButtons
 
-from commands import admin, confirm, extras, sell
+from commands import admin, confirm, extras, sell, register
 
 handler=logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -22,6 +23,8 @@ async def on_ready():
         activity=activity
     )
 
+    bot.add_view(ConfirmationButtons())
+
     try:
         guild=GUILD_ID
         synced=await bot.tree.sync(guild=guild)
@@ -29,15 +32,17 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
 
-    if str(date.today()) not in jadwal.presensi_rawatib:
+    system_date = str(datetime.now(SYSTEM_TIMEZONE).date())
+
+    if system_date not in jadwal.presensi_rawatib:
         write_todays_pic()
         
-    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[str(date.today())]
+    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[system_date]
 
-    if not new_system_day.is_running:
+    if not new_system_day.is_running():
         new_system_day.start()
 
-    if not new_actual_day.is_running:
+    if not new_actual_day.is_running():
         new_actual_day.start()
 
     if not scheduler.running:

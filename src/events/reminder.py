@@ -39,13 +39,13 @@ async def send_reminder(sholat: str):
         list_petugas=[]
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
             petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
-            if petugas['id_sub'] is not None:
-                anggota = jadwal.anggota['id_sub']
-                list_petugas.append(f"**{tugas}:** {anggota['nama']}")
+            if petugas['id_sub'] != 0:
+                anggota = jadwal.anggota[petugas['id_sub']]
+                list_petugas.append(f"{tugas}: **{anggota['nama']}**")
                 tags.add(f"<@{anggota['uid']}>")
             else:
-                anggota = jadwal.anggota['id_anggota']
-                list_petugas.append(f"**{tugas}:** {anggota['nama']}")
+                anggota = jadwal.anggota[petugas['id_anggota']]
+                list_petugas.append(f"{tugas}: **{anggota['nama']}**")
                 tags.add(f"<@{anggota['uid']}>")
                 if not petugas['confirmed'] and not petugas['need_sub']:
                     tags_need_confirmation.add(f"<@{anggota['uid']}>")

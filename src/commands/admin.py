@@ -7,7 +7,6 @@ from data.loader import jadwal, save_presence
 from data.updater import update_to_sell, update_to_confirm, update_to_claim
 from events.on_sale_notification import on_sale_noti
 import discord
-import json
 
 @bot.tree.command(name="dailyschedule", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
@@ -19,7 +18,7 @@ async def dailyschedule(interaction: discord.Interaction):
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def rewritejson(interaction: discord.Interaction):
     write_todays_pic()
-    await interaction.response.send_message("jadwal_hariini.json telah ditulis ulang", ephemeral=True)
+    await interaction.response.send_message("presensi_rawatib.json telah ditulis ulang", ephemeral=True)
 
 @bot.tree.command(name="testreminder", description="[ADMIN] Tes reminder",guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
