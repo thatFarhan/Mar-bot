@@ -9,7 +9,7 @@ from events.daily_tasks import new_actual_day, new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
 
-from commands import admin, confirm, extras, sell, register
+from commands import admin, confirm, extras, sell, register, claim, member
 
 handler=logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 

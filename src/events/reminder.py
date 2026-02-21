@@ -42,12 +42,10 @@ async def send_reminder(sholat: str):
             if petugas['id_sub'] != 0:
                 anggota = jadwal.anggota[petugas['id_sub']]
                 list_petugas.append(f"{tugas}: **{anggota['nama']}**")
-                tags.add(f"<@{anggota['uid']}>")
             else:
                 anggota = jadwal.anggota[petugas['id_anggota']]
                 list_petugas.append(f"{tugas}: **{anggota['nama']}**")
-                tags.add(f"<@{anggota['uid']}>")
-                if not petugas['confirmed'] and not petugas['need_sub']:
+                if not petugas['confirmed'] and not petugas['need_sub'] and anggota['uid'] != 0:
                     tags_need_confirmation.add(f"<@{anggota['uid']}>")
 
                     # auto sell after 10 minutes if there's no confirmation
@@ -64,6 +62,9 @@ async def send_reminder(sholat: str):
                         await message.delete()
                     
                     await on_sale_noti(tugas, sholat, tempat, emergency=True)
+
+            if anggota['uid'] != 0:
+                tags.add(f"<@{anggota['uid']}>")
 
         embed.add_field(
             name=TEMPAT_TITLE[tempat],

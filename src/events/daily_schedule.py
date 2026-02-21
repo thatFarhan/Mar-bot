@@ -17,7 +17,8 @@ def build_schedule_and_tags(tempat: str, system_day_name: str):
             id_anggota = jadwal.jadwal_rawatib[system_day_name][tempat][sholat][tugas]['id_anggota']
             anggota = jadwal.anggota[id_anggota]
             field_values.append(f"{tugas}: **{anggota['nama']}**")
-            tags.add(f"<@{anggota['uid']}>")
+            if anggota['uid'] != 0:
+                tags.add(f"<@{anggota['uid']}>")
 
         schedule.add_field(
             name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",

@@ -44,36 +44,3 @@ async def nama_autocomplete(interaction: discord.Interaction, nama: int):
             choices.append(app_commands.Choice(name=jadwal.anggota[i]['nama_lengkap'], value=i))
 
     return choices
-
-@bot.tree.command(name="unregister", description="[ADMIN] Unregisters a member", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
-async def unregister(interaction: discord.Interaction, member: discord.Member):
-    for id in range(1, len(jadwal.anggota)):
-        if member.id == jadwal.anggota[id]['uid']:
-            role = []
-            role.append(discord.utils.get(interaction.guild.roles, name="Unregistered"))
-            await member.edit(roles=role, nick=member.global_name)
-
-            jadwal.anggota[id]['uid'] = 0
-            save_json("src/data/anggota.json", jadwal.anggota)
-            await interaction.response.send_message(content=f"Berhasil menghapus UID {jadwal.anggota[id]['nama_lengkap']}.", ephemeral=True)
-            break
-    # for else = will run when for is completed without break
-    else:
-        await interaction.response.send_message("Akun tersebut belum teregistrasi sebagai akun anggota", ephemeral=True)
-
-@bot.tree.command(name="removeuid", description="[ADMIN] Hanya hapus UID dari anggota.", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
-async def removeuid(interaction: discord.Interaction, nama: int):
-    jadwal.anggota[nama]['uid'] = 0
-    save_json("src/data/anggota.json", jadwal.anggota)
-    await interaction.response.send_message(content=f"Berhasil menghapus UID atas nama {jadwal.anggota[nama]['nama_lengkap']}.", ephemeral=True)
-
-@removeuid.autocomplete("nama")
-async def nama_autocomplete(interaction: discord.Interaction, nama: int):
-    choices = []
-    for i in range(1, len(jadwal.anggota)):
-        if jadwal.anggota[i]['uid'] != 0:
-            choices.append(app_commands.Choice(name=jadwal.anggota[i]['nama_lengkap'], value=i))
-
-    return choices

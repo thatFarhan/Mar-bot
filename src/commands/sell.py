@@ -83,3 +83,17 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     update_to_sell(tugas, sholat, tempat)
     save_presence(jadwal.jadwal_hariini)
     await on_sale_noti(tugas, sholat, tempat, emergency=True)
+
+@bot.tree.command(name="forcesell", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
+@app_commands.checks.has_role("Marbot Mar-bot")
+async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
+    if sholat.value not in jadwal.jadwal_hariini[tempat.value] or tugas.value not in jadwal.jadwal_hariini[tempat.value][sholat.value]:
+        await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
+        return
+
+    update_to_sell(tugas, sholat, tempat)
+    emergency = global_vars.reminder_sent[sholat.value]
+    await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
+    save_presence(jadwal.jadwal_hariini)
+
+    await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
