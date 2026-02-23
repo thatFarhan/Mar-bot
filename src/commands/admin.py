@@ -2,7 +2,7 @@ from discord import app_commands
 from config import bot, GUILD_ID
 from events.daily_schedule import send_daily_schedule, write_todays_pic
 from global_vars import scheduler
-from events.reminder import send_reminder, reset_reminder_sent
+from events.reminder import send_reminder, reset_reminder_sent, set_reminders
 import discord
 
 @bot.tree.command(name="dailyschedule", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
@@ -10,6 +10,8 @@ import discord
 async def dailyschedule(interaction: discord.Interaction):
     await interaction.response.defer()
     await send_daily_schedule(interaction.followup)
+    write_todays_pic()
+    set_reminders()
 
 @bot.tree.command(name="rewritejson", description="[ADMIN] Menulis ulang file json jadwal hari ini", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")

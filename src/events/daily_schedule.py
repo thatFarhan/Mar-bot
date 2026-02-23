@@ -4,16 +4,16 @@ from config import TEMPAT_TITLE, SHOLAT_TITLE
 from views.confirmation_buttons import ConfirmationButtons
 from global_vars import global_vars
 
-def build_schedule_and_tags(tempat: str, system_day_name: str):
+def build_schedule_and_tags(tempat: str, system_day_name: str, enable_time: bool = True):
     schedule=discord.Embed(
             title=TEMPAT_TITLE[tempat],
             color=discord.Color.green()
         )
 
     tags=set()
-    for sholat in jadwal.jadwal_rawatib[f'{system_day_name}'][tempat]:
+    for sholat in jadwal.jadwal_rawatib[system_day_name][tempat]:
         field_values=[]
-        for tugas in jadwal.jadwal_rawatib[f'{system_day_name}'][tempat][sholat]:
+        for tugas in jadwal.jadwal_rawatib[system_day_name][tempat][sholat]:
             id_anggota = jadwal.jadwal_rawatib[system_day_name][tempat][sholat][tugas]['id_anggota']
             anggota = jadwal.anggota[id_anggota]
             field_values.append(f"{tugas}: **{anggota['nama']}**")
@@ -21,7 +21,7 @@ def build_schedule_and_tags(tempat: str, system_day_name: str):
                 tags.add(f"<@{anggota['uid']}>")
 
         schedule.add_field(
-            name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
+            name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})" if enable_time else SHOLAT_TITLE[sholat],
             value="\n".join(field_values),
             inline=True
         )

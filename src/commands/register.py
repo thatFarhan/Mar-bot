@@ -11,7 +11,7 @@ async def on_member_join(member: discord.Member):
     channel = bot.get_channel(WELCOME_CHANNEL)
     embed = discord.Embed(
         title=f"👋 Ahlan wa Sahlan, akhi {member.display_name}!",
-        description="Sebelum menggunakan layanan Mar-bot, silahkan untuk melakukan registrasi dengan command di bawah ini:\n\n`✨ /register [nama antum]`\n\n Jika nama antum tidak tertera, harap untuk menghubungi admin terdekat. Jazaakallaahu Khoiron, Baarakallahu Fiik 🙏",
+        description="Sebelum menggunakan layanan Mar-bot, silahkan untuk melakukan registrasi dengan command di bawah ini:\n## `✨ /register [nama antum]`\n Jika nama antum tidak tertera, harap untuk menghubungi admin terdekat. Jazaakallaahu Khoiron, Baarakallahu Fiik 🙏",
         color=discord.Color.green()
     )
     await channel.send(content=member.mention, embed=embed)
