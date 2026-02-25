@@ -8,9 +8,8 @@ import discord
 @bot.tree.command(name="dailyschedule", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def dailyschedule(interaction: discord.Interaction):
-    await interaction.response.defer()
-    await send_daily_schedule(interaction.followup)
-    write_todays_pic()
+    await send_daily_schedule()
+    await interaction.response.send_message(content="Daily schedule sent", ephemeral=True)
     set_reminders()
 
 @bot.tree.command(name="rewritejson", description="[ADMIN] Menulis ulang file json jadwal hari ini", guild=GUILD_ID)
@@ -23,7 +22,7 @@ async def rewritejson(interaction: discord.Interaction):
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def testreminder(interaction: discord.Interaction):
     await interaction.response.send_message(content="test", ephemeral=True)
-    await send_reminder('maghrib')
+    await send_reminder('subuh')
     for schedule in scheduler.get_jobs():
         print(schedule)
 

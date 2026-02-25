@@ -1,9 +1,9 @@
 from discord import app_commands
 import discord
-import json
 from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
 from data.loader import jadwal, save_presence
 from data.updater import update_to_confirm
+from events.update_schedule_message import update_daily_schedule
 
 @bot.tree.command(name="confirm", description="Mengonfirmasi presensi suatu jadwal antum di hari ini", guild=GUILD_ID)
 @app_commands.describe(tugas="Tugas yang mana?", sholat="Sholat apa?", tempat="Dimana?")
@@ -20,6 +20,7 @@ async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: Sh
         save_presence(jadwal.jadwal_hariini)
 
         await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
+        await update_daily_schedule()
     else:
         await interaction.response.send_message(f"Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
@@ -42,6 +43,7 @@ async def confirm_all(interaction: discord.Interaction):
     if confirmed_anything:
         save_presence(jadwal.jadwal_hariini)
         await interaction.followup.send(content="Berhasil mengonfirmasi seluruh jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
+        await update_daily_schedule()
     else:
         await interaction.followup.send(content="Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal hari ini", ephemeral=True)
 
@@ -63,6 +65,7 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
             save_presence(jadwal.jadwal_hariini)
 
             await interaction.followup.send(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
+            await update_daily_schedule()
             return
 
     await interaction.followup.send(f"Antum tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
@@ -78,3 +81,4 @@ async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, shola
     save_presence(jadwal.jadwal_hariini)
 
     await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
+    await update_daily_schedule()

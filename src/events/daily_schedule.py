@@ -1,52 +1,28 @@
 import discord
 from data.loader import jadwal, save_presence
-from config import TEMPAT_TITLE, SHOLAT_TITLE
+from config import TEMPAT_TITLE, SHOLAT_TITLE, bot, DAILY_SCHEDULE_CHANNEL
 from views.confirmation_buttons import ConfirmationButtons
 from global_vars import global_vars
+from data.persistent_loader import persistent_vars, save_persistent
+from events.update_schedule_message import build_schedule_and_tags
 
-def build_schedule_and_tags(tempat: str, system_day_name: str, enable_time: bool = True):
-    schedule=discord.Embed(
-            title=TEMPAT_TITLE[tempat],
-            color=discord.Color.green()
-        )
-
+async def send_daily_schedule():
+    embeds=[]
     tags=set()
-    for sholat in jadwal.jadwal_rawatib[system_day_name][tempat]:
-        field_values=[]
-        for tugas in jadwal.jadwal_rawatib[system_day_name][tempat][sholat]:
-            id_anggota = jadwal.jadwal_rawatib[system_day_name][tempat][sholat][tugas]['id_anggota']
-            anggota = jadwal.anggota[id_anggota]
-            field_values.append(f"{tugas}: **{anggota['nama']}**")
-            if anggota['uid'] != 0:
-                tags.add(f"<@{anggota['uid']}>")
+    for tempat in jadwal.jadwal_rawatib[global_vars.system_day_name]:
+        schedule_and_tags=build_schedule_and_tags(tempat)
+        embeds.append(schedule_and_tags[0])
+        for tag in schedule_and_tags[1]:
+            tags.add(tag)
 
-        schedule.add_field(
-            name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})" if enable_time else SHOLAT_TITLE[sholat],
-            value="\n".join(field_values),
-            inline=True
-        )
-    
-    return [schedule, tags]
-
-async def send_daily_schedule(target):
-    if target:
-        global_vars.system_day_name=jadwal.jadwal_sholat_bulanini[global_vars.system_date]['hari']
-
-        embeds=[]
-        tags=set()
-        for tempat in jadwal.jadwal_rawatib[global_vars.system_day_name]:
-            schedule_and_tags=build_schedule_and_tags(tempat, global_vars.system_day_name)
-            embeds.append(schedule_and_tags[0])
-            for tag in schedule_and_tags[1]:
-                tags.add(tag)
-
-        await target.send(
-            content=f"# 💫 Jadwal hari {global_vars.system_day_name}\n## 🌃 Lailatukumus Sa'idah Ikhwan~\nBerikut adalah jadwal petugas untuk esok hari. Mohon untuk konfirmasi kehadiran jika bisa berhadir atau request pengganti jika tidak.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}\n\n",
-            embeds=embeds,
-            view=ConfirmationButtons()
-        )
-    else:
-        print("Send schedule failed")
+    daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
+    message = await daily_schedule_channel.send(
+        content=f"# 💫 Jadwal hari {global_vars.system_day_name}\n## 🌃 Lailatukumus Sa'idah Ikhwan~\nBerikut adalah jadwal petugas untuk esok hari. Mohon untuk konfirmasi kehadiran jika bisa berhadir atau request pengganti jika tidak.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}\n\n",
+        embeds=embeds,
+        view=ConfirmationButtons()
+    )
+    persistent_vars["current_daily_schedule_id"] = message.id
+    save_persistent()
 
 def write_todays_pic():
     jadwal_hariini = jadwal.jadwal_rawatib[global_vars.system_day_name]

@@ -2,6 +2,7 @@ import discord
 from config import SUB_REQUESTS_CHANNEL, bot, mention_everyone
 from global_vars import global_vars
 from data.loader import jadwal
+from data.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
 
 async def on_sale_noti(tugas, sholat, tempat, emergency=False):
@@ -21,7 +22,7 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     )
 
     tags = ""
-    if tugas == "Muadzin" or emergency:
+    if tugas == "Muadzin" or emergency or "Badal" not in jadwal.jadwal_hariini[tempat][sholat]:
         tags = "@everyone"
     else:
         id_badal = jadwal.jadwal_hariini[tempat][sholat]['Badal']['id_anggota']
@@ -34,4 +35,5 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
         content=f"**📢 {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti! 📢**\n{tags}"
 
     message = await target.send(content=content, embed=embed, view=ClaimButton(tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
-    global_vars.notification_ids[f"{tugas}_{sholat}_{tempat}"] = message.id
+    persistent_vars["notification_ids"][f"{tugas}_{sholat}_{tempat}"] = message.id
+    save_persistent()

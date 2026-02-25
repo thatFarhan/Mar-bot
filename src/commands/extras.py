@@ -3,16 +3,15 @@ from discord import app_commands
 from config import bot, GUILD_ID, SHOLAT_TITLE
 from global_vars import global_vars
 from data.loader import jadwal
-from events.daily_schedule import build_schedule_and_tags
-from views.day_selector import DaySelectorView
+from views.day_selector import DaySelectorView, build_schedule
 
 @bot.tree.command(name="jadwalsholat", description="Menampilkan jadwal sholat untuk bulan ini pada tanggal tertentu", guild=GUILD_ID)
 async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
     if tanggal == "today":
-        target_date=global_vars.actual_date
+        target_date=global_vars.system_date
 
     elif tanggal == "tomorrow":
-        target_date=global_vars.actual_date + 1
+        target_date=global_vars.system_date + 1
 
     else:
         try:
@@ -56,7 +55,7 @@ async def hari_autocomplete(interaction: discord.Interaction, tanggal: str):
 async def jadwalpetugass(interaction: discord.Interaction):
     embeds=[]
     for tempat in jadwal.jadwal_rawatib[global_vars.system_day_name]:
-        schedule_and_tags=build_schedule_and_tags(tempat, global_vars.system_day_name, enable_time=False)
-        embeds.append(schedule_and_tags[0])
+        schedule=build_schedule(tempat, global_vars.system_day_name)
+        embeds.append(schedule)
 
     await interaction.response.send_message(content=f"# 💫 Jadwal hari {global_vars.system_day_name}", embeds=embeds, view=DaySelectorView())

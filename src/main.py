@@ -1,11 +1,11 @@
 import discord
-from datetime import datetime, date
+from datetime import datetime
 import logging
 
 # file imports
 from config import bot, ACTUAL_TIMEZONE, SYSTEM_TIMEZONE, GUILD_ID, token
 from data.loader import jadwal, load_json
-from events.daily_tasks import new_actual_day, new_system_day, write_todays_pic
+from events.daily_tasks import new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
 
@@ -41,9 +41,6 @@ async def on_ready():
 
     if not new_system_day.is_running():
         new_system_day.start()
-
-    if not new_actual_day.is_running():
-        new_actual_day.start()
 
     if not scheduler.running:
         scheduler.start()

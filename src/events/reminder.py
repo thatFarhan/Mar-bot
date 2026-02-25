@@ -1,6 +1,7 @@
 import discord
 from datetime import datetime, timedelta
 from data.loader import jadwal
+from data.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars, scheduler
 from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
 from views.quick_confirmation_buttons import QuickConfirmationButtons
@@ -23,7 +24,9 @@ def set_reminders():
         print(schedule)
 
 async def send_reminder(sholat: str):
-    global_vars.reminder_sent[sholat] = True
+    persistent_vars["reminder_sent"][sholat] = True
+    save_persistent()
+
     embed=discord.Embed(
         title=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
         color=discord.Color.green()
@@ -54,9 +57,9 @@ async def send_reminder(sholat: str):
                     scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                 elif petugas['need_sub']:
                     key = f"{tugas}_{sholat}_{tempat}"
-                    if key in global_vars.notification_ids:
+                    if key in persistent_vars["notification_ids"]:
                         channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-                        noti_id = global_vars.notification_ids[key]
+                        noti_id = persistent_vars["notification_ids"][key]
                         message = await channel.fetch_message(noti_id)
 
                         await message.delete()
@@ -85,4 +88,6 @@ async def send_reminder(sholat: str):
 
 def reset_reminder_sent():
     for sholat in ('subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'):
-        global_vars.reminder_sent[sholat] = False
+        persistent_vars["reminder_sent"][sholat] = False
+
+    save_persistent()

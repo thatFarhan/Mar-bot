@@ -3,8 +3,9 @@ import discord
 from discord import app_commands
 from data.updater import update_to_claim, update_to_confirm
 from data.loader import jadwal, save_presence
+from data.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars
-
+from events.update_schedule_message import update_daily_schedule
 
 @bot.tree.command(name="forceclaim", description="[ADMIN] Mengklaim suatu jadwal yang perlu pengganti untuk seseorang", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
@@ -41,14 +42,15 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
             return
 
     save_presence(jadwal.jadwal_hariini)
+    await update_daily_schedule()
 
     key = f"{tugas.value}_{sholat.value}_{tempat.value}"
 
-    if key not in global_vars.notification_ids:
+    if key not in persistent_vars["notification_ids"]:
         await interaction.followup.send(f"Berhasil mengklaim untuk {nama_pengklaim}, namun notifikasi request pengganti tidak ditemukan")
         return
     
-    noti_id = global_vars.notification_ids[key]
+    noti_id = persistent_vars["notification_ids"][key]
 
     channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
     message = await channel.fetch_message(noti_id)
@@ -65,8 +67,42 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
 
     content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim} ✅**"
 
-    global_vars.notification_ids.pop(f"{tugas.value}_{sholat.value}_{tempat.value}", None)
+    persistent_vars["notification_ids"].pop(f"{tugas.value}_{sholat.value}_{tempat.value}", None)
+    save_persistent()
 
     await message.edit(content=content, embed=embed, view=None)
 
     await interaction.followup.send(f"Berhasil mengklaim untuk {nama_pengklaim}")
+
+async def claim(interaction: discord.Interaction, tugas: str, sholat: str, tempat: str, embed_desc: str):
+    petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
+    detail_petugas = jadwal.anggota[petugas['id_anggota']]
+
+    if detail_petugas['uid'] == interaction.user.id:
+        update_to_confirm(tugas, sholat, tempat)
+        nama_pengklaim = detail_petugas['nama']
+    else:
+        for id in range(1, len(jadwal.anggota)):
+            if interaction.user.id == jadwal.anggota[id]['uid']:
+                nama_pengklaim = jadwal.anggota[id]['nama']
+                update_to_claim(tugas, sholat, tempat, id)
+                break
+        # for else = will run when for is completed without break
+        else:
+            await interaction.response.send_message("Akun antum belum teregistrasi sebagai akun anggota", ephemeral=True)
+            return
+
+    save_presence(jadwal.jadwal_hariini)
+
+    embed = discord.Embed(
+        title="Detail Jadwal",
+        color=discord.Color.green(),
+        description=embed_desc
+    )
+    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim} ✅**"
+
+    persistent_vars["notification_ids"].pop(f"{tugas}_{sholat}_{tempat}", None)
+    save_persistent()
+    
+    await interaction.response.edit_message(content=content, embed=embed, view=None)
+    await update_daily_schedule()

@@ -1,0 +1,11 @@
+{
+    "reminder_sent": {
+        "subuh": false,
+        "dzuhur": false,
+        "ashar": false,
+        "maghrib": false,
+        "isya": false
+    },
+    "notification_ids": {},
+    "current_daily_schedule_id": 0
+}
