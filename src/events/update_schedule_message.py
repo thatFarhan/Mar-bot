@@ -16,7 +16,7 @@ def build_schedule_and_tags(tempat: str):
             continue
 
         if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
-            sholat_title = "jumat"
+            sholat_title = "jum'at"
         else:
             sholat_title = sholat
 

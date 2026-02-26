@@ -31,7 +31,7 @@ NAMA_HARI = ("Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Ahad")
 SHOLAT_TITLE={
     "subuh": "🌅 Subuh", 
     "dzuhur": "☀️ Dzuhur",
-    "jumat": "☀️ Jum'at",
+    "jum'at": "☀️ Jum'at",
     "ashar": "🌇 Ashar", 
     "maghrib": "🌆 Maghrib", 
     "isya": "🌔 Isya"

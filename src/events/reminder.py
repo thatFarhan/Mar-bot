@@ -27,8 +27,13 @@ async def send_reminder(sholat: str):
     persistent_vars["reminder_sent"][sholat] = True
     save_persistent()
 
+    if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
+        sholat_title = "jum'at"
+    else:
+        sholat_title = sholat
+
     embed=discord.Embed(
-        title=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]})",
+        title=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]})",
         color=discord.Color.green()
     )
 
@@ -75,7 +80,7 @@ async def send_reminder(sholat: str):
             inline=True
         )
 
-    content=f"## ⏰ 30 Menit Menjelang Sholat {sholat.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
+    content=f"## ⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
 
     reminders_channel=bot.get_channel(REMINDERS_CHANNEL)
     await reminders_channel.send(content=content, embed=embed)
