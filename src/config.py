@@ -20,13 +20,18 @@ intents.message_content=True
 intents.members=True
 intents.guilds=True
 
-# system_date is 4 hours ahead so that the day changes at 20:00
+# system_day is 4 hours ahead so that the day changes at 20:00
 ACTUAL_TIMEZONE=ZoneInfo("Asia/Jakarta")
 SYSTEM_TIMEZONE=ZoneInfo("Asia/Magadan")
 
+SHOLAT_TUPLE = ("subuh", "dzuhur", "ashar", "maghrib", "isya")
+
+NAMA_HARI = ("Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Ahad")
+
 SHOLAT_TITLE={
     "subuh": "🌅 Subuh", 
-    "dzuhur": "☀️ Dzuhur", 
+    "dzuhur": "☀️ Dzuhur",
+    "jumat": "☀️ Jum'at",
     "ashar": "🌇 Ashar", 
     "maghrib": "🌆 Maghrib", 
     "isya": "🌔 Isya"

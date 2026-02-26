@@ -2,11 +2,11 @@ import json
 from datetime import datetime
 from config import SYSTEM_TIMEZONE
 
-def load_json(filename):
+def load_json(filename: str):
     with open(filename) as f:
         return json.load(f)
     
-def save_json(filename, new_data):
+def save_json(filename: str, new_data: dict):
     with open(filename, 'w') as f:
         json.dump(new_data, f, indent=4)
     
@@ -26,6 +26,7 @@ class Jadwal():
         self.anggota = None
         self.presensi_rawatib = None
         self.jadwal_hariini = None
+        self.jadwal_jumat = None
 
 jadwal = Jadwal()
 
@@ -33,3 +34,4 @@ jadwal.jadwal_sholat_bulanini = load_json("src/data/jadwal_sholat/february.json"
 jadwal.jadwal_rawatib = load_json("src/data/jadwal_rawatib.json")
 jadwal.anggota = load_json("src/data/anggota.json")
 jadwal.presensi_rawatib = load_json("src/data/presensi_rawatib.json")
+jadwal.jadwal_jumat = load_json("src/data/jadwal_jumat.json")

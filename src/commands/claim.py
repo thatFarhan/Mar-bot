@@ -56,7 +56,7 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
     message = await channel.fetch_message(noti_id)
 
     nama_petugas_default = jadwal.anggota[jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]['id_anggota']]['nama']
-    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat.value]
+    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat.value]
     embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas.value}\nSholat: {sholat.value.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.value.upper()}\nPetugas Default: {nama_petugas_default}"
 
     embed = discord.Embed(

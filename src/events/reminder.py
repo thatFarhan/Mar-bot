@@ -3,15 +3,15 @@ from datetime import datetime, timedelta
 from data.loader import jadwal
 from data.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars, scheduler
-from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
+from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL, SHOLAT_TUPLE
 from views.quick_confirmation_buttons import QuickConfirmationButtons
 from events.on_sale_notification import on_sale_noti
 from commands.sell import emergency_sell
 
 def set_reminders():
-    for sholat in ('subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'):
-        date=jadwal.jadwal_sholat_bulanini[global_vars.system_date]['tanggal_lengkap'].split('-')
-        time=jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat].split(':')
+    for sholat in SHOLAT_TUPLE:
+        date=jadwal.jadwal_sholat_bulanini[global_vars.system_day]['tanggal_lengkap'].split('-')
+        time=jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat].split(':')
 
         year, month, day = int(date[0]), int(date[1]), int(date[2])
         hour, minute = int(time[0]), int(time[1])
@@ -28,7 +28,7 @@ async def send_reminder(sholat: str):
     save_persistent()
 
     embed=discord.Embed(
-        title=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
+        title=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]})",
         color=discord.Color.green()
     )
 
@@ -75,7 +75,7 @@ async def send_reminder(sholat: str):
             inline=True
         )
 
-    content=f"# ⏰ 30 Menit Menjelang Sholat {sholat.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
+    content=f"## ⏰ 30 Menit Menjelang Sholat {sholat.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
 
     reminders_channel=bot.get_channel(REMINDERS_CHANNEL)
     await reminders_channel.send(content=content, embed=embed)
@@ -87,7 +87,7 @@ async def send_reminder(sholat: str):
         )
 
 def reset_reminder_sent():
-    for sholat in ('subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'):
+    for sholat in SHOLAT_TUPLE:
         persistent_vars["reminder_sent"][sholat] = False
 
     save_persistent()

@@ -12,7 +12,7 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
 
     id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
     nama_petugas_default = jadwal.anggota[id_anggota]['nama']
-    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]
+    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]
     embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.upper()}\nPetugas Default: {nama_petugas_default}"
 
     embed=discord.Embed(

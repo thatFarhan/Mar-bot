@@ -8,7 +8,7 @@ class DaySelector(discord.ui.Select):
         self.tempat_chosen = tempat_chosen
 
         day_options=[]
-        for day in ("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"):
+        for day in ("Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Ahad"):
             day_options.append(discord.SelectOption(label=day))
 
         super().__init__(placeholder="Pilih hari", options=day_options)

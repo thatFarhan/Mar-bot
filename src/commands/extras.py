@@ -8,10 +8,10 @@ from views.day_selector import DaySelectorView, build_schedule
 @bot.tree.command(name="jadwalsholat", description="Menampilkan jadwal sholat untuk bulan ini pada tanggal tertentu", guild=GUILD_ID)
 async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
     if tanggal == "today":
-        target_date=global_vars.system_date
+        target_date=global_vars.system_day
 
     elif tanggal == "tomorrow":
-        target_date=global_vars.system_date + 1
+        target_date=global_vars.system_day + 1
 
     else:
         try:
@@ -58,4 +58,4 @@ async def jadwalpetugass(interaction: discord.Interaction):
         schedule=build_schedule(tempat, global_vars.system_day_name)
         embeds.append(schedule)
 
-    await interaction.response.send_message(content=f"# 💫 Jadwal hari {global_vars.system_day_name}", embeds=embeds, view=DaySelectorView())
+    await interaction.response.send_message(content=f"## 💫 Jadwal hari {global_vars.system_day_name}", embeds=embeds, view=DaySelectorView())

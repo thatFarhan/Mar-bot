@@ -22,7 +22,7 @@ async def rewritejson(interaction: discord.Interaction):
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def testreminder(interaction: discord.Interaction):
     await interaction.response.send_message(content="test", ephemeral=True)
-    await send_reminder('subuh')
+    await send_reminder('dzuhur')
     for schedule in scheduler.get_jobs():
         print(schedule)
 

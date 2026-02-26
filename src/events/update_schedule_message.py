@@ -1,5 +1,5 @@
 import discord
-from config import TEMPAT_TITLE, SHOLAT_TITLE, bot, DAILY_SCHEDULE_CHANNEL
+from config import TEMPAT_TITLE, SHOLAT_TITLE, bot, DAILY_SCHEDULE_CHANNEL, SHOLAT_TUPLE
 from data.loader import jadwal
 from data.persistent_loader import persistent_vars
 from global_vars import global_vars
@@ -11,7 +11,15 @@ def build_schedule_and_tags(tempat: str):
         )
 
     tags=set()
-    for sholat in jadwal.jadwal_hariini[tempat]:
+    for sholat in SHOLAT_TUPLE:
+        if sholat not in jadwal.jadwal_hariini[tempat]:
+            continue
+
+        if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
+            sholat_title = "jumat"
+        else:
+            sholat_title = sholat
+
         field_values=[]
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
             id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
@@ -35,7 +43,7 @@ def build_schedule_and_tags(tempat: str):
                 tags.add(f"<@{anggota['uid']}>")
 
         schedule.add_field(
-            name=f"{SHOLAT_TITLE[sholat]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_date][sholat]})",
+            name=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]})",
             value="\n".join(field_values),
             inline=True
         )
