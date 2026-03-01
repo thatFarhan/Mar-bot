@@ -4,7 +4,6 @@ from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
 from data.loader import jadwal, save_presence
 from data.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
-from global_vars import global_vars
 from events.update_schedule_message import update_daily_schedule
 from data.persistent_loader import persistent_vars
 
@@ -22,7 +21,7 @@ async def sell(interaction: discord.Interaction, tugas: TugasEnum, sholat: Shola
         update_to_sell(tugas, sholat, tempat)
         emergency = persistent_vars["reminder_sent"][sholat.value]
         await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-        save_presence(jadwal.jadwal_hariini)
+        await save_presence(jadwal.jadwal_hariini)
 
         await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
         await update_daily_schedule()
@@ -50,7 +49,7 @@ async def sell_all(interaction: discord.Interaction):
                     sold_anything = True
         
     if sold_anything:
-        save_presence(jadwal.jadwal_hariini)
+        await save_presence(jadwal.jadwal_hariini)
 
         await interaction.followup.send(content="Berhasil meminta pengganti untuk seluruh jadwal antum hari ini", ephemeral=True)
         await update_daily_schedule()
@@ -74,7 +73,7 @@ async def quick_sell(interaction: discord.Interaction, sholat: str):
             if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
                 update_to_sell(tugas, sholat, tempat)
                 await on_sale_noti(tugas, sholat, tempat, emergency=True)
-                save_presence(jadwal.jadwal_hariini)
+                await save_presence(jadwal.jadwal_hariini)
 
                 await interaction.followup.send(f"Berhasil meminta pengganti untuk {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}", ephemeral=True)
                 await update_daily_schedule()
@@ -85,7 +84,7 @@ async def quick_sell(interaction: discord.Interaction, sholat: str):
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
     update_to_sell(tugas, sholat, tempat)
-    save_presence(jadwal.jadwal_hariini)
+    await save_presence(jadwal.jadwal_hariini)
     await on_sale_noti(tugas, sholat, tempat, emergency=True)
 
 @bot.tree.command(name="forcesell", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
@@ -98,7 +97,7 @@ async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: 
     update_to_sell(tugas, sholat, tempat)
     emergency = persistent_vars["reminder_sent"][sholat.value]
     await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-    save_presence(jadwal.jadwal_hariini)
+    await save_presence(jadwal.jadwal_hariini)
 
     await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
     await update_daily_schedule()

@@ -37,7 +37,7 @@ async def tanggal_autocomplete(interaction: discord.Interaction, tanggal: str):
 async def nama_autocomplete(interaction: discord.Interaction, nama: int):
     choices = []
     for i in range(1, len(jadwal.anggota)):
-        choices.append(app_commands.Choice(name=jadwal.anggota[i]['nama_lengkap'], value=i))
+        choices.append(app_commands.Choice(name=jadwal.anggota[i]['nama'], value=i))
 
     return choices
 

@@ -1,6 +1,5 @@
 from config import ACTUAL_TIMEZONE, SYSTEM_TIMEZONE, NAMA_HARI
 from datetime import datetime
-from data.loader import jadwal
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 class GlobalVars:

@@ -10,8 +10,8 @@ from commands.sell import emergency_sell
 
 def set_reminders():
     for sholat in SHOLAT_TUPLE:
-        date=jadwal.jadwal_sholat_bulanini[global_vars.system_day]['tanggal_lengkap'].split('-')
-        time=jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat].split(':')
+        date=jadwal.jadwal_sholat[global_vars.system_day]['tanggal_lengkap'].split('-')
+        time=jadwal.jadwal_sholat[global_vars.system_day][sholat].split(':')
 
         year, month, day = int(date[0]), int(date[1]), int(date[2])
         hour, minute = int(time[0]), int(time[1])
@@ -25,7 +25,7 @@ def set_reminders():
 
 async def send_reminder(sholat: str):
     persistent_vars["reminder_sent"][sholat] = True
-    save_persistent()
+    await save_persistent()
 
     if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
         sholat_title = "jum'at"
@@ -33,7 +33,7 @@ async def send_reminder(sholat: str):
         sholat_title = sholat
 
     embed=discord.Embed(
-        title=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]})",
+        title=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat[global_vars.system_day][sholat]})",
         color=discord.Color.green()
     )
 
@@ -91,8 +91,8 @@ async def send_reminder(sholat: str):
             view=QuickConfirmationButtons(sholat)
         )
 
-def reset_reminder_sent():
+async def reset_reminder_sent():
     for sholat in SHOLAT_TUPLE:
         persistent_vars["reminder_sent"][sholat] = False
 
-    save_persistent()
+    await save_persistent()

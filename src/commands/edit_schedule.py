@@ -3,7 +3,7 @@ from discord import app_commands
 from data.loader import jadwal
 from global_vars import global_vars
 from views.edit_schedule_view import EditScheduleView
-from views.schedule_embed_builder import build_schedule
+from builders.edit_schedule_builder import build_schedule
 import discord
 
 @bot.tree.command(name="editschedule", description="[ADMIN] Menampilkan interface untuk mengedit jadwal rawatib", guild=GUILD_ID)

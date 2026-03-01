@@ -1,6 +1,6 @@
 import discord
 from data.loader import jadwal, save_json
-from views.schedule_embed_builder import build_schedule
+from builders.edit_schedule_builder import build_schedule
 
 class DaySelector(discord.ui.Select):
     def __init__(self, sholat_chosen: str, tempat_chosen: str):

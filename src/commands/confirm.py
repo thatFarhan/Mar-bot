@@ -17,7 +17,7 @@ async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: Sh
 
     if detail_petugas['uid'] == interaction.user.id and not petugas['confirmed']:
         update_to_confirm(tugas.value, sholat.value, tempat.value)
-        save_presence(jadwal.jadwal_hariini)
+        await save_presence(jadwal.jadwal_hariini)
 
         await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
@@ -41,7 +41,7 @@ async def confirm_all(interaction: discord.Interaction):
                     confirmed_anything = True
         
     if confirmed_anything:
-        save_presence(jadwal.jadwal_hariini)
+        await save_presence(jadwal.jadwal_hariini)
         await interaction.followup.send(content="Berhasil mengonfirmasi seluruh jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
@@ -62,7 +62,7 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
                 continue
 
             update_to_confirm(tugas, sholat, tempat)
-            save_presence(jadwal.jadwal_hariini)
+            await save_presence(jadwal.jadwal_hariini)
 
             await interaction.followup.send(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
             await update_daily_schedule()
@@ -78,7 +78,7 @@ async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, shola
         return
     
     update_to_confirm(tugas.value, sholat.value, tempat.value)
-    save_presence(jadwal.jadwal_hariini)
+    await save_presence(jadwal.jadwal_hariini)
 
     await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
     await update_daily_schedule()

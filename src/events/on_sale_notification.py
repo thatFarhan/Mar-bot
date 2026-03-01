@@ -12,7 +12,7 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
 
     id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
     nama_petugas_default = jadwal.anggota[id_anggota]['nama']
-    waktu_sholat = jadwal.jadwal_sholat_bulanini[global_vars.system_day][sholat]
+    waktu_sholat = jadwal.jadwal_sholat[global_vars.system_day][sholat]
     embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.upper()}\nPetugas Default: {nama_petugas_default}"
 
     embed=discord.Embed(
@@ -36,4 +36,4 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
 
     message = await target.send(content=content, embed=embed, view=ClaimButton(tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
     persistent_vars["notification_ids"][f"{tugas}_{sholat}_{tempat}"] = message.id
-    save_persistent()
+    await save_persistent()

@@ -6,6 +6,7 @@ from events.reminder import set_reminders, reset_reminder_sent
 from global_vars import global_vars
 from data.loader import jadwal
 from data.persistent_loader import persistent_vars, save_persistent
+from events.new_prayer_schedule import get_new_schedule
 
 @tasks.loop(time=time(hour=20, tzinfo=ACTUAL_TIMEZONE))
 async def new_system_day():
@@ -14,12 +15,16 @@ async def new_system_day():
     global_vars.system_date = str(datetime.now(SYSTEM_TIMEZONE).date())
     global_vars.system_day_name = NAMA_HARI[datetime.now(SYSTEM_TIMEZONE).date().weekday()]
     persistent_vars["notification_ids"].clear()
-    save_persistent()
 
-    write_todays_pic()
+    if jadwal.data_sholat["bulan"] != datetime.now(SYSTEM_TIMEZONE).month:
+        await get_new_schedule()
+
+    await save_persistent()
+
+    await write_todays_pic()
 
     await send_daily_schedule()
 
     set_reminders()
 
-    reset_reminder_sent()
+    await reset_reminder_sent()

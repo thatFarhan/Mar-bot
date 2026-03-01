@@ -1,10 +1,10 @@
 from datetime import datetime
 from data.loader import jadwal, save_presence
-from config import bot, DAILY_SCHEDULE_CHANNEL, SYSTEM_TIMEZONE
+from config import bot, DAILY_SCHEDULE_CHANNEL
 from views.confirmation_buttons import ConfirmationButtons
 from global_vars import global_vars
 from data.persistent_loader import persistent_vars, save_persistent
-from events.update_schedule_message import build_schedule_and_tags
+from builders.daily_schedule_builder import build_schedule_and_tags
 
 async def send_daily_schedule():
     embeds=[]
@@ -22,9 +22,9 @@ async def send_daily_schedule():
         view=ConfirmationButtons()
     )
     persistent_vars["current_daily_schedule_id"] = message.id
-    save_persistent()
+    await save_persistent()
 
-def write_todays_pic():
+async def write_todays_pic():
     jadwal_hariini = dict(jadwal.jadwal_rawatib[global_vars.system_day_name])
 
     if global_vars.system_day_name == "Jum'at":
@@ -40,4 +40,4 @@ def write_todays_pic():
                 petugas['need_sub'] = False
                 petugas['id_sub'] = 0
 
-    save_presence(jadwal_hariini)
+    await save_presence(jadwal_hariini)

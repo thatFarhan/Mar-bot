@@ -3,12 +3,13 @@ from datetime import datetime
 import logging
 
 # file imports
-from config import bot, ACTUAL_TIMEZONE, GUILD_ID, token
+from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, GUILD_ID, token
 from global_vars import global_vars
 from data.loader import jadwal, load_json
 from events.daily_tasks import new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
+from events.new_prayer_schedule import get_new_schedule
 
 from commands import admin, confirm, extras, sell, register, claim, member, edit_schedule, jumat_schedule
 
@@ -33,8 +34,11 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
 
+    if jadwal.data_sholat["bulan"] != datetime.now(SYSTEM_TIMEZONE).month:
+        await get_new_schedule()
+
     if global_vars.system_date not in jadwal.presensi_rawatib:
-        write_todays_pic()
+        await write_todays_pic()
         
     jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[global_vars.system_date]
 

@@ -3,7 +3,8 @@ from discord import app_commands
 from config import bot, GUILD_ID, SHOLAT_TITLE
 from global_vars import global_vars
 from data.loader import jadwal
-from views.day_selector import DaySelectorView, build_schedule
+from views.day_selector import DaySelectorView
+from builders.show_schedule_builder import build_schedule
 
 @bot.tree.command(name="jadwalsholat", description="Menampilkan jadwal sholat untuk bulan ini pada tanggal tertentu", guild=GUILD_ID)
 async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
@@ -20,7 +21,7 @@ async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
             await interaction.response.send_message("Parameter harus berupa angka atau 'Hari ini' / 'Besok'", ephemeral=True)
             return
         
-    if target_date > len(jadwal.jadwal_sholat_bulanini) - 1:
+    if target_date > len(jadwal.jadwal_sholat) - 1:
         await interaction.response.send_message("Tanggal tidak bisa melebihi tanggal terakhir bulan ini", ephemeral=True)
         return
     
@@ -29,14 +30,17 @@ async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
         return
 
     embed=discord.Embed(
-        title=f"🕌 Jadwal Sholat {jadwal.jadwal_sholat_bulanini[target_date]['hari']}, {jadwal.jadwal_sholat_bulanini[target_date]['tanggal_lengkap']}",
+        title=f"🕌 Jadwal Sholat {jadwal.jadwal_sholat[target_date]['hari']}, {jadwal.jadwal_sholat[target_date]['tanggal_lengkap']}",
         color=discord.Color.green()
     )
 
     for sholat in SHOLAT_TITLE:
+        if sholat not in jadwal.jadwal_sholat[target_date]:
+            continue
+
         embed.add_field(
             name=SHOLAT_TITLE[sholat],
-            value=jadwal.jadwal_sholat_bulanini[target_date][sholat],
+            value=jadwal.jadwal_sholat[target_date][sholat],
             inline=True
         )
 

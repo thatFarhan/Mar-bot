@@ -5,3 +5,4 @@ src/commands/__pycache__
 src/data/__pycache__
 src/events/__pycache__
 src/views/__pycache__
+.venv
