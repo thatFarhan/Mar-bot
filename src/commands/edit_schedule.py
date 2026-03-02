@@ -1,7 +1,6 @@
-from config import bot, GUILD_ID, TEMPAT_TITLE
+from config import bot, GUILD_ID
 from discord import app_commands
 from data.loader import jadwal
-from global_vars import global_vars
 from views.edit_schedule_view import EditScheduleView
 from builders.edit_schedule_builder import build_schedule
 import discord

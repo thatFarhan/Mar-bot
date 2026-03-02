@@ -17,16 +17,27 @@ async def sell(interaction: discord.Interaction, tugas: TugasEnum, sholat: Shola
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
     detail_petugas = jadwal.anggota[petugas['id_anggota']]
     detail_pengganti = jadwal.anggota[petugas['id_sub']]
-    if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
-        update_to_sell(tugas, sholat, tempat)
-        emergency = persistent_vars["reminder_sent"][sholat.value]
-        await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-        await save_presence(jadwal.jadwal_hariini)
 
-        await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
-        await update_daily_schedule()
-    else:
+    if tugas == 'Pembaca Hadits':
+        await interaction.response.send_message("Jadwal Pembaca Hadits tidak bisa di jual", ephemeral=True)
+        return
+    if petugas["need_sub"]:
+        await interaction.response.send_message("Jadwal tersebut sudah di jual", ephemeral=True)
+        return
+    if detail_petugas['uid'] != interaction.user.id and detail_pengganti['uid'] != interaction.user.id:
         await interaction.response.send_message(f"Antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
+        return
+    if detail_petugas['uid'] == interaction.user.id and detail_pengganti['uid'] != 0:
+        await interaction.response.send_message(f"Jadwal tersebut sudah di gantikan oleh {detail_pengganti['nama']}", ephemeral=True)
+        return
+
+    update_to_sell(tugas, sholat, tempat)
+    emergency = persistent_vars["reminder_sent"][sholat.value]
+    await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
+    await save_presence(jadwal.jadwal_hariini)
+
+    await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
+    await update_daily_schedule()
 
 @bot.tree.command(name="sellall", description="Merequest pengganti untuk seluruh jadwal antum di hari ini", guild=GUILD_ID)
 async def sellall(interaction: discord.Interaction):
@@ -38,15 +49,25 @@ async def sell_all(interaction: discord.Interaction):
     for tempat in jadwal.jadwal_hariini:
         for sholat in jadwal.jadwal_hariini[tempat]:
             for tugas in jadwal.jadwal_hariini[tempat][sholat]:
+                if tugas == 'Pembaca Hadits': continue
                 
                 petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
                 detail_petugas = jadwal.anggota[petugas['id_anggota']]
                 detail_pengganti = jadwal.anggota[petugas['id_sub']]
-                if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
-                    emergency = persistent_vars["reminder_sent"][sholat]
-                    update_to_sell(tugas, sholat, tempat, emergency=emergency)
-                    await on_sale_noti(tugas, sholat, tempat)
-                    sold_anything = True
+                    
+                if petugas["need_sub"]:
+                    continue
+                    
+                if detail_petugas['uid'] != interaction.user.id and detail_pengganti['uid'] != interaction.user.id:
+                    continue
+
+                if detail_petugas['uid'] == interaction.user.id and detail_pengganti['uid'] != 0:
+                    continue
+
+                emergency = persistent_vars["reminder_sent"][sholat]
+                update_to_sell(tugas, sholat, tempat, emergency=emergency)
+                await on_sale_noti(tugas, sholat, tempat)
+                sold_anything = True
         
     if sold_anything:
         await save_presence(jadwal.jadwal_hariini)
@@ -70,14 +91,22 @@ async def quick_sell(interaction: discord.Interaction, sholat: str):
             detail_petugas = jadwal.anggota[petugas['id_anggota']]
             detail_pengganti = jadwal.anggota[petugas['id_sub']]
 
-            if (detail_petugas['uid'] == interaction.user.id or detail_pengganti['uid'] == interaction.user.id) and not petugas['need_sub']:
-                update_to_sell(tugas, sholat, tempat)
-                await on_sale_noti(tugas, sholat, tempat, emergency=True)
-                await save_presence(jadwal.jadwal_hariini)
+            if petugas["need_sub"]:
+                continue
+                
+            if detail_petugas['uid'] != interaction.user.id and detail_pengganti['uid'] != interaction.user.id:
+                continue
 
-                await interaction.followup.send(f"Berhasil meminta pengganti untuk {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}", ephemeral=True)
-                await update_daily_schedule()
-                return
+            if detail_petugas['uid'] == interaction.user.id and detail_pengganti['uid'] != 0:
+                continue
+
+            update_to_sell(tugas, sholat, tempat)
+            await on_sale_noti(tugas, sholat, tempat, emergency=True)
+            await save_presence(jadwal.jadwal_hariini)
+
+            await interaction.followup.send(f"Berhasil meminta pengganti untuk {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}", ephemeral=True)
+            await update_daily_schedule()
+            return
 
     await interaction.followup.send(f"Antum tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
 

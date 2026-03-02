@@ -22,14 +22,14 @@ async def on_member_remove(member: discord.Member):
     for anggota in jadwal.anggota:
         if anggota['uid'] == uid:
             anggota['uid'] = 0
-            save_json("src/data/anggota.json", jadwal.anggota)
+            await save_json("src/data/anggota.json", jadwal.anggota)
             break
 
 @app_commands.checks.has_role("Unregistered")
 @bot.tree.command(name="register", description="Memasukkan UID Discord antum ke dalam sistem", guild=GUILD_ID)
 async def register(interaction: discord.Interaction, nama: int):
     jadwal.anggota[nama]['uid'] = interaction.user.id
-    save_json("src/data/anggota.json", jadwal.anggota)
+    await save_json("src/data/anggota.json", jadwal.anggota)
 
     role = []
     role.append(discord.utils.get(interaction.guild.roles, name="Registered"))

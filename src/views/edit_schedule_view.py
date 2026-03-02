@@ -40,31 +40,57 @@ class ClusterSelector(discord.ui.Select):
         new_sholat = cluster_chosen[1]
         await edit_schedule_message(interaction, day_name=self.day_name, sholat_chosen=new_sholat, tempat_chosen=new_tempat)
 
-class MemberSelector(discord.ui.Select):
+class EditButton(discord.ui.Button):
     def __init__(self, day_name: str, sholat_chosen: str, tempat_chosen: str):
         self.day_name = day_name
         self.sholat_chosen = sholat_chosen
         self.tempat_chosen = tempat_chosen
 
-        minmax_values = 0
-        for tugas in jadwal.jadwal_rawatib[f'{day_name}'][tempat_chosen][sholat_chosen]:
-            minmax_values += 1
+        super().__init__(label="Edit cluster", style=discord.ButtonStyle.primary)
 
-        member_options=[]
-        for i in range(1, len(jadwal.anggota)):
-            if jadwal.anggota[i]['nama'] != "":
-                member_options.append(discord.SelectOption(label=jadwal.anggota[i]['nama'], value=i))
+    async def callback(self, interaction):
+        await interaction.response.send_modal(EditModal(self.day_name, self.sholat_chosen, self.tempat_chosen))
 
-        super().__init__(placeholder=f"Pilih {minmax_values} anggota", options=member_options, min_values=minmax_values, max_values=minmax_values)
+class EditModal(discord.ui.Modal):
+    def __init__(self, day_name: str, sholat_chosen: str, tempat_chosen: str):
+        self.day_name = day_name
+        self.sholat_chosen = sholat_chosen
+        self.tempat_chosen = tempat_chosen
 
-    async def callback(self, interaction: discord.Interaction):
-        i = 0
-        for tugas in dict(jadwal.jadwal_rawatib[f'{self.day_name}'][self.tempat_chosen][self.sholat_chosen]):
-            jadwal.jadwal_rawatib[f'{self.day_name}'][self.tempat_chosen][self.sholat_chosen][tugas]['id_anggota'] = int(self.values[i])
-            i += 1
+        super().__init__(title=f"{day_name} {sholat_chosen.capitalize()} {tempat_chosen.upper()}")
 
-        save_json("src/data/jadwal_rawatib.json", jadwal.jadwal_rawatib)
-        await edit_schedule_message(interaction, day_name=self.day_name, sholat_chosen=self.sholat_chosen, tempat_chosen=self.tempat_chosen)
+        for i, tugas in enumerate(jadwal.jadwal_rawatib[day_name][tempat_chosen][sholat_chosen]):
+            petugas = jadwal.jadwal_rawatib[day_name][tempat_chosen][sholat_chosen][tugas]
+            detail_petugas = jadwal.anggota[petugas["id_anggota"]]
+            self.add_item(
+                discord.ui.Label(
+                    text=tugas,
+                    id=i,
+                    component=discord.ui.TextInput(
+                        required=False,
+                        default=detail_petugas["nama"]
+                    )
+                )
+            )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        id_petugas = {
+            anggota["nama"].lower(): i 
+            for i, anggota in enumerate(jadwal.anggota)
+        }
+        
+        for child in self.children:
+            tugas = child.text
+
+            new_pic = child.component.value.lower()
+
+            if new_pic not in id_petugas:
+                new_pic = "kosong"
+
+            jadwal.jadwal_rawatib[f'{self.day_name}'][self.tempat_chosen][self.sholat_chosen][tugas]['id_anggota'] = id_petugas[new_pic]
+
+        await save_json("src/data/jadwal_rawatib.json", jadwal.jadwal_rawatib)
+        await edit_schedule_message(interaction, self.day_name, self.sholat_chosen, self.tempat_chosen)
 
 async def edit_schedule_message(interaction: discord.Interaction, day_name: str, sholat_chosen: str, tempat_chosen: str):
     embeds=[]
@@ -83,4 +109,4 @@ class EditScheduleView(discord.ui.View):
 
         self.add_item(DaySelector(self.sholat_chosen, self.tempat_chosen))
         self.add_item(ClusterSelector(self.day_name))
-        self.add_item(MemberSelector(self.day_name, self.sholat_chosen, self.tempat_chosen))
+        self.add_item(EditButton(self.day_name, self.sholat_chosen, self.tempat_chosen))

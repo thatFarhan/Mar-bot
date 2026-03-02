@@ -6,7 +6,7 @@ from data.loader import jadwal, save_json
 
 @bot.tree.command(name="modifyjumatschedule", description="[ADMIN] Menambah atau mengubah jadwal Muadzin Jum'at", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def modifyjumatschedule(interaction: discord.Interaction, tanggal: str, nama: int):
+async def modifyjumatschedule(interaction: discord.Interaction, tanggal: str, nama: str):
     try:
         chosen_date = tanggal.split("-")
         year = int(chosen_date[0])
@@ -20,9 +20,19 @@ async def modifyjumatschedule(interaction: discord.Interaction, tanggal: str, na
     except ValueError:
         await interaction.response.send_message("Tanggal harus menggunakan format YYYY-MM-DD", ephemeral=True)
         return
+    
+    id_petugas = {
+        anggota["nama"].lower(): i 
+        for i, anggota in enumerate(jadwal.anggota)
+    }
 
-    jadwal.jadwal_jumat[tanggal] = nama
-    save_json("src/data/jadwal_jumat.json", jadwal.jadwal_jumat)
+    new_pic = nama.lower()
+
+    if new_pic not in id_petugas:
+        new_pic = "kosong"
+
+    jadwal.jadwal_jumat[tanggal] = id_petugas[new_pic]
+    await save_json("src/data/jadwal_jumat.json", jadwal.jadwal_jumat)
     await interaction.response.send_message("Berhasil memodifikasi jadwal Jum'at", ephemeral=True)
 
 @modifyjumatschedule.autocomplete("tanggal")
@@ -30,14 +40,6 @@ async def tanggal_autocomplete(interaction: discord.Interaction, tanggal: str):
     choices = []
     for date in jadwal.jadwal_jumat:
         choices.append(app_commands.Choice(name=date, value=date))
-
-    return choices
-
-@modifyjumatschedule.autocomplete("nama")
-async def nama_autocomplete(interaction: discord.Interaction, nama: int):
-    choices = []
-    for i in range(1, len(jadwal.anggota)):
-        choices.append(app_commands.Choice(name=jadwal.anggota[i]['nama'], value=i))
 
     return choices
 
@@ -49,7 +51,7 @@ async def deletejumatschedule(interaction: discord.Interaction, tanggal: str):
         return
 
     jadwal.jadwal_jumat.pop(tanggal)
-    save_json("src/data/jadwal_jumat.json", jadwal.jadwal_jumat)
+    await save_json("src/data/jadwal_jumat.json", jadwal.jadwal_jumat)
     await interaction.response.send_message("Berhasil menghapus jadwal", ephemeral=True)
 
 @deletejumatschedule.autocomplete("tanggal")
@@ -65,7 +67,7 @@ async def jadwaljumat(interaction: discord.Interaction):
     embed_desc = []
     for tanggal in jadwal.jadwal_jumat:
         anggota = jadwal.anggota[jadwal.jadwal_jumat[tanggal]]["nama"]
-        embed_desc.append(f"{tanggal}: **{anggota}**")
+        embed_desc.append(f"`{tanggal}:` **{anggota}**")
 
     content = "## ☀️ Jadwal Muadzin Jum'at"
     embed = discord.Embed(

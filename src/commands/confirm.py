@@ -49,6 +49,7 @@ async def confirm_all(interaction: discord.Interaction):
 
 async def quick_confirm(interaction: discord.Interaction, sholat: str):
     await interaction.response.defer(ephemeral=True)
+    confirmed_anything = False
     for tempat in jadwal.jadwal_hariini:
 
         if sholat not in jadwal.jadwal_hariini[tempat]:
@@ -62,13 +63,14 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
                 continue
 
             update_to_confirm(tugas, sholat, tempat)
-            await save_presence(jadwal.jadwal_hariini)
+            confirmed_anything = True
 
-            await interaction.followup.send(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
-            await update_daily_schedule()
-            return
-
-    await interaction.followup.send(f"Antum tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
+    if confirmed_anything:
+        await save_presence(jadwal.jadwal_hariini)
+        await interaction.followup.send(f"Berhasil mengonfirmasi jadwal Sholat {sholat.capitalize()} hari ini, Syukran Jazilan 🙏", ephemeral=True)    
+        await update_daily_schedule()
+    else:
+        await interaction.followup.send(f"Antum tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
 
 @bot.tree.command(name="forceconfirm", description="[ADMIN] Mengonfirmasi presensi suatu jadwal", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")

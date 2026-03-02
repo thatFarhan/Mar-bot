@@ -11,6 +11,7 @@ async def dailyschedule(interaction: discord.Interaction):
     await send_daily_schedule()
     await interaction.response.send_message(content="Daily schedule sent", ephemeral=True)
     set_reminders()
+    await reset_reminder_sent()
 
 @bot.tree.command(name="rewritejson", description="[ADMIN] Menulis ulang file json jadwal hari ini", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
@@ -23,9 +24,3 @@ async def rewritejson(interaction: discord.Interaction):
 async def testreminder(interaction: discord.Interaction):
     await interaction.response.send_message(content="test", ephemeral=True)
     await send_reminder('dzuhur')
-
-@bot.tree.command(name="resetremindersent", description="[ADMIN] Reset tracker reminder yang telah dikirim", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
-async def resetremindersent(interaction: discord.Interaction):
-    await reset_reminder_sent()
-    await interaction.response.send_message(content="Tracker reminder telah di reset", ephemeral=True)

@@ -1,4 +1,3 @@
-from datetime import datetime
 from data.loader import jadwal, save_presence
 from config import bot, DAILY_SCHEDULE_CHANNEL
 from views.confirmation_buttons import ConfirmationButtons

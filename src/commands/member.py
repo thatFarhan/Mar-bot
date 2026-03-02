@@ -13,7 +13,7 @@ async def unregister(interaction: discord.Interaction, member: discord.Member):
             await member.edit(roles=role, nick=member.global_name)
 
             jadwal.anggota[id]['uid'] = 0
-            save_json("src/data/anggota.json", jadwal.anggota)
+            await save_json("src/data/anggota.json", jadwal.anggota)
             await interaction.response.send_message(content=f"Berhasil menghapus UID {jadwal.anggota[id]['nama_lengkap']}.", ephemeral=True)
             break
     # for else = will run when for is completed without break
@@ -24,7 +24,7 @@ async def unregister(interaction: discord.Interaction, member: discord.Member):
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def removeuid(interaction: discord.Interaction, nama: int):
     jadwal.anggota[nama]['uid'] = 0
-    save_json("src/data/anggota.json", jadwal.anggota)
+    await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menghapus UID atas nama {jadwal.anggota[nama]['nama_lengkap']}.", ephemeral=True)
 
 @removeuid.autocomplete("nama")
@@ -56,7 +56,7 @@ async def addmember(interaction: discord.Interaction, nama_panggilan: str, nama_
 
         jadwal.anggota.append(new_anggota)
     
-    save_json("src/data/anggota.json", jadwal.anggota)
+    await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menambah anggota baru dengan id_anggota = {i}.", ephemeral=True)
 
 @bot.tree.command(name="removemember", description="[ADMIN] Menghapus anggota.", guild=GUILD_ID)
@@ -68,7 +68,7 @@ async def removemember(interaction: discord.Interaction, nama: int):
         jadwal.anggota[nama]['uid'] = 0
         jadwal.anggota[nama]['nama'] = ""
         jadwal.anggota[nama]['nama_lengkap'] = ""
-    save_json("src/data/anggota.json", jadwal.anggota)
+    await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menghapus anggota dengan id_member = {nama}.", ephemeral=True)
 
 @removemember.autocomplete("nama")

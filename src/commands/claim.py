@@ -19,14 +19,6 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
     petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
     detail_petugas = jadwal.anggota[petugas['id_anggota']]
 
-    if petugas["confirmed"]:
-        await interaction.followup.send("Jadwal tersebut sudah diklaim")
-        return
-    
-    if not petugas["need_sub"]:
-        await interaction.followup.send("Jadwal tersebut belum di-sell")
-        return
-
     if detail_petugas['uid'] == pengganti.id:
         update_to_confirm(tugas.value, sholat.value, tempat.value)
         nama_pengklaim = detail_petugas['nama']

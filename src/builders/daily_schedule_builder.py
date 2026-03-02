@@ -22,6 +22,10 @@ def build_schedule_and_tags(tempat: str):
         field_values=[]
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
             id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
+
+            if id_anggota == 0:
+                continue
+
             confirmed = jadwal.jadwal_hariini[tempat][sholat][tugas]['confirmed']
             need_sub = jadwal.jadwal_hariini[tempat][sholat][tugas]['need_sub']
             id_sub = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_sub']

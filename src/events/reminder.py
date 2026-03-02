@@ -59,7 +59,9 @@ async def send_reminder(sholat: str):
                     # auto sell after 10 minutes if there's no confirmation
                     run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
 
-                    scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
+                    if tugas != "Pembaca Hadits":
+                        scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
+                        
                 elif petugas['need_sub']:
                     key = f"{tugas}_{sholat}_{tempat}"
                     if key in persistent_vars["notification_ids"]:
