@@ -102,7 +102,7 @@ async def edit_schedule_message(interaction: discord.Interaction, day_name: str,
 
 class EditScheduleView(discord.ui.View):
     def __init__(self, day_name: str = "Senin", sholat_chosen: str = "subuh", tempat_chosen: str = "msu"):
-        super().__init__()
+        super().__init__(timeout=None)
         self.day_name = day_name
         self.sholat_chosen = sholat_chosen
         self.tempat_chosen = tempat_chosen

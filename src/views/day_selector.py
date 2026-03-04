@@ -21,5 +21,5 @@ class DaySelector(discord.ui.Select):
 
 class DaySelectorView(discord.ui.View):
     def __init__(self):
-        super().__init__()
+        super().__init__(timeout=None)
         self.add_item(DaySelector())

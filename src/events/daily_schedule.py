@@ -4,6 +4,7 @@ from views.confirmation_buttons import ConfirmationButtons
 from global_vars import global_vars
 from data.persistent_loader import persistent_vars, save_persistent
 from builders.daily_schedule_builder import build_schedule_and_tags
+from events.update_schedule_message import update_daily_schedule
 
 async def send_daily_schedule():
     embeds=[]
@@ -40,3 +41,4 @@ async def write_todays_pic():
                 petugas['id_sub'] = 0
 
     await save_presence(jadwal_hariini)
+    await update_daily_schedule()

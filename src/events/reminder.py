@@ -71,7 +71,7 @@ async def send_reminder(sholat: str):
 
                         await message.delete()
                     
-                    await on_sale_noti(tugas, sholat, tempat, emergency=True)
+                    await on_sale_noti(tugas, sholat, tempat, emergency=True, alasan="Belum di klaim")
 
             if anggota['uid'] != 0:
                 tags.add(f"<@{anggota['uid']}>")

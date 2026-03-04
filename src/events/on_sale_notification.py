@@ -5,7 +5,7 @@ from data.loader import jadwal
 from data.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
 
-async def on_sale_noti(tugas, sholat, tempat, emergency=False):
+async def on_sale_noti(tugas, sholat, tempat, emergency=False, alasan="Tanpa alasan"):
     if tugas == 'Pembaca Hadits': return
 
     target=bot.get_channel(SUB_REQUESTS_CHANNEL)
@@ -13,7 +13,7 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
     nama_petugas_default = jadwal.anggota[id_anggota]['nama']
     waktu_sholat = jadwal.jadwal_sholat[global_vars.system_day][sholat]
-    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.upper()}\nPetugas Default: {nama_petugas_default}"
+    embed_desc=f"Hari: {global_vars.system_day_name}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nWaktu Sholat: {waktu_sholat}\nTempat: {tempat.upper()}\nPetugas Default: {nama_petugas_default}\n\nAlasan:\n>>> {alasan}"
 
     embed=discord.Embed(
         title="Detail Jadwal", 
@@ -22,12 +22,12 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False):
     )
 
     tags = ""
-    if tugas == "Muadzin" or emergency or "Badal" not in jadwal.jadwal_hariini[tempat][sholat]:
-        tags = "@everyone"
-    else:
+    if not emergency and tugas == "Imam":
         id_badal = jadwal.jadwal_hariini[tempat][sholat]['Badal']['id_anggota']
         uid_badal = jadwal.anggota[id_badal]['uid']
-        tags = f"Badal: <@{uid_badal}>"
+        tags = f"Badal: <@{uid_badal}>" if uid_badal != 0 else "@everyone"
+    else:
+        tags = "@everyone"
 
     if emergency:
         content=f"## 🚨 PERHATIAN (PENGGANTI) 🚨\n**{tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!**\n{tags}"

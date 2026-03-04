@@ -1,6 +1,6 @@
 import discord
 from commands.confirm import quick_confirm
-from commands.sell import quick_sell
+from commands.sell import sellmodal
 
 class QuickConfirmationButtons(discord.ui.View):
     def __init__(self, sholat: str):
@@ -13,4 +13,4 @@ class QuickConfirmationButtons(discord.ui.View):
 
     @discord.ui.button(label="Request Pengganti", style=discord.ButtonStyle.red)
     async def button_sell(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await quick_sell(interaction, self.sholat)
+        await sellmodal(interaction)

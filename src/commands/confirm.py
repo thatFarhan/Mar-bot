@@ -24,7 +24,7 @@ async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: Sh
     else:
         await interaction.response.send_message(f"Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
 
-@bot.tree.command(name="confirmall", description="Mengonfirmasi presensi untuk seluruh jadwal antum hari ini", guild=GUILD_ID)
+@bot.tree.command(name="confirmall", description="Mengonfirmasi presensi untuk seluruh jadwal antum hari ini yang tidak di jual", guild=GUILD_ID)
 async def confirmall(interaction: discord.Interaction):
     await confirm_all(interaction)
 
@@ -36,7 +36,7 @@ async def confirm_all(interaction: discord.Interaction):
             for tugas in jadwal.jadwal_hariini[tempat][sholat]:
                 petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
                 detail_petugas = jadwal.anggota[petugas['id_anggota']]
-                if detail_petugas['uid'] == interaction.user.id and not petugas['confirmed']:
+                if detail_petugas["uid"] == interaction.user.id and not petugas["confirmed"] and not petugas["need_sub"]:
                     update_to_confirm(tugas, sholat, tempat)
                     confirmed_anything = True
         
@@ -45,7 +45,7 @@ async def confirm_all(interaction: discord.Interaction):
         await interaction.followup.send(content="Berhasil mengonfirmasi seluruh jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
-        await interaction.followup.send(content="Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal hari ini", ephemeral=True)
+        await interaction.followup.send(content="Tidak ada jadwal yang bisa di konfirmasi", ephemeral=True)
 
 async def quick_confirm(interaction: discord.Interaction, sholat: str):
     await interaction.response.defer(ephemeral=True)

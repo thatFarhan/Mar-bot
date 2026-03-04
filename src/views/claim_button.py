@@ -3,7 +3,7 @@ from commands.claim import claim
 
 class ClaimButton(discord.ui.View):
     def __init__(self, tugas: str, sholat: str, tempat: str, embed_desc: str):
-        super().__init__()
+        super().__init__(timeout=None)
         self.tugas = tugas
         self.sholat = sholat
         self.tempat = tempat

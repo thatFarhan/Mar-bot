@@ -5,7 +5,7 @@ import logging
 # file imports
 from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, GUILD_ID, token
 from global_vars import global_vars
-from data.loader import jadwal, load_json
+from data.loader import jadwal
 from events.daily_tasks import new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
@@ -40,7 +40,10 @@ async def on_ready():
     if global_vars.system_date not in jadwal.presensi_rawatib:
         await write_todays_pic()
         
-    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[global_vars.system_date]
+    jadwal.jadwal_hariini = jadwal.presensi_rawatib[global_vars.system_date]
+
+    if global_vars.system_date in jadwal.alasan_absen:
+        jadwal.alasan_absen_hariini = jadwal.alasan_absen[global_vars.system_date]
 
     if not new_system_day.is_running():
         new_system_day.start()

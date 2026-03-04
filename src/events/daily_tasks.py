@@ -28,3 +28,5 @@ async def new_system_day():
     set_reminders()
 
     await reset_reminder_sent()
+
+    jadwal.alasan_absen_hariini = None
