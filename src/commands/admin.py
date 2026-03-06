@@ -1,7 +1,6 @@
 from discord import app_commands
-from config import bot, GUILD_ID
+from config import bot, GUILD_ID, SholatEnum
 from events.daily_schedule import send_daily_schedule, write_todays_pic
-from global_vars import scheduler
 from events.reminder import send_reminder, reset_reminder_sent, set_reminders
 import discord
 
@@ -21,6 +20,6 @@ async def rewritejson(interaction: discord.Interaction):
 
 @bot.tree.command(name="testreminder", description="[ADMIN] Tes reminder",guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def testreminder(interaction: discord.Interaction):
+async def testreminder(interaction: discord.Interaction, sholat: SholatEnum):
     await interaction.response.send_message(content="test", ephemeral=True)
-    await send_reminder('dzuhur')
+    await send_reminder(sholat)

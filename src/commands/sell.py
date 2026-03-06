@@ -8,7 +8,7 @@ from events.update_schedule_message import update_daily_schedule
 from data.persistent_loader import persistent_vars
 from views.sell_modal import SellModal
 
-@bot.tree.command(name="sell", description="Merequest pengganti untuk suatu jadwal antum di hari ini", guild=GUILD_ID)
+@bot.tree.command(name="sell", description="Merequest pengganti untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
 async def sell(interaction: discord.Interaction):
     await sellmodal(interaction)
 
@@ -24,7 +24,7 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     id_petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]["id_anggota"]
 
     if jadwal.alasan_absen_hariini is None:
-            jadwal.alasan_absen_hariini = {}
+        jadwal.alasan_absen_hariini = {}
 
     jadwal.alasan_absen_hariini[str(id_petugas)] = alasan_absen
     await save_reason()

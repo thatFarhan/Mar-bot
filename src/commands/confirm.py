@@ -4,29 +4,14 @@ from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
 from data.loader import jadwal, save_presence
 from data.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
+from views.confirm_modal import ConfirmModal
 
-@bot.tree.command(name="confirm", description="Mengonfirmasi presensi suatu jadwal antum di hari ini", guild=GUILD_ID)
-@app_commands.describe(tugas="Tugas yang mana?", sholat="Sholat apa?", tempat="Dimana?")
-async def confirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
-    if sholat.value not in jadwal.jadwal_hariini[tempat.value] or tugas.value not in jadwal.jadwal_hariini[tempat.value][sholat.value]:
-        await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
-        return
-    
-    petugas = jadwal.jadwal_hariini[tempat.value][sholat.value][tugas.value]
-    detail_petugas = jadwal.anggota[petugas['id_anggota']]
-
-    if detail_petugas['uid'] == interaction.user.id and not petugas['confirmed']:
-        update_to_confirm(tugas.value, sholat.value, tempat.value)
-        await save_presence(jadwal.jadwal_hariini)
-
-        await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
-        await update_daily_schedule()
-    else:
-        await interaction.response.send_message(f"Jadwal sudah dikonfirmasi atau antum tidak memiliki jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} pada hari ini", ephemeral=True)
-
-@bot.tree.command(name="confirmall", description="Mengonfirmasi presensi untuk seluruh jadwal antum hari ini yang tidak di jual", guild=GUILD_ID)
-async def confirmall(interaction: discord.Interaction):
-    await confirm_all(interaction)
+@bot.tree.command(name="confirm", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
+async def confirm(interaction: discord.Interaction):
+    try:
+        await interaction.response.send_modal(ConfirmModal(interaction.user.id))
+    except discord.errors.HTTPException:
+        await interaction.response.send_message(content="Antum tidak memiliki jadwal hari ini", ephemeral=True)
 
 async def confirm_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)

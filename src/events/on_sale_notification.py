@@ -30,9 +30,9 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False, alasan="Tanpa ala
         tags = "@everyone"
 
     if emergency:
-        content=f"## 🚨 PERHATIAN (PENGGANTI) 🚨\n**{tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!**\n{tags}"
+        content=f"## 🚨 PENGGANTI DADAKAN DIPERLUKAN 🚨\n**{tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!**\n{tags}"
     else:
-        content=f"**📢 {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti! 📢**\n{tags}"
+        content=f"## 📢 PENGGANTI DIPERLUKAN 📢\n**{tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!**\n{tags}"
 
     message = await target.send(content=content, embed=embed, view=ClaimButton(tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
     persistent_vars["notification_ids"][f"{tugas}_{sholat}_{tempat}"] = message.id

@@ -41,13 +41,15 @@ async def send_reminder(sholat: str):
 
     tags=set()
     for tempat in jadwal.jadwal_hariini:
-        if sholat not in jadwal.jadwal_hariini[tempat]:
-            continue
+        if sholat not in jadwal.jadwal_hariini[tempat]: continue
 
         list_petugas=[]
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
             petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
-            if petugas['id_sub'] != 0:
+
+            if petugas["id_anggota"] == 0 and petugas["id_sub"] == 0: continue
+
+            if petugas["id_sub"] != 0:
                 anggota = jadwal.anggota[petugas['id_sub']]
                 list_petugas.append(f"{tugas}: **{anggota['nama']}**")
             else:
@@ -76,11 +78,12 @@ async def send_reminder(sholat: str):
             if anggota['uid'] != 0:
                 tags.add(f"<@{anggota['uid']}>")
 
-        embed.add_field(
-            name=TEMPAT_TITLE[tempat],
-            value="\n".join(list_petugas),
-            inline=True
-        )
+        if list_petugas:
+            embed.add_field(
+                name=TEMPAT_TITLE[tempat],
+                value="\n".join(list_petugas),
+                inline=True
+            )
 
     content=f"## ⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
 
@@ -89,7 +92,7 @@ async def send_reminder(sholat: str):
     if tags_need_confirmation:
         unix_timestamp=int(run_date.timestamp())
         await reminders_channel.send(
-            content=f"**⚠️ PERHATIAN (KONFIRMASI) ⚠️**\n\nNama di bawah ini belum melakukan konfirmasi. harap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
+            content=f"**⚠️ KONFIRMASI DIPERLUKAN ⚠️**\n\nNama di bawah ini belum melakukan konfirmasi. harap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
             view=QuickConfirmationButtons(sholat)
         )
 

@@ -10,10 +10,11 @@ async def send_daily_schedule():
     embeds=[]
     tags=set()
     for tempat in jadwal.jadwal_rawatib[global_vars.system_day_name]:
-        schedule_and_tags=build_schedule_and_tags(tempat)
-        embeds.append(schedule_and_tags[0])
-        for tag in schedule_and_tags[1]:
-            tags.add(tag)
+        schedule_and_tags = build_schedule_and_tags(tempat)
+        if schedule_and_tags:
+            embeds.append(schedule_and_tags[0])
+            for tag in schedule_and_tags[1]:
+                tags.add(tag)
 
     daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
     message = await daily_schedule_channel.send(

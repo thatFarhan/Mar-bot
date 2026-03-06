@@ -23,8 +23,7 @@ def build_schedule_and_tags(tempat: str):
         for tugas in jadwal.jadwal_hariini[tempat][sholat]:
             id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
 
-            if id_anggota == 0:
-                continue
+            if id_anggota == 0: continue
 
             confirmed = jadwal.jadwal_hariini[tempat][sholat][tugas]['confirmed']
             need_sub = jadwal.jadwal_hariini[tempat][sholat][tugas]['need_sub']
@@ -45,10 +44,14 @@ def build_schedule_and_tags(tempat: str):
             if anggota['uid'] != 0:
                 tags.add(f"<@{anggota['uid']}>")
 
-        schedule.add_field(
-            name=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat[global_vars.system_day][sholat]})",
-            value="\n".join(field_values),
-            inline=True
-        )
+        if field_values:
+            schedule.add_field(
+                name=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat[global_vars.system_day][sholat]})",
+                value="\n".join(field_values),
+                inline=True
+            )
     
-    return [schedule, tags]
+    if schedule.fields:
+        return [schedule, tags]
+    else:
+        return None
