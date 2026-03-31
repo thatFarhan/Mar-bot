@@ -2,8 +2,6 @@ import json
 import asyncio
 import os
 import tempfile
-from datetime import datetime
-from config import SYSTEM_TIMEZONE
 from global_vars import global_vars
 
 lock = asyncio.Lock()
@@ -28,7 +26,7 @@ async def save_presence(jadwal_hariini):
     await save_json("src/data/presensi_rawatib.json", jadwal.presensi_rawatib)
 
     jadwal.presensi_rawatib = load_json("src/data/presensi_rawatib.json")
-    jadwal.jadwal_hariini = jadwal.presensi_rawatib[global_vars.system_date]
+    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[global_vars.system_date]
 
 async def save_reason():
     jadwal.alasan_absen[global_vars.system_date] = jadwal.alasan_absen_hariini

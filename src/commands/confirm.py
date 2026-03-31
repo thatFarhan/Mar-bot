@@ -8,10 +8,32 @@ from views.confirm_modal import ConfirmModal
 
 @bot.tree.command(name="confirm", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
 async def confirm(interaction: discord.Interaction):
-    try:
-        await interaction.response.send_modal(ConfirmModal(interaction.user.id))
-    except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Antum tidak memiliki jadwal hari ini", ephemeral=True)
+    select_options = []
+    for tempat in jadwal.jadwal_hariini:
+        for sholat in jadwal.jadwal_hariini[tempat]:
+            for tugas in jadwal.jadwal_hariini[tempat][sholat]:
+                
+                petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
+                detail_petugas = jadwal.anggota[petugas['id_anggota']]
+                    
+                if detail_petugas["uid"] != interaction.user.id or petugas["confirmed"]:
+                    continue
+
+                select_options.append(discord.SelectOption(label=f"{tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{tempat}_{sholat}_{tugas}"))
+
+    if len(select_options) == 0:
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa di konfirmasi", ephemeral=True)
+    elif len(select_options) == 1:
+        select_values = select_options[0].value.split("_")
+        tempat = select_values[0]
+        sholat = select_values[1]
+        tugas = select_values[2]
+        update_to_confirm(tugas, sholat, tempat)
+        await save_presence(jadwal.jadwal_hariini)
+        await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
+        await update_daily_schedule()
+    else:
+        await interaction.response.send_modal(ConfirmModal(select_options))
 
 async def confirm_all(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
@@ -27,7 +49,7 @@ async def confirm_all(interaction: discord.Interaction):
         
     if confirmed_anything:
         await save_presence(jadwal.jadwal_hariini)
-        await interaction.followup.send(content="Berhasil mengonfirmasi seluruh jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
+        await interaction.followup.send(content="Berhasil mengonfirmasi jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
         await interaction.followup.send(content="Tidak ada jadwal yang bisa di konfirmasi", ephemeral=True)

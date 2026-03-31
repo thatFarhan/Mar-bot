@@ -4,22 +4,9 @@ from data.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 
 class ConfirmModal(discord.ui.Modal):
-    def __init__(self, uid: int):
+    def __init__(self, select_options: list):
         super().__init__(title="Konfirmasi Jadwal")
-        self.uid = uid
-
-        select_options = []
-        for tempat in jadwal.jadwal_hariini:
-            for sholat in jadwal.jadwal_hariini[tempat]:
-                for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-                    
-                    petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
-                    detail_petugas = jadwal.anggota[petugas['id_anggota']]
-                        
-                    if detail_petugas["uid"] != uid or petugas["confirmed"]:
-                        continue
-
-                    select_options.append(discord.SelectOption(label=f"{tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{tempat}_{sholat}_{tugas}"))
+        self.select_options = select_options
 
         jadwal_select = discord.ui.Select(
             placeholder="Pilih jadwal",

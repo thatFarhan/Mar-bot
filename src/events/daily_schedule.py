@@ -1,3 +1,4 @@
+import copy
 from data.loader import jadwal, save_presence
 from config import bot, DAILY_SCHEDULE_CHANNEL
 from views.confirmation_buttons import ConfirmationButtons
@@ -9,7 +10,7 @@ from events.update_schedule_message import update_daily_schedule
 async def send_daily_schedule():
     embeds=[]
     tags=set()
-    for tempat in jadwal.jadwal_rawatib[global_vars.system_day_name]:
+    for tempat in jadwal.jadwal_hariini:
         schedule_and_tags = build_schedule_and_tags(tempat)
         if schedule_and_tags:
             embeds.append(schedule_and_tags[0])
@@ -26,7 +27,7 @@ async def send_daily_schedule():
     await save_persistent()
 
 async def write_todays_pic():
-    jadwal_hariini = dict(jadwal.jadwal_rawatib[global_vars.system_day_name])
+    jadwal_hariini = copy.deepcopy(jadwal.jadwal_rawatib[global_vars.system_day_name])
 
     if global_vars.system_day_name == "Jum'at":
         if global_vars.system_date in jadwal.jadwal_jumat:
