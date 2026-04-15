@@ -30,7 +30,7 @@ def export_next_monday():
 
 async def export_to_excel(target: discord.Webhook, export_range):
     if not target: return
-    workbook = xlsxwriter.Workbook("WeekReport.xlsx")
+    workbook = xlsxwriter.Workbook("ExcelReport.xlsx")
 
     formats = {
         "green": workbook.add_format({"bg_color": Color("#B6D7A8"), "border": 1}),
