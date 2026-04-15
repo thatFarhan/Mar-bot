@@ -6,7 +6,7 @@ from data.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 from views.confirm_modal import ConfirmModal
 
-@bot.tree.command(name="confirm", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
+@bot.tree.command(name="konfirmasi", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
 async def confirm(interaction: discord.Interaction):
     select_options = []
     for tempat in jadwal.jadwal_hariini:

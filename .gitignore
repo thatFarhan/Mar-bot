@@ -1,9 +1,5 @@
 .env
 discord.log
-src/__pycache__
-src/builders/__pycache__
-src/commands/__pycache__
-src/data/__pycache__
-src/events/__pycache__
-src/views/__pycache__
+__pycache__
 .venv
+WeekReport.xlsx

@@ -37,6 +37,8 @@ async def send_reminder(sholat: str):
         color=discord.Color.green()
     )
 
+    embed.set_footer(text="* Indikator kehadiran tidak diperbarui secara langsung (real-time). Untuk pembaruan langsung, lihat jadwal harian.")
+
     tags_need_confirmation=set()
 
     tags=set()
@@ -51,17 +53,23 @@ async def send_reminder(sholat: str):
 
             if petugas["id_sub"] != 0:
                 anggota = jadwal.anggota[petugas['id_sub']]
-                list_petugas.append(f"{tugas}: **{anggota['nama']}**")
+                list_petugas.append(f"🔁 {tugas}: **{anggota['nama']}**")
             else:
                 anggota = jadwal.anggota[petugas['id_anggota']]
-                list_petugas.append(f"{tugas}: **{anggota['nama']}**")
+                
+                emoji = "⬛"
+                if petugas['confirmed']:
+                    emoji = "✅"
+                if petugas['need_sub']:
+                    emoji = "⚠️"
+
                 if not petugas['confirmed'] and not petugas['need_sub'] and anggota['uid'] != 0:
                     tags_need_confirmation.add(f"<@{anggota['uid']}>")
 
                     # auto sell after 10 minutes if there's no confirmation
                     run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
 
-                    if tugas != "Pembaca Hadits":
+                    if tugas != "Hadits":
                         scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                         
                 elif petugas['need_sub']:
@@ -74,6 +82,8 @@ async def send_reminder(sholat: str):
                         await message.delete()
                     
                     await on_sale_noti(tugas, sholat, tempat, emergency=True, alasan="Belum di klaim")
+
+                list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
 
             if anggota['uid'] != 0:
                 tags.add(f"<@{anggota['uid']}>")

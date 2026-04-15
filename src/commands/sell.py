@@ -8,7 +8,7 @@ from events.update_schedule_message import update_daily_schedule
 from data.persistent_loader import persistent_vars
 from views.sell_modal import SellModal
 
-@bot.tree.command(name="sell", description="Merequest pengganti untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
+@bot.tree.command(name="request", description="Merequest pengganti untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
 async def sell(interaction: discord.Interaction):
     await sellmodal(interaction)
 
@@ -16,7 +16,7 @@ async def sellmodal(interaction: discord.Interaction):
     try:
         await interaction.response.send_modal(SellModal(interaction.user.id))
     except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Antum tidak memiliki jadwal hari ini", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa di request pengganti", ephemeral=True)
 
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
@@ -33,7 +33,7 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     await save_presence(jadwal.jadwal_hariini)
     await on_sale_noti(tugas, sholat, tempat, emergency=True, alasan=alasan_absen)
 
-@bot.tree.command(name="forcesell", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
+@bot.tree.command(name="forcerequest", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
     if sholat.value not in jadwal.jadwal_hariini[tempat.value] or tugas.value not in jadwal.jadwal_hariini[tempat.value][sholat.value]:

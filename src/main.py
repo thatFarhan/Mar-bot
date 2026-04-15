@@ -6,12 +6,13 @@ import logging
 from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, GUILD_ID, token
 from global_vars import global_vars
 from data.loader import jadwal, load_json
+from data.export import export_next_monday
 from events.daily_tasks import new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
 from events.new_prayer_schedule import get_new_schedule
 
-from commands import admin, confirm, extras, sell, register, claim, member, edit_schedule, jumat_schedule
+from commands import admin, confirm, extras, sell, register, claim, member, jumat_schedule
 
 handler=logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -51,6 +52,7 @@ async def on_ready():
     if not scheduler.running:
         scheduler.start()
 
+    export_next_monday()
     set_reminders()
 
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)

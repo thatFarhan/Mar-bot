@@ -6,7 +6,7 @@ from data.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
 
 async def on_sale_noti(tugas, sholat, tempat, emergency=False, alasan="Tanpa alasan"):
-    if tugas == 'Pembaca Hadits': return
+    if tugas == 'Hadits': return
 
     target=bot.get_channel(SUB_REQUESTS_CHANNEL)
 

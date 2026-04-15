@@ -2,7 +2,7 @@ from data.loader import jadwal
 from global_vars import scheduler
 
 def update_to_sell(tugas: str, sholat: str, tempat: str):
-    if tugas == 'Pembaca Hadits': return
+    if tugas == 'Hadits': return
 
     petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
     petugas["confirmed"] = False

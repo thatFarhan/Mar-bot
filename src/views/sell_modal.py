@@ -14,7 +14,7 @@ class SellModal(discord.ui.Modal):
         for tempat in jadwal.jadwal_hariini:
             for sholat in jadwal.jadwal_hariini[tempat]:
                 for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-                    if tugas == 'Pembaca Hadits': continue
+                    if tugas == 'Hadits': continue
                     
                     petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
                     detail_petugas = jadwal.anggota[petugas['id_anggota']]
