@@ -1,9 +1,10 @@
-from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID, SUB_REQUESTS_CHANNEL
+from config import bot, TugasEnum, SholatEnum, TempatEnum
+from server_config import GUILD_ID, SUB_REQUESTS_CHANNEL
 import discord
 from discord import app_commands
-from data.updater import update_to_claim, update_to_confirm
-from data.loader import jadwal, save_presence
-from data.persistent_loader import persistent_vars, save_persistent
+from repository.updater import update_to_claim, update_to_confirm
+from repository.loader import jadwal, save_presence
+from repository.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars
 from events.update_schedule_message import update_daily_schedule
 

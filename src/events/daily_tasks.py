@@ -4,8 +4,8 @@ from config import ACTUAL_TIMEZONE, SYSTEM_TIMEZONE, NAMA_HARI
 from events.daily_schedule import send_daily_schedule, write_todays_pic
 from events.reminder import set_reminders, reset_reminder_sent
 from global_vars import global_vars
-from data.loader import jadwal
-from data.persistent_loader import persistent_vars, save_persistent
+from repository.loader import jadwal
+from repository.persistent_loader import persistent_vars, save_persistent
 from events.new_prayer_schedule import get_new_schedule
 
 @tasks.loop(time=time(hour=20, tzinfo=ACTUAL_TIMEZONE))

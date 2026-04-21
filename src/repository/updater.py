@@ -1,4 +1,4 @@
-from data.loader import jadwal
+from repository.loader import jadwal
 from global_vars import scheduler
 
 def update_to_sell(tugas: str, sholat: str, tempat: str):

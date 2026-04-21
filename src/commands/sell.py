@@ -1,11 +1,12 @@
 import discord
 from discord import app_commands
-from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
-from data.loader import jadwal, save_presence, save_reason
-from data.updater import update_to_sell
+from config import bot, TugasEnum, SholatEnum, TempatEnum
+from server_config import GUILD_ID
+from repository.loader import jadwal, save_presence, save_reason
+from repository.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
 from events.update_schedule_message import update_daily_schedule
-from data.persistent_loader import persistent_vars
+from repository.persistent_loader import persistent_vars
 from views.sell_modal import SellModal
 
 @bot.tree.command(name="request", description="Merequest pengganti untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)

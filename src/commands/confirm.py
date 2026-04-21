@@ -1,8 +1,9 @@
 from discord import app_commands
 import discord
-from config import bot, TugasEnum, SholatEnum, TempatEnum, GUILD_ID
-from data.loader import jadwal, save_presence
-from data.updater import update_to_confirm
+from config import bot, TugasEnum, SholatEnum, TempatEnum
+from server_config import GUILD_ID
+from repository.loader import jadwal, save_presence
+from repository.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 from views.confirm_modal import ConfirmModal
 

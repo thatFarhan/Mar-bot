@@ -1,8 +1,9 @@
 import datetime
 import discord
 from discord import app_commands
-from config import bot, GUILD_ID, TEMPAT_TITLE
-from data.loader import jadwal, save_json
+from config import bot, TEMPAT_TITLE
+from server_config import GUILD_ID
+from repository.loader import jadwal, save_json
 
 @bot.tree.command(name="modifyjumatschedule", description="[ADMIN] Menambah atau mengubah jadwal Muadzin Jum'at", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")

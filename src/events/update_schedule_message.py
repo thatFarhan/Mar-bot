@@ -1,6 +1,7 @@
-from config import bot, DAILY_SCHEDULE_CHANNEL
-from data.loader import jadwal
-from data.persistent_loader import persistent_vars
+from config import bot
+from server_config import DAILY_SCHEDULE_CHANNEL
+from repository.loader import jadwal
+from repository.persistent_loader import persistent_vars
 from builders.daily_schedule_builder import build_schedule_and_tags
 
 async def update_daily_schedule():

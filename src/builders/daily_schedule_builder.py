@@ -1,6 +1,6 @@
 import discord
 from config import TEMPAT_TITLE, SHOLAT_TITLE, SHOLAT_TUPLE
-from data.loader import jadwal
+from repository.loader import jadwal
 from global_vars import global_vars
 
 def build_schedule_and_tags(tempat: str):

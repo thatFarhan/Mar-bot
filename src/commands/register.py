@@ -1,7 +1,9 @@
 import discord
 from discord import app_commands
-from config import bot, GUILD_ID, WELCOME_CHANNEL
-from data.loader import jadwal, save_json
+from config import bot
+from server_config import GUILD_ID
+from server_config import WELCOME_CHANNEL
+from repository.loader import jadwal, save_json
 
 @bot.event
 async def on_member_join(member: discord.Member):

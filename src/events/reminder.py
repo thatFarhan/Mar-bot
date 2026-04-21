@@ -1,9 +1,10 @@
 import discord
 from datetime import datetime, timedelta
-from data.loader import jadwal
-from data.persistent_loader import persistent_vars, save_persistent
+from repository.loader import jadwal
+from repository.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars, scheduler
-from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL, SHOLAT_TUPLE
+from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, SHOLAT_TUPLE
+from server_config import REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
 from views.quick_confirmation_buttons import QuickConfirmationButtons
 from events.on_sale_notification import on_sale_noti
 from commands.sell import emergency_sell

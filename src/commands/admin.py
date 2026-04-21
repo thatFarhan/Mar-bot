@@ -1,11 +1,12 @@
 from discord import app_commands
-from config import bot, GUILD_ID, SholatEnum
+from config import bot, SholatEnum
+from server_config import GUILD_ID
 from events.daily_schedule import send_daily_schedule, write_todays_pic
 from events.reminder import send_reminder, reset_reminder_sent, set_reminders
 from views.edit_schedule_view import EditScheduleView
 from builders.edit_schedule_builder import build_schedule
-from data.loader import jadwal
-from data.export import export_to_excel, export_json
+from repository.loader import jadwal
+from repository.export import export_to_excel, export_json
 import discord
 
 @bot.tree.command(name="dailyschedule", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)

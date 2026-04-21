@@ -1,12 +1,12 @@
 import discord
 from datetime import datetime
-import logging
 
 # file imports
-from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, GUILD_ID, token
+from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, token
+from server_config import GUILD_ID
 from global_vars import global_vars
-from data.loader import jadwal, load_json
-from data.export import export_next_monday
+from repository.loader import jadwal, load_json
+from repository.export import export_next_monday
 from events.daily_tasks import new_system_day, write_todays_pic
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
@@ -14,13 +14,11 @@ from events.new_prayer_schedule import get_new_schedule
 
 from commands import admin, confirm, extras, sell, register, claim, member, jumat_schedule
 
-handler=logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-
 @bot.event
 async def on_ready():
     print("Mar-bot siap bertugas pada", datetime.now(ACTUAL_TIMEZONE))
 
-    activity = discord.Game(name="Under development")
+    activity = discord.Game(name="InsyaAllah Hadir")
     await bot.change_presence(
         status=discord.Status.online,
         activity=activity
@@ -55,4 +53,4 @@ async def on_ready():
     export_next_monday()
     set_reminders()
 
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+bot.run(token)

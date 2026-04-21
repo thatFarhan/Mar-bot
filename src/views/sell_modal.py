@@ -1,7 +1,7 @@
 import discord
-from data.loader import jadwal, save_presence, save_reason
-from data.persistent_loader import persistent_vars
-from data.updater import update_to_sell
+from repository.loader import jadwal, save_presence, save_reason
+from repository.persistent_loader import persistent_vars
+from repository.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
 from events.update_schedule_message import update_daily_schedule
 

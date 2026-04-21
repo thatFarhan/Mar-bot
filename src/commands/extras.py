@@ -1,8 +1,9 @@
 import discord
 from discord import app_commands
-from config import bot, GUILD_ID, SHOLAT_TITLE
+from config import bot, SHOLAT_TITLE
+from server_config import GUILD_ID
 from global_vars import global_vars
-from data.loader import jadwal
+from repository.loader import jadwal
 from views.day_selector import DaySelectorView
 from builders.show_schedule_builder import build_schedule
 

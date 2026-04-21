@@ -1,6 +1,6 @@
 import discord
-from data.loader import jadwal, save_presence
-from data.updater import update_to_confirm
+from repository.loader import jadwal, save_presence
+from repository.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 
 class ConfirmModal(discord.ui.Modal):

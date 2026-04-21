@@ -1,7 +1,7 @@
 import aiohttp
 from datetime import datetime
 from config import SYSTEM_TIMEZONE
-from data.loader import load_json, save_json, jadwal
+from repository.loader import load_json, save_json, jadwal
 from decorators.retry import retry
 
 @retry(retries=10)

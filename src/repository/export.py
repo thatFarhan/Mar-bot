@@ -2,9 +2,10 @@ from datetime import datetime, timedelta
 import discord
 import xlsxwriter
 from xlsxwriter.color import Color
-from config import SHOLAT_TUPLE, bot, ADMIN_CHANNEL, SYSTEM_TIMEZONE
+from config import SHOLAT_TUPLE, bot, SYSTEM_TIMEZONE
+from server_config import ADMIN_CHANNEL
 from global_vars import global_vars, scheduler
-from data.loader import jadwal
+from repository.loader import jadwal
 
 async def export_json(target: discord.Webhook):
     json_file = open("src/data/presensi_rawatib.json", "rb")

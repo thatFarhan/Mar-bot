@@ -1,5 +1,5 @@
 import discord
-from data.loader import jadwal, save_json
+from repository.loader import jadwal, save_json
 from builders.edit_schedule_builder import build_schedule
 
 class DaySelector(discord.ui.Select):

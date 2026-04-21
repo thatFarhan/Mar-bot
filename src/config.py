@@ -7,14 +7,6 @@ from enum import Enum
 
 load_dotenv()
 token=os.getenv('DISCORD_TOKEN')
-# change these with your server's channel ids
-WELCOME_CHANNEL=1474251557284610223
-DAILY_SCHEDULE_CHANNEL=1470291576398938186
-SUB_REQUESTS_CHANNEL=1470733669273436200
-REMINDERS_CHANNEL=1471430354366632088
-ADMIN_CHANNEL=1475290246773080075
-
-GUILD_ID=discord.Object(id=1470291575455092738)
 
 intents=discord.Intents.default()
 intents.message_content=True

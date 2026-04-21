@@ -1,7 +1,8 @@
 import discord
 from discord import app_commands
-from config import bot, GUILD_ID
-from data.loader import jadwal, save_json
+from config import bot
+from server_config import GUILD_ID
+from repository.loader import jadwal, save_json
 
 @bot.tree.command(name="unregister", description="[ADMIN] Unregisters a member", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")

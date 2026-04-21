@@ -1,8 +1,9 @@
 import discord
-from config import SUB_REQUESTS_CHANNEL, bot, mention_everyone
+from config import bot, mention_everyone
+from server_config import SUB_REQUESTS_CHANNEL
 from global_vars import global_vars
-from data.loader import jadwal
-from data.persistent_loader import persistent_vars, save_persistent
+from repository.loader import jadwal
+from repository.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
 
 async def on_sale_noti(tugas, sholat, tempat, emergency=False, alasan="Tanpa alasan"):

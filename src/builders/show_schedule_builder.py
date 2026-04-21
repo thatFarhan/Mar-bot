@@ -1,6 +1,6 @@
 import discord
 from config import TEMPAT_TITLE, SHOLAT_TITLE
-from data.loader import jadwal
+from repository.loader import jadwal
 
 def build_schedule(tempat: str, system_day_name: str):
     schedule=discord.Embed(
