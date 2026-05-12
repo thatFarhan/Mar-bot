@@ -70,7 +70,7 @@ async def send_reminder(sholat: str):
                     # auto sell after 10 minutes if there's no confirmation
                     run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
 
-                    if tugas != "Hadits":
+                    if tugas != "Hadits" and tugas != "Badal`":
                         scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                         
                 elif petugas['need_sub']:
@@ -96,14 +96,14 @@ async def send_reminder(sholat: str):
                 inline=True
             )
 
-    content=f"## ⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()} ⏰\nDiingatkan kembali kepada para petugas, harap untuk hadir sesuai dengan plotingannya masing-masing.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}"
+    content=f"⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()}\n\n{' '.join(tags)}"
 
     reminders_channel=bot.get_channel(REMINDERS_CHANNEL)
     await reminders_channel.send(content=content, embed=embed)
     if tags_need_confirmation:
         unix_timestamp=int(run_date.timestamp())
         await reminders_channel.send(
-            content=f"**⚠️ KONFIRMASI DIPERLUKAN ⚠️**\n\nNama di bawah ini belum melakukan konfirmasi. harap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
+            content=f"⚠️ Nama di bawah ini belum melakukan konfirmasi.\n\nHarap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
             view=QuickConfirmationButtons(sholat)
         )
 

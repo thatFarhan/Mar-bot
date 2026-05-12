@@ -20,7 +20,7 @@ async def send_daily_schedule():
 
     daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
     message = await daily_schedule_channel.send(
-        content=f"## 💫 Jadwal hari {global_vars.system_day_name}\n## 🌃 Lailatukumus Sa'idah Ikhwan~\nBerikut adalah jadwal petugas untuk esok hari. Mohon untuk konfirmasi kehadiran jika bisa berhadir atau request pengganti jika tidak.\nJazaakumullaahu Khoiron, Baarakallahu Fiikum 🙏\n\n{' '.join(tags)}\n\n",
+        content=f"📜 Antum ada jadwal esok hari!\n\n{' '.join(tags)}\n# 📌 {global_vars.system_day_name}",
         embeds=embeds,
         view=ConfirmationButtons()
     )

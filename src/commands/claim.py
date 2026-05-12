@@ -58,7 +58,7 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
         description=embed_desc
     )
 
-    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim} ✅**"
+    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim}**"
 
     persistent_vars["notification_ids"].pop(f"{tugas.value}_{sholat.value}_{tempat.value}", None)
     await save_persistent()
@@ -92,7 +92,7 @@ async def claim(interaction: discord.Interaction, tugas: str, sholat: str, tempa
         color=discord.Color.green(),
         description=embed_desc
     )
-    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim} ✅**"
+    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim}**"
 
     persistent_vars["notification_ids"].pop(f"{tugas}_{sholat}_{tempat}", None)
     await save_persistent()
