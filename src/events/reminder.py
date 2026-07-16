@@ -43,12 +43,13 @@ async def send_reminder(sholat: str):
     tags_need_confirmation=set()
 
     tags=set()
-    for tempat in jadwal.jadwal_hariini:
-        if sholat not in jadwal.jadwal_hariini[tempat]: continue
+    jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
+    for tempat in jadwal_harian:
+        if sholat not in jadwal_harian[tempat]: continue
 
         list_petugas=[]
-        for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-            petugas = jadwal.jadwal_hariini[tempat][sholat][tugas]
+        for tugas in jadwal_harian[tempat][sholat]:
+            petugas = jadwal_harian[tempat][sholat][tugas]
 
             if petugas["id_anggota"] == 0 and petugas["id_sub"] == 0: continue
 
@@ -74,7 +75,7 @@ async def send_reminder(sholat: str):
                         scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                         
                 elif petugas['need_sub']:
-                    key = f"{tugas}_{sholat}_{tempat}"
+                    key = f"{global_vars.system_date}_{tugas}_{sholat}_{tempat}"
                     if key in persistent_vars["notification_ids"]:
                         channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
                         noti_id = persistent_vars["notification_ids"][key]
@@ -82,7 +83,7 @@ async def send_reminder(sholat: str):
 
                         await message.delete()
                     
-                    await on_sale_noti(tugas, sholat, tempat, emergency=True, alasan="Belum di klaim")
+                    await on_sale_noti(tugas, sholat, tempat, emergency=True)
 
                 list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
 

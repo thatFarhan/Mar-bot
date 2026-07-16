@@ -1,16 +1,18 @@
 import discord
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # file imports
 from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, token
 from server_config import GUILD_ID
 from global_vars import global_vars
-from repository.loader import jadwal, load_json
+from repository.loader import jadwal
 from repository.export import export_next_monday
-from events.daily_tasks import new_system_day, write_todays_pic
+from events.daily_tasks import new_system_day
+from events.daily_schedule import write_pics_weekahead
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
 from events.new_prayer_schedule import get_new_schedule
+from mission_util import to_datetime
 
 from commands import admin, confirm, extras, sell, register, claim, member, jumat_schedule
 
@@ -36,13 +38,9 @@ async def on_ready():
     if jadwal.data_sholat["bulan"] != datetime.now(SYSTEM_TIMEZONE).month:
         await get_new_schedule()
 
-    if global_vars.system_date not in jadwal.presensi_rawatib:
-        await write_todays_pic()
-        
-    jadwal.jadwal_hariini = load_json("src/data/presensi_rawatib.json")[global_vars.system_date]
-
-    if global_vars.system_date in jadwal.alasan_absen:
-        jadwal.alasan_absen_hariini = jadwal.alasan_absen[global_vars.system_date]
+    date_next_week = str(to_datetime(global_vars.system_date) + timedelta(6))
+    if date_next_week not in jadwal.presensi_rawatib:
+        await write_pics_weekahead()
 
     if not new_system_day.is_running():
         new_system_day.start()

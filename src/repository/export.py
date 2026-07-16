@@ -6,6 +6,7 @@ from config import SHOLAT_TUPLE, bot, SYSTEM_TIMEZONE
 from server_config import ADMIN_CHANNEL
 from global_vars import global_vars, scheduler
 from repository.loader import jadwal
+from mission_util import next_weekday
 
 async def export_json(target: discord.Webhook):
     json_file = open("src/data/presensi_rawatib.json", "rb")
@@ -14,12 +15,6 @@ async def export_json(target: discord.Webhook):
         file=discord.File(json_file)
     )
     json_file.close
-
-def next_weekday(d, weekday):
-    days_ahead = weekday - d.weekday()
-    if days_ahead <= 0: # Target day already happened this week
-        days_ahead += 7
-    return d + timedelta(days=days_ahead)
 
 def export_next_monday():
     MONDAY = 0

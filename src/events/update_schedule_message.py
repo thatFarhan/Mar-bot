@@ -3,13 +3,15 @@ from server_config import DAILY_SCHEDULE_CHANNEL
 from repository.loader import jadwal
 from repository.persistent_loader import persistent_vars
 from builders.daily_schedule_builder import build_schedule_and_tags
+from global_vars import global_vars
 
 async def update_daily_schedule():
     if persistent_vars["current_daily_schedule_id"] == 0:
         return
     
     embeds=[]
-    for tempat in jadwal.jadwal_hariini:
+    jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
+    for tempat in jadwal_harian:
         schedule_and_tags = build_schedule_and_tags(tempat)
         if schedule_and_tags:
             schedule = schedule_and_tags[0]

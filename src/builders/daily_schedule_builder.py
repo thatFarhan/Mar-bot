@@ -10,8 +10,10 @@ def build_schedule_and_tags(tempat: str):
         )
 
     tags=set()
+    need_subs=[]
     for sholat in SHOLAT_TUPLE:
-        if sholat not in jadwal.jadwal_hariini[tempat]:
+        jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
+        if sholat not in jadwal_harian[tempat]:
             continue
 
         if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
@@ -20,25 +22,27 @@ def build_schedule_and_tags(tempat: str):
             sholat_title = sholat
 
         field_values=[]
-        for tugas in jadwal.jadwal_hariini[tempat][sholat]:
-            id_anggota = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_anggota']
+        for tugas in jadwal_harian[tempat][sholat]:
+            id_anggota = jadwal_harian[tempat][sholat][tugas]['id_anggota']
 
             if id_anggota == 0: continue
 
-            confirmed = jadwal.jadwal_hariini[tempat][sholat][tugas]['confirmed']
-            need_sub = jadwal.jadwal_hariini[tempat][sholat][tugas]['need_sub']
-            id_sub = jadwal.jadwal_hariini[tempat][sholat][tugas]['id_sub']
+            confirmed = jadwal_harian[tempat][sholat][tugas]['confirmed']
+            need_sub = jadwal_harian[tempat][sholat][tugas]['need_sub']
+            id_sub = jadwal_harian[tempat][sholat][tugas]['id_sub']
 
             anggota = jadwal.anggota[id_anggota]
             emoji = "⬛"
 
             if confirmed and id_sub == 0:
                 emoji = "✅"
-            if confirmed and id_sub != 0:
-                emoji = "🔁"
+            if id_sub != 0:
                 anggota = jadwal.anggota[id_sub]
+                if confirmed:
+                    emoji = "🔁"
             if need_sub:
                 emoji = "⚠️"
+                need_subs.append(f"{tugas}_{sholat}_{tempat}")
 
             field_values.append(f"{emoji} {tugas}: **{anggota['nama']}**")
             if anggota['uid'] != 0:
@@ -52,6 +56,6 @@ def build_schedule_and_tags(tempat: str):
             )
     
     if schedule.fields:
-        return [schedule, tags]
+        return [schedule, tags, need_subs]
     else:
         return None

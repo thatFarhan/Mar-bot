@@ -12,15 +12,16 @@ import discord
 @bot.tree.command(name="dailyschedule", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def dailyschedule(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
     await send_daily_schedule()
-    await interaction.response.send_message(content="Daily schedule sent", ephemeral=True)
+    await interaction.followup.send(content="Daily schedule sent", ephemeral=True)
     set_reminders()
     await reset_reminder_sent()
 
 @bot.tree.command(name="rewritejson", description="[ADMIN] Menulis ulang file json jadwal hari ini", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def rewritejson(interaction: discord.Interaction):
-    await interaction.response.defer(ephemeral=True);
+    await interaction.response.defer(ephemeral=True)
     await write_todays_pic()
     await interaction.followup.send("presensi_rawatib.json telah ditulis ulang", ephemeral=True)
 
@@ -28,7 +29,7 @@ async def rewritejson(interaction: discord.Interaction):
 @app_commands.checks.has_role("Marbot Mar-bot")
 async def testreminder(interaction: discord.Interaction, sholat: SholatEnum):
     await interaction.response.send_message(content=f"Test reminder sholat {sholat}", ephemeral=True)
-    await send_reminder(sholat)
+    await send_reminder(sholat.value)
 
 @bot.tree.command(name="editjadwal", description="[ADMIN] Menampilkan interface untuk mengedit jadwal rawatib", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
