@@ -25,14 +25,14 @@ async def confirm(interaction: discord.Interaction):
                 select_options.append(discord.SelectOption(label=f"{tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{tempat}_{sholat}_{tugas}"))
 
     if len(select_options) == 0:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa di konfirmasi", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa dikonfirmasi", ephemeral=True)
     elif len(select_options) == 1:
         select_values = select_options[0].value.split("_")
         tempat = select_values[0]
         sholat = select_values[1]
         tugas = select_values[2]
         update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
-        await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+        await save_presence()
         await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
@@ -48,16 +48,16 @@ async def confirm_all(interaction: discord.Interaction):
                 petugas = jadwal_harian[tempat][sholat][tugas]
                 detail_petugas = jadwal.anggota[petugas['id_anggota']]
                 detail_pengganti = jadwal.anggota[petugas['id_sub']]
-                if detail_petugas["uid"] == interaction.user.id or detail_pengganti["uid"] == interaction.user.id and not petugas["confirmed"] and not petugas["need_sub"]:
+                if (detail_petugas["uid"] == interaction.user.id or detail_pengganti["uid"] == interaction.user.id) and not petugas["confirmed"] and not petugas["need_sub"]:
                     update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
                     confirmed_anything = True
         
     if confirmed_anything:
-        await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+        await save_presence()
         await interaction.followup.send(content="Berhasil mengonfirmasi jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
-        await interaction.followup.send(content="Tidak ada jadwal yang bisa di konfirmasi", ephemeral=True)
+        await interaction.followup.send(content="Tidak ada jadwal yang bisa dikonfirmasi", ephemeral=True)
 
 async def quick_confirm(interaction: discord.Interaction, sholat: str):
     await interaction.response.defer(ephemeral=True)
@@ -71,15 +71,16 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
         for tugas in jadwal_harian[tempat][sholat]:
             petugas = jadwal_harian[tempat][sholat][tugas]
             detail_petugas = jadwal.anggota[petugas['id_anggota']]
+            detail_pengganti = jadwal.anggota[petugas['id_sub']]
 
-            if detail_petugas['uid'] != interaction.user.id or petugas['confirmed']:
+            if (detail_petugas['uid'] != interaction.user.id and detail_pengganti['uid'] != interaction.user.id) or petugas['confirmed']:
                 continue
 
             update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
             confirmed_anything = True
 
     if confirmed_anything:
-        await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+        await save_presence()
         await interaction.followup.send(f"Berhasil mengonfirmasi jadwal Sholat {sholat.capitalize()} hari ini, Syukran Jazilan 🙏", ephemeral=True)    
         await update_daily_schedule()
     else:
@@ -94,7 +95,7 @@ async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, shola
         return
     
     update_to_confirm(global_vars.system_date, tugas.value, sholat.value, tempat.value)
-    await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+    await save_presence()
 
     await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)
     await update_daily_schedule()

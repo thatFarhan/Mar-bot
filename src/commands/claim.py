@@ -2,7 +2,7 @@ from config import bot, TugasEnum, SholatEnum, TempatEnum
 from server_config import GUILD_ID, SUB_REQUESTS_CHANNEL
 import discord
 from discord import app_commands
-from repository.updater import update_to_claim, update_to_confirm
+from repository.updater import update_to_claim
 from repository.loader import jadwal, save_presence
 from repository.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars
@@ -20,21 +20,17 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
     petugas = jadwal_harian[tempat.value][sholat.value][tugas.value]
     detail_petugas = jadwal.anggota[petugas['id_anggota']]
 
-    if detail_petugas['uid'] == pengganti.id:
-        update_to_confirm(global_vars.system_date, tugas.value, sholat.value, tempat.value)
-        nama_pengklaim = detail_petugas['nama']
+    for id in range(1, len(jadwal.anggota)):
+        if pengganti.id == jadwal.anggota[id]['uid']:
+            nama_pengklaim = jadwal.anggota[id]['nama']
+            update_to_claim(global_vars.system_date, tugas, sholat, tempat, id)
+            break
+    # for else = will run when for is completed without break
     else:
-        for id in range(1, len(jadwal.anggota)):
-            if pengganti.id == jadwal.anggota[id]['uid']:
-                nama_pengklaim = jadwal.anggota[id]['nama']
-                update_to_claim(global_vars.system_date, tugas, sholat, tempat, id)
-                break
-        # for else = will run when for is completed without break
-        else:
-            await interaction.followup.send("Akun tercantum belum teregistrasi sebagai akun anggota", ephemeral=True)
-            return
+        await interaction.followup.send("Akun tercantum belum teregistrasi sebagai akun anggota", ephemeral=True)
+        return
 
-    await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+    await save_presence()
     await update_daily_schedule()
 
     key = f"{global_vars.system_date}_{tugas.value}_{sholat.value}_{tempat.value}"
@@ -69,24 +65,18 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
 
 async def claim(interaction: discord.Interaction, tanggal: str, tugas: str, sholat: str, tempat: str, embed_desc: str):
     jadwal_harian = jadwal.presensi_rawatib[tanggal]
-    petugas = jadwal_harian[tempat][sholat][tugas]
-    detail_petugas = jadwal.anggota[petugas['id_anggota']]
 
-    if detail_petugas['uid'] == interaction.user.id:
-        update_to_confirm(tanggal, tugas, sholat, tempat)
-        nama_pengklaim = detail_petugas['nama']
+    for id in range(1, len(jadwal.anggota)):
+        if interaction.user.id == jadwal.anggota[id]['uid']:
+            nama_pengklaim = jadwal.anggota[id]['nama']
+            update_to_claim(tanggal, tugas, sholat, tempat, id)
+            break
+    # for else = will run when for is completed without break
     else:
-        for id in range(1, len(jadwal.anggota)):
-            if interaction.user.id == jadwal.anggota[id]['uid']:
-                nama_pengklaim = jadwal.anggota[id]['nama']
-                update_to_claim(tanggal, tugas, sholat, tempat, id)
-                break
-        # for else = will run when for is completed without break
-        else:
-            await interaction.response.send_message("Akun antum belum teregistrasi sebagai akun anggota", ephemeral=True)
-            return
+        await interaction.response.send_message("Akun antum belum teregistrasi sebagai akun anggota", ephemeral=True)
+        return
 
-    await save_presence(jadwal_harian, tanggal)
+    await save_presence()
 
     embed = discord.Embed(
         title="Detail Jadwal",

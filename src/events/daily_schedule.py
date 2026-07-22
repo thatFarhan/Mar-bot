@@ -1,5 +1,5 @@
 import copy
-from repository.loader import jadwal, save_presence
+from repository.loader import jadwal, save_new_schedule
 from config import bot, NAMA_HARI
 from server_config import DAILY_SCHEDULE_CHANNEL, SUB_REQUESTS_CHANNEL
 from views.confirmation_buttons import ConfirmationButtons
@@ -66,7 +66,7 @@ async def write_todays_pic():
                 petugas['need_sub'] = False
                 petugas['id_sub'] = 0
 
-    await save_presence(jadwal_harian)
+    await save_new_schedule(jadwal_harian, global_vars.system_date)
 
 async def write_pic(date: str):
     datetime_object = to_datetime(date)
@@ -86,7 +86,7 @@ async def write_pic(date: str):
                 petugas['need_sub'] = False
                 petugas['id_sub'] = 0
     
-    await save_presence(jadwal_sehari, date)
+    await save_new_schedule(jadwal_sehari, date)
 
 async def write_pics_weekahead():
     for i in range(7):

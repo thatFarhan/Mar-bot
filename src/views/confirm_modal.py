@@ -32,6 +32,6 @@ class ConfirmModal(discord.ui.Modal):
 
             update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
 
-        await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
-        await interaction.response.send_message("Berhasil mengonfirmasi jadwal yang telah di pilih", ephemeral=True)
+        await save_presence()
+        await interaction.response.send_message("Berhasil mengonfirmasi jadwal yang telah dipilih", ephemeral=True)
         await update_daily_schedule()

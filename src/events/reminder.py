@@ -53,39 +53,44 @@ async def send_reminder(sholat: str):
 
             if petugas["id_anggota"] == 0 and petugas["id_sub"] == 0: continue
 
-            if petugas["id_sub"] != 0:
-                anggota = jadwal.anggota[petugas['id_sub']]
-                list_petugas.append(f"🔁 {tugas}: **{anggota['nama']}**")
-            else:
-                anggota = jadwal.anggota[petugas['id_anggota']]
-                
-                emoji = "⬛"
-                if petugas['confirmed']:
-                    emoji = "✅"
-                if petugas['need_sub']:
-                    emoji = "⚠️"
+            confirmed = jadwal_harian[tempat][sholat][tugas]['confirmed']
+            need_sub = jadwal_harian[tempat][sholat][tugas]['need_sub']
+            id_sub = jadwal_harian[tempat][sholat][tugas]['id_sub']
 
-                if not petugas['confirmed'] and not petugas['need_sub'] and anggota['uid'] != 0:
-                    tags_need_confirmation.add(f"<@{anggota['uid']}>")
+            id_anggota = jadwal_harian[tempat][sholat][tugas]['id_anggota']
+            anggota = jadwal.anggota[id_anggota]
+            emoji = "⬛"
 
-                    # auto sell after 10 minutes if there's no confirmation
-                    run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
+            if confirmed and id_sub == 0:
+                emoji = "✅"
+            if id_sub != 0:
+                anggota = jadwal.anggota[id_sub]
+                if confirmed:
+                    emoji = "☑️"
+            if need_sub:
+                emoji = "⚠️"
 
-                    if tugas != "Hadits" and tugas != "Badal`":
-                        scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
-                        
-                elif petugas['need_sub']:
-                    key = f"{global_vars.system_date}_{tugas}_{sholat}_{tempat}"
-                    if key in persistent_vars["notification_ids"]:
-                        channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-                        noti_id = persistent_vars["notification_ids"][key]
-                        message = await channel.fetch_message(noti_id)
+            if not confirmed and not need_sub and anggota['uid'] != 0:
+                tags_need_confirmation.add(f"<@{anggota['uid']}>")
 
-                        await message.delete()
+                # auto sell after 10 minutes if there's no confirmation
+                run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
+
+                if tugas != "Hadits" and tugas != "Badal`":
+                    scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
                     
-                    await on_sale_noti(tugas, sholat, tempat, emergency=True)
+            elif petugas['need_sub']:
+                key = f"{global_vars.system_date}_{tugas}_{sholat}_{tempat}"
+                if key in persistent_vars["notification_ids"]:
+                    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
+                    noti_id = persistent_vars["notification_ids"][key]
+                    message = await channel.fetch_message(noti_id)
 
-                list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
+                    await message.delete()
+                
+                await on_sale_noti(tugas, sholat, tempat, emergency=True)
+
+            list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
 
             if anggota['uid'] != 0:
                 tags.add(f"<@{anggota['uid']}>")

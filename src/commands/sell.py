@@ -22,13 +22,13 @@ async def sellmodal(interaction: discord.Interaction):
     try:
         await interaction.response.send_modal(SellModal(interaction.user.id))
     except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa di request pengganti", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa direquest pengganti", ephemeral=True)
 
 async def sellweekmodal(interaction: discord.Interaction):
     try:
         await interaction.response.send_modal(SellWeekModal(interaction.user.id))
     except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa di request pengganti", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa direquest pengganti", ephemeral=True)
 
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
@@ -40,7 +40,7 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     await save_reason()
 
     update_to_sell(tugas, sholat, tempat)
-    await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+    await save_presence()
     await on_sale_noti(tugas, sholat, tempat, emergency=True)
 
 @bot.tree.command(name="forcerequest", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
@@ -54,7 +54,7 @@ async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: 
     update_to_sell(tugas, sholat, tempat)
     emergency = persistent_vars["reminder_sent"][sholat.value]
     await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
-    await save_presence(jadwal.presensi_rawatib[global_vars.system_date])
+    await save_presence()
 
     await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
     await update_daily_schedule()

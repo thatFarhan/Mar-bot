@@ -6,8 +6,13 @@ from mission_util import to_datetime
 from repository.loader import jadwal
 from repository.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
+from models.Schedule import Schedule
 
-async def on_sale_noti(tugas, sholat, tempat, emergency=False, tanggal=global_vars.system_date, id_requestor=None):
+async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_members=None):
+    tanggal = requested_schedule.tanggal
+    tugas = requested_schedule.tugas
+    sholat = requested_schedule.sholat
+    tempat = requested_schedule.tempat
     if tugas == 'Hadits': return
 
     target=bot.get_channel(SUB_REQUESTS_CHANNEL)
@@ -15,10 +20,10 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False, tanggal=global_va
     jadwal_harian = jadwal.presensi_rawatib[tanggal]
     hari = NAMA_HARI[to_datetime(tanggal).weekday()]
 
-    if id_requestor == None:
-        id_anggota = jadwal_harian[tempat][sholat][tugas]['id_anggota']
-    else:
-        id_anggota = id_requestor
+    sold_jadwal = Schedule(tanggal, requested_schedule.tugas, sholat, tempat)
+
+    id_anggota = sold_jadwal.get_pic_id()
+
     nama_petugas_sebelumnya = jadwal.anggota[id_anggota]['nama']
     alasan_harian = jadwal.alasan_absen.get(tanggal)
     alasan = alasan_harian.get(str(id_anggota))
@@ -30,13 +35,24 @@ async def on_sale_noti(tugas, sholat, tempat, emergency=False, tanggal=global_va
         description=embed_desc
     )
 
-    tags = ""
-    if not emergency and tugas == "Imam":
-        id_badal = jadwal_harian[tempat][sholat]['Badal']['id_anggota']
-        uid_badal = jadwal.anggota[id_badal]['uid']
-        tags = f"Badal: <@{uid_badal}>" if uid_badal != 0 else "@everyone"
-    else:
+    if emergency:
         tags = "@everyone"
+    else:
+        mentions = []
+
+        if tugas == "Imam":
+            id_badal = jadwal_harian[tempat][sholat]['Badal']['id_anggota']
+            uid_badal = jadwal.anggota[id_badal]['uid']
+            if uid_badal != 0:
+                mentions.append(f"Badal: <@{uid_badal}>\n")
+            
+        for member in selected_members:
+            mentions.append(member.mention)
+
+        if len(mentions) == 0:
+            tags = "@everyone"
+        else:  
+            tags = " ".join(mentions)
 
     if emergency:
         content=f"🚨 {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!\n{tags}"

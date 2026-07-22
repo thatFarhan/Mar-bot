@@ -39,7 +39,7 @@ def build_schedule_and_tags(tempat: str):
             if id_sub != 0:
                 anggota = jadwal.anggota[id_sub]
                 if confirmed:
-                    emoji = "🔁"
+                    emoji = "☑️"
             if need_sub:
                 emoji = "⚠️"
                 need_subs.append(f"{tugas}_{sholat}_{tempat}")

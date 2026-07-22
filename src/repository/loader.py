@@ -19,14 +19,14 @@ async def save_json(filename: str, new_data: dict):
             temp_name = tmp.name
 
         os.replace(temp_name, filename)
-    
-async def save_presence(jadwal_harian, tanggal: str = global_vars.system_date):
+
+async def save_new_schedule(jadwal_harian, tanggal):
     jadwal.presensi_rawatib[tanggal] = jadwal_harian
-
+    await save_presence()
+    
+async def save_presence():
     await save_json("src/data/presensi_rawatib.json", jadwal.presensi_rawatib)
-
-    if tanggal == global_vars.system_date:
-        jadwal.presensi_rawatib = load_json("src/data/presensi_rawatib.json")
+    jadwal.presensi_rawatib = load_json("src/data/presensi_rawatib.json")
 
 async def save_reason():
     await save_json("src/data/alasan_absen.json", jadwal.alasan_absen)
