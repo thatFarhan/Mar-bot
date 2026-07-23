@@ -3,6 +3,7 @@ from repository.loader import jadwal, save_presence
 from repository.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 from global_vars import global_vars
+from models.Schedule import Schedule
 
 class ConfirmModal(discord.ui.Modal):
     def __init__(self, select_options: list):
@@ -30,7 +31,8 @@ class ConfirmModal(discord.ui.Modal):
             sholat = detail_jadwal[1]
             tugas = detail_jadwal[2]
 
-            update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
+            schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+            update_to_confirm(schedule)
 
         await save_presence()
         await interaction.response.send_message("Berhasil mengonfirmasi jadwal yang telah dipilih", ephemeral=True)

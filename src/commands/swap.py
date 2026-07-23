@@ -3,11 +3,7 @@ from config import bot
 from server_config import GUILD_ID
 from views.swap_request_modal import SwapRequestModal, SwapRequestWeekModal
 
-@bot.tree.command(name="tukar", description="Merequest penukaran jadwal yang antum pilih di hari ini", guild=GUILD_ID)
-async def swap(interaction: discord.Interaction):
-    await swaprequestmodal(interaction)
-
-@bot.tree.command(name="tukarpekan", description="Merequest penukaran jadwal yang antum pilih di pekan ini", guild=GUILD_ID)
+@bot.tree.command(name="tukar", description="Merequest penukaran jadwal yang antum pilih di pekan ini", guild=GUILD_ID)
 async def swap(interaction: discord.Interaction):
     await swaprequestweekmodal(interaction)
 

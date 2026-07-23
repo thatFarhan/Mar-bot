@@ -1,7 +1,7 @@
 import discord
 from config import NAMA_HARI, bot
 from server_config import SUB_REQUESTS_CHANNEL
-from mission_util import to_datetime
+from mission_util import to_datetime, to_indo_date_format
 from repository.updater import update_to_claim
 from repository.loader import jadwal, save_presence
 from repository.persistent_loader import persistent_vars, save_persistent
@@ -10,41 +10,31 @@ from models.Schedule import Schedule
 from events.purge_transaction import purge_offerers, purge_requestors
 
 async def accept(interaction: discord.Interaction, requested_schedule: Schedule, offered_schedule: Schedule):
+    id_penawar = offered_schedule.get_pic_id()
     id_peminta = requested_schedule.get_pic_id()
     uid_peminta = jadwal.anggota[id_peminta]['uid']
     if interaction.user.id != uid_peminta:
         await interaction.response.send_message("Lau sape mpruy? 🫵😂", ephemeral=True)
         return
     
-    id_penawar = offered_schedule.get_pic_id()
-    
-    update_to_claim(requested_schedule.tanggal, requested_schedule.tugas, requested_schedule.sholat, requested_schedule.tempat, id_penawar)
-    update_to_claim(offered_schedule.tanggal, offered_schedule.tugas, offered_schedule.sholat, offered_schedule.tempat, id_peminta)
+    update_to_claim(requested_schedule, id_penawar)
+    update_to_claim(offered_schedule, id_peminta)
 
     await save_presence()
 
-    requested_hari = NAMA_HARI[to_datetime(requested_schedule.tanggal).weekday()]
-    offered_hari = NAMA_HARI[to_datetime(offered_schedule.tanggal).weekday()]
-
     embeds = []
-
-    nama_peminta = jadwal.anggota[id_peminta]['nama']
-    desc_peminta=f"Hari: {requested_hari}\nTugas: {requested_schedule.tugas}\nSholat: {requested_schedule.sholat.capitalize()}\nTempat: {requested_schedule.tempat.upper()}\nPetugas: {nama_peminta}"
 
     embed_permintaan=discord.Embed(
         title="Jadwal yang Akan Diserahkan", 
         color=discord.Color.green(),
-        description=desc_peminta
+        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya:")
     )
     embeds.append(embed_permintaan)
-        
-    nama_penawar = jadwal.anggota[id_penawar]['nama']
-    desc_penawar=f"Hari: {offered_hari}\nTugas: {offered_schedule.tugas}\nSholat: {offered_schedule.sholat.capitalize()}\nTempat: {offered_schedule.tempat.upper()}\nPetugas: {nama_penawar}"
 
     embed_tawaran=discord.Embed(
         title="Jadwal yang Akan Diterima", 
         color=discord.Color.green(),
-        description=desc_penawar
+        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya:")
     )
     embeds.append(embed_tawaran)
 
@@ -58,10 +48,10 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
         color=discord.Color.green()
     )
 
-    value_jadwal_a=f"Hari: {requested_hari}\nTugas: {requested_schedule.tugas}\nSholat: {requested_schedule.sholat.capitalize()}\nTempat: {requested_schedule.tempat.upper()}\nPetugas Pengganti: {nama_penawar}"
+    nama_penawar = jadwal.anggota[id_penawar]['nama']
     embed_accepted_swap.add_field(
         name="Jadwal A",
-        value=value_jadwal_a,
+        value=requested_schedule.get_unreasoned_desc("Petugas Pengganti", nama_penawar),
         inline=False
     )
 
@@ -71,10 +61,10 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
         inline=False
     )
 
-    value_jadwal_b=f"Hari: {offered_hari}\nTugas: {offered_schedule.tugas}\nSholat: {offered_schedule.sholat.capitalize()}\nTempat: {offered_schedule.tempat.upper()}\nPetugas Pengganti: {nama_peminta}"
+    nama_peminta = jadwal.anggota[id_peminta]['nama']
     embed_accepted_swap.add_field(
         name="Jadwal B",
-        value=value_jadwal_b,
+        value=offered_schedule.get_unreasoned_desc("Petugas Pengganti", nama_peminta),
         inline=False
     )
 

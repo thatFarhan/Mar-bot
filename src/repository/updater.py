@@ -1,17 +1,12 @@
 from repository.loader import jadwal
 from global_vars import scheduler, global_vars
-
-def update_to_sell(tugas: str, sholat: str, tempat: str):
-    if tugas == 'Hadits': return
-
-    petugas = jadwal.presensi_rawatib[global_vars.system_date][tempat][sholat][tugas]
-    petugas["confirmed"] = False
-    petugas["need_sub"] = True
-
-    if scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
-        scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
+from models.Schedule import Schedule
         
-def update_to_sell_week(tanggal: str, tugas: str, sholat: str, tempat: str):
+def update_to_sell(schedule: Schedule):
+    tanggal = schedule.tanggal
+    tempat = schedule.tempat
+    sholat = schedule.sholat
+    tugas = schedule.tugas
     if tugas == 'Hadits': return
 
     petugas = jadwal.presensi_rawatib[tanggal][tempat][sholat][tugas]
@@ -21,7 +16,11 @@ def update_to_sell_week(tanggal: str, tugas: str, sholat: str, tempat: str):
     if global_vars.system_date == tanggal and scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
         scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
 
-def update_to_confirm(tanggal: str, tugas: str, sholat: str, tempat: str):
+def update_to_confirm(schedule: Schedule):
+    tanggal = schedule.tanggal
+    tempat = schedule.tempat
+    sholat = schedule.sholat
+    tugas = schedule.tugas
     petugas = jadwal.presensi_rawatib[tanggal][tempat][sholat][tugas]
     if tanggal == global_vars.system_date:
         petugas["confirmed"] = True
@@ -30,7 +29,11 @@ def update_to_confirm(tanggal: str, tugas: str, sholat: str, tempat: str):
     if scheduler.get_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}"):
         scheduler.remove_job(job_id=f"emergency_{tugas}_{sholat}_{tempat}")
 
-def update_to_claim(tanggal: str, tugas: str, sholat: str, tempat: str, id: int):
+def update_to_claim(schedule: Schedule, id: int):
+    tanggal = schedule.tanggal
+    tempat = schedule.tempat
+    sholat = schedule.sholat
+    tugas = schedule.tugas
     petugas = jadwal.presensi_rawatib[tanggal][tempat][sholat][tugas]
     if tanggal == global_vars.system_date:
         petugas["confirmed"] = True

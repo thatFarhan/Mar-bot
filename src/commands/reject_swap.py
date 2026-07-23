@@ -1,7 +1,6 @@
 import discord
-from config import NAMA_HARI, bot
+from config import bot
 from repository.persistent_loader import persistent_vars, save_persistent
-from mission_util import to_datetime
 from repository.loader import jadwal
 from models.Schedule import Schedule
 
@@ -15,28 +14,19 @@ async def reject(interaction: discord.Interaction, requested_schedule: Schedule,
         await interaction.response.send_message("Lau sape mpruy? 🫵😂", ephemeral=True)
         return
 
-    requested_hari = NAMA_HARI[to_datetime(requested_schedule.tanggal).weekday()]
-    offered_hari = NAMA_HARI[to_datetime(offered_schedule.tanggal).weekday()]
-
     embeds_peminta = []
-
-    nama_peminta = jadwal.anggota[id_peminta]['nama']
-    desc_peminta=f"Hari: {requested_hari}\nTugas: {requested_schedule.tugas}\nSholat: {requested_schedule.sholat.capitalize()}\nTempat: {requested_schedule.tempat.upper()}\nPetugas: {nama_peminta}"
 
     embed_permintaan=discord.Embed(
         title="Jadwal yang Akan Diserahkan", 
         color=discord.Color.red(),
-        description=desc_peminta
+        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_peminta.append(embed_permintaan)
         
-    nama_penawar = jadwal.anggota[id_penawar]['nama']
-    desc_penawar=f"Hari: {offered_hari}\nTugas: {offered_schedule.tugas}\nSholat: {offered_schedule.sholat.capitalize()}\nTempat: {offered_schedule.tempat.upper()}\nPetugas: {nama_penawar}"
-
     embed_tawaran=discord.Embed(
         title="Jadwal yang Akan Diterima", 
         color=discord.Color.red(),
-        description=desc_penawar
+        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_peminta.append(embed_tawaran)
 

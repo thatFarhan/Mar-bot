@@ -7,6 +7,7 @@ from repository.updater import update_to_confirm
 from events.update_schedule_message import update_daily_schedule
 from views.confirm_modal import ConfirmModal
 from global_vars import global_vars
+from models.Schedule import Schedule
 
 @bot.tree.command(name="konfirmasi", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
 async def confirm(interaction: discord.Interaction):
@@ -31,7 +32,8 @@ async def confirm(interaction: discord.Interaction):
         tempat = select_values[0]
         sholat = select_values[1]
         tugas = select_values[2]
-        update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
+        schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+        update_to_confirm(schedule)
         await save_presence()
         await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas} Sholat {sholat.capitalize()} di {tempat.upper()}, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
@@ -49,7 +51,8 @@ async def confirm_all(interaction: discord.Interaction):
                 detail_petugas = jadwal.anggota[petugas['id_anggota']]
                 detail_pengganti = jadwal.anggota[petugas['id_sub']]
                 if (detail_petugas["uid"] == interaction.user.id or detail_pengganti["uid"] == interaction.user.id) and not petugas["confirmed"] and not petugas["need_sub"]:
-                    update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
+                    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+                    update_to_confirm(schedule)
                     confirmed_anything = True
         
     if confirmed_anything:
@@ -75,8 +78,8 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
 
             if (detail_petugas['uid'] != interaction.user.id and detail_pengganti['uid'] != interaction.user.id) or petugas['confirmed']:
                 continue
-
-            update_to_confirm(global_vars.system_date, tugas, sholat, tempat)
+            schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+            update_to_confirm(schedule)
             confirmed_anything = True
 
     if confirmed_anything:
@@ -93,8 +96,8 @@ async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, shola
     if sholat.value not in jadwal_harian[tempat.value] or tugas.value not in jadwal_harian[tempat.value][sholat.value]:
         await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
         return
-    
-    update_to_confirm(global_vars.system_date, tugas.value, sholat.value, tempat.value)
+    schedule = Schedule(global_vars.system_date, tugas.value, sholat.value, tempat.value)
+    update_to_confirm(schedule)
     await save_presence()
 
     await interaction.response.send_message(f"Berhasil mengonfirmasi jadwal {tugas.name} Sholat {sholat.name} di {tempat.name}, Syukran Jazilan 🙏", ephemeral=True)

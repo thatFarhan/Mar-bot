@@ -2,13 +2,13 @@ import discord
 from config import bot, mention_everyone, NAMA_HARI
 from server_config import SUB_REQUESTS_CHANNEL
 from global_vars import global_vars
-from mission_util import to_datetime
+from mission_util import to_datetime, to_indo_date_format
 from repository.loader import jadwal
 from repository.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton
 from models.Schedule import Schedule
 
-async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_members=None):
+async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_members=[]):
     tanggal = requested_schedule.tanggal
     tugas = requested_schedule.tugas
     sholat = requested_schedule.sholat
@@ -27,15 +27,15 @@ async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_m
     nama_petugas_sebelumnya = jadwal.anggota[id_anggota]['nama']
     alasan_harian = jadwal.alasan_absen.get(tanggal)
     alasan = alasan_harian.get(str(id_anggota))
-    embed_desc=f"Hari: {hari}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nTempat: {tempat.upper()}\nPetugas Sebelumnya: {nama_petugas_sebelumnya}\n\nAlasan:\n>>> {alasan}"
+    embed_desc=f"Hari: {hari}\nTanggal: {to_indo_date_format(tanggal)}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nTempat: {tempat.upper()}\nPetugas Sebelumnya: {nama_petugas_sebelumnya}\n\nAlasan:\n>>> {alasan}"
 
     embed=discord.Embed(
         title="Detail Jadwal", 
         color=discord.Color.red() if emergency else discord.Color.gold(),
-        description=embed_desc
+        description=requested_schedule.get_reasoned_desc("Petugas Sebelumnya")
     )
 
-    if emergency:
+    if emergency or len(selected_members) == 0:
         tags = "@everyone"
     else:
         mentions = []
@@ -49,10 +49,7 @@ async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_m
         for member in selected_members:
             mentions.append(member.mention)
 
-        if len(mentions) == 0:
-            tags = "@everyone"
-        else:  
-            tags = " ".join(mentions)
+        tags = " ".join(mentions)
 
     if emergency:
         content=f"🚨 {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!\n{tags}"
@@ -62,6 +59,6 @@ async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_m
         else:
             content=f"📢 ({hari}) {tugas} Sholat {sholat.capitalize()} di {tempat.upper()} Perlu Pengganti!\n{tags}"
 
-    message = await target.send(content=content, embed=embed, view=ClaimButton(tanggal, tugas, sholat, tempat, embed_desc), allowed_mentions=mention_everyone)
-    persistent_vars["notification_ids"][f"{tanggal}_{tugas}_{sholat}_{tempat}"] = message.id
+    message = await target.send(content=content, embed=embed, view=ClaimButton(requested_schedule), allowed_mentions=mention_everyone)
+    persistent_vars["notification_ids"][requested_schedule.get_key()] = message.id
     await save_persistent()

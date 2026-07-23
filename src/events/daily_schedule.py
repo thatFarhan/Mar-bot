@@ -7,8 +7,9 @@ from global_vars import global_vars
 from repository.persistent_loader import persistent_vars, save_persistent
 from builders.daily_schedule_builder import build_schedule_and_tags
 from events.on_sale_notification import on_sale_noti
-from mission_util import to_datetime
+from mission_util import to_datetime, to_indo_date_format
 from datetime import timedelta
+from models.Schedule import Schedule
 
 async def send_daily_schedule():
     embeds=[]
@@ -28,8 +29,8 @@ async def send_daily_schedule():
                     tugas = values[0]
                     sholat = values[1]
                     tempat = values[2]
-
-                    key = f"{global_vars.system_date}_{tugas}_{sholat}_{tempat}"
+                    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+                    key = schedule.get_key()
                     if key in persistent_vars["notification_ids"]:
                         channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
                         noti_id = persistent_vars["notification_ids"][key]
@@ -39,11 +40,11 @@ async def send_daily_schedule():
                         except Exception:
                             pass
 
-                    await on_sale_noti(tugas, sholat, tempat, emergency=False)
+                    await on_sale_noti(schedule)
 
     daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
     message = await daily_schedule_channel.send(
-        content=f"📜 Antum ada jadwal esok hari!\n\n{' '.join(tags)}\n# 📌 {global_vars.system_day_name}",
+        content=f"📜 Antum ada jadwal esok hari!\n\n{' '.join(tags)}\n# 📌 {global_vars.system_day_name} ({to_indo_date_format(global_vars.system_date)})",
         embeds=embeds,
         view=ConfirmationButtons()
     )

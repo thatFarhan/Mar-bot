@@ -21,6 +21,8 @@ SHOLAT_TUPLE = ("subuh", "dzuhur", "ashar", "maghrib", "isya")
 
 NAMA_HARI = ("Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Ahad")
 
+NAMA_BULAN = ("index 0", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember")
+
 SHOLAT_TITLE={
     "subuh": "🌅 Subuh", 
     "dzuhur": "☀️ Dzuhur",

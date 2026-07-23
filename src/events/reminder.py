@@ -8,6 +8,7 @@ from server_config import REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
 from views.quick_confirmation_buttons import QuickConfirmationButtons
 from events.on_sale_notification import on_sale_noti
 from commands.sell import emergency_sell
+from models.Schedule import Schedule
 
 def set_reminders():
     for sholat in SHOLAT_TUPLE:
@@ -53,11 +54,11 @@ async def send_reminder(sholat: str):
 
             if petugas["id_anggota"] == 0 and petugas["id_sub"] == 0: continue
 
-            confirmed = jadwal_harian[tempat][sholat][tugas]['confirmed']
-            need_sub = jadwal_harian[tempat][sholat][tugas]['need_sub']
-            id_sub = jadwal_harian[tempat][sholat][tugas]['id_sub']
+            confirmed = petugas['confirmed']
+            need_sub = petugas['need_sub']
+            id_sub = petugas['id_sub']
 
-            id_anggota = jadwal_harian[tempat][sholat][tugas]['id_anggota']
+            id_anggota = petugas['id_anggota']
             anggota = jadwal.anggota[id_anggota]
             emoji = "⬛"
 
@@ -88,11 +89,12 @@ async def send_reminder(sholat: str):
 
                     await message.delete()
                 
-                await on_sale_noti(tugas, sholat, tempat, emergency=True)
+                schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+                await on_sale_noti(schedule, emergency=True)
 
             list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
 
-            if anggota['uid'] != 0:
+            if anggota['uid'] != 0 and not need_sub:
                 tags.add(f"<@{anggota['uid']}>")
 
         if list_petugas:

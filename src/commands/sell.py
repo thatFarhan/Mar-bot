@@ -9,12 +9,9 @@ from events.update_schedule_message import update_daily_schedule
 from repository.persistent_loader import persistent_vars
 from views.sell_modal import SellModal, SellWeekModal
 from global_vars import global_vars
+from models.Schedule import Schedule
 
-@bot.tree.command(name="request", description="Merequest pengganti untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
-async def sell(interaction: discord.Interaction):
-    await sellmodal(interaction)
-
-@bot.tree.command(name="requestpekan", description="Merequest pengganti untuk jadwal yang antum pilih di pekan ini", guild=GUILD_ID)
+@bot.tree.command(name="ganti", description="Merequest pengganti untuk jadwal yang antum pilih di pekan ini", guild=GUILD_ID)
 async def sellweek(interaction: discord.Interaction):
     await sellweekmodal(interaction)
 
@@ -39,9 +36,10 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     jadwal.alasan_absen[global_vars.system_date][id_petugas] = alasan_dict
     await save_reason()
 
-    update_to_sell(tugas, sholat, tempat)
+    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+    update_to_sell(schedule)
     await save_presence()
-    await on_sale_noti(tugas, sholat, tempat, emergency=True)
+    await on_sale_noti(schedule, emergency=True)
 
 @bot.tree.command(name="forcerequest", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
@@ -51,9 +49,10 @@ async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: 
         await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
         return
 
-    update_to_sell(tugas, sholat, tempat)
+    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
+    update_to_sell(schedule)
     emergency = persistent_vars["reminder_sent"][sholat.value]
-    await on_sale_noti(tugas.value, sholat.value, tempat.value, emergency=emergency)
+    await on_sale_noti(schedule, emergency=emergency)
     await save_presence()
 
     await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)

@@ -1,7 +1,7 @@
 import discord
 from config import bot, mention_everyone, NAMA_HARI
 from server_config import SUB_REQUESTS_CHANNEL
-from mission_util import to_datetime
+from mission_util import to_datetime, to_indo_date_format
 from repository.loader import jadwal
 from repository.persistent_loader import persistent_vars, save_persistent
 from models.Schedule import Schedule
@@ -11,31 +11,25 @@ from views.cancel_button import CancelButton
 async def swap_offer_noti(interaction: discord.Interaction, requested_schedule: Schedule, offered_schedule: Schedule):
     if offered_schedule.tugas == 'Hadits' or offered_schedule.tugas == 'Badal': return
 
-    requested_hari = NAMA_HARI[to_datetime(requested_schedule.tanggal).weekday()]
-    offered_hari = NAMA_HARI[to_datetime(offered_schedule.tanggal).weekday()]
-
     embeds_peminta = []
 
     id_peminta = requested_schedule.get_pic_id()
     id_penawar = offered_schedule.get_pic_id()
         
     nama_peminta = jadwal.anggota[id_peminta]['nama']
-    desc_peminta=f"Hari: {requested_hari}\nTugas: {requested_schedule.tugas}\nSholat: {requested_schedule.sholat.capitalize()}\nTempat: {requested_schedule.tempat.upper()}\nPetugas Sebelumnya: {nama_peminta}"
-
     nama_penawar = jadwal.anggota[id_penawar]['nama']
-    desc_penawar=f"Hari: {offered_hari}\nTugas: {offered_schedule.tugas}\nSholat: {offered_schedule.sholat.capitalize()}\nTempat: {offered_schedule.tempat.upper()}\nPetugas Sebelumnya: {nama_penawar}"
 
     embed_permintaan1=discord.Embed(
         title="Jadwal yang Akan Diserahkan", 
         color=discord.Color.dark_gold(),
-        description=desc_peminta
+        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_peminta.append(embed_permintaan1)
 
     embed_tawaran1=discord.Embed(
         title="Jadwal yang Akan Diterima", 
         color=discord.Color.gold(),
-        description=desc_penawar
+        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_peminta.append(embed_tawaran1)
 
@@ -67,14 +61,14 @@ async def swap_offer_noti(interaction: discord.Interaction, requested_schedule: 
     embed_tawaran2=discord.Embed(
         title="Jadwal yang Akan Diserahkan", 
         color=discord.Color.dark_gold(),
-        description=desc_penawar
+        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_penawar.append(embed_tawaran2)
 
     embed_permintaan2=discord.Embed(
         title="Jadwal yang Akan Diterima", 
         color=discord.Color.gold(),
-        description=desc_peminta
+        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya")
     )
     embeds_penawar.append(embed_permintaan2)
 

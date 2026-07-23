@@ -1,15 +1,12 @@
 import discord
 from commands.claim import claim
+from models.Schedule import Schedule
 
 class ClaimButton(discord.ui.View):
-    def __init__(self, tanggal:str, tugas: str, sholat: str, tempat: str, embed_desc: str):
+    def __init__(self, requested_schedule: Schedule):
         super().__init__(timeout=None)
-        self.tanggal = tanggal
-        self.tugas = tugas
-        self.sholat = sholat
-        self.tempat = tempat
-        self.embed_desc = embed_desc
+        self.requested_schedule = requested_schedule
 
     @discord.ui.button(label="Klaim Jadwal", style=discord.ButtonStyle.primary)
     async def button_claim(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await claim(interaction, self.tanggal, self.tugas, self.sholat, self.tempat, self.embed_desc)
+        await claim(interaction, self.requested_schedule)

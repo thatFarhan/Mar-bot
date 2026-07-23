@@ -5,7 +5,7 @@ from mission_util import to_datetime
 from global_vars import global_vars
 from repository.loader import jadwal, save_presence, save_reason
 from repository.persistent_loader import persistent_vars
-from repository.updater import update_to_sell, update_to_sell_week
+from repository.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
 from events.update_schedule_message import update_daily_schedule
 from models.Schedule import Schedule
@@ -92,7 +92,7 @@ class SellModal(discord.ui.Modal):
             tugas = detail_jadwal[2]
 
             requested_schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
-            update_to_sell(tugas, sholat, tempat)
+            update_to_sell(requested_schedule)
             emergency = persistent_vars["reminder_sent"][sholat]
             await save_reason()
             await on_sale_noti(requested_schedule, emergency, self.find_item(2).component.values)
@@ -189,7 +189,7 @@ class SellWeekModal(discord.ui.Modal):
             tugas = detail_jadwal[3]
 
             requested_schedule = Schedule(tanggal, tugas, sholat, tempat)
-            update_to_sell_week(tanggal, tugas, sholat, tempat)
+            update_to_sell(requested_schedule)
             jadwal.alasan_absen[tanggal] = alasan_dict
             sold_dates.add(tanggal)
 
