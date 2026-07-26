@@ -14,8 +14,7 @@ async def swap_request_noti(requested_schedule: Schedule, emergency=False, selec
     target=bot.get_channel(SUB_REQUESTS_CHANNEL)
 
     embed=discord.Embed(
-        title="Detail Jadwal", 
-        color=discord.Color.blue(),
+        title="Detail Jadwal",
         description=requested_schedule.get_reasoned_desc("Petugas Sebelumnya")
     )
 

@@ -5,8 +5,7 @@ from global_vars import global_vars
 
 def build_schedule_and_tags(tempat: str):
     schedule=discord.Embed(
-            title=TEMPAT_TITLE[tempat],
-            color=discord.Color.green()
+            title=TEMPAT_TITLE[tempat]
         )
 
     tags=set()

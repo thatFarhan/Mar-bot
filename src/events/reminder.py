@@ -35,8 +35,7 @@ async def send_reminder(sholat: str):
         sholat_title = sholat
 
     embed=discord.Embed(
-        title=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat[global_vars.system_day][sholat]})",
-        color=discord.Color.green()
+        title=f"{SHOLAT_TITLE[sholat_title]} ({jadwal.jadwal_sholat[global_vars.system_day][sholat]})"
     )
 
     embed.set_footer(text="* Indikator kehadiran tidak diperbarui secara langsung (real-time). Untuk pembaruan langsung, lihat jadwal harian.")
@@ -107,13 +106,10 @@ async def send_reminder(sholat: str):
     content=f"⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()}\n\n{' '.join(tags)}"
 
     reminders_channel=bot.get_channel(REMINDERS_CHANNEL)
-    await reminders_channel.send(content=content, embed=embed)
+    await reminders_channel.send(content=content, embed=embed, view=QuickConfirmationButtons(sholat))
     if tags_need_confirmation:
         unix_timestamp=int(run_date.timestamp())
-        await reminders_channel.send(
-            content=f"⚠️ Nama di bawah ini belum melakukan konfirmasi.\n\nHarap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}",
-            view=QuickConfirmationButtons(sholat)
-        )
+        await reminders_channel.send(content=f"⚠️ Nama di bawah ini belum melakukan konfirmasi.\n\nHarap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}")
 
 async def reset_reminder_sent():
     for sholat in SHOLAT_TUPLE:

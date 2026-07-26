@@ -7,6 +7,7 @@ from repository.loader import jadwal, save_presence
 from repository.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars
 from events.update_schedule_message import update_daily_schedule
+from events.purge_transaction import purge_requestors, purge_offerers, delete_swap_noti
 from models.Schedule import Schedule
 
 @bot.tree.command(name="forceclaim", description="[ADMIN] Mengklaim suatu jadwal yang perlu pengganti untuk seseorang", guild=GUILD_ID)
@@ -43,18 +44,18 @@ async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat:
     channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
     message = await channel.fetch_message(noti_id)
 
-    embed = discord.Embed(
-        title="Detail Jadwal",
-        color=discord.Color.green(),
-        description=schedule.get_reasoned_desc("Petugas Sebelumnya")
-    )
+    content=f"**✅ Jadwal Telah Diklaim oleh {nama_pengklaim}**"
 
-    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim}**"
+    noti_key = schedule.get_key()
 
-    persistent_vars["notification_ids"].pop(schedule.get_key(), None)
+    persistent_vars["notification_ids"].pop(noti_key, None)
+
+    await delete_swap_noti(noti_key, "🤷 Jadwal Telah Digantikan")
+    await purge_requestors(schedule, "🤷 Jadwal yang Ditawarkan Telah Diambil Oleh Anggota Lain")
+    await purge_offerers(schedule, "🤷 Jadwal yang Ditawarkan Telah Diambil Oleh Anggota Lain")
     await save_persistent()
 
-    await message.edit(content=content, embed=embed, view=None)
+    await message.edit(content=content, view=None)
 
     await interaction.followup.send(f"Berhasil mengklaim untuk {nama_pengklaim}")
 
@@ -71,15 +72,16 @@ async def claim(interaction: discord.Interaction, requested_schedule: Schedule):
 
     await save_presence()
 
-    embed = discord.Embed(
-        title="Detail Jadwal",
-        color=discord.Color.green(),
-        description=requested_schedule.get_reasoned_desc("Petugas Pengganti", nama_pengklaim)
-    )
-    content=f"**✅ Jadwal telah diklaim oleh {nama_pengklaim}**"
+    content=f"**✅ Jadwal Telah Diklaim oleh {nama_pengklaim}**"
+    await interaction.response.edit_message(content=content, view=None)
 
-    persistent_vars["notification_ids"].pop(requested_schedule.get_key(), None)
+    noti_key = requested_schedule.get_key()
+
+    persistent_vars["notification_ids"].pop(noti_key, None)
+
+    await delete_swap_noti(noti_key, "🤷 Jadwal Telah Digantikan")
+    await purge_requestors(requested_schedule, "🤷 Jadwal yang Ditawarkan Telah Diambil Oleh Anggota Lain")
+    await purge_offerers(requested_schedule, "🤷 Jadwal yang Ditawarkan Telah Diambil Oleh Anggota Lain")
     await save_persistent()
     
-    await interaction.response.edit_message(content=content, embed=embed, view=None)
     await update_daily_schedule()

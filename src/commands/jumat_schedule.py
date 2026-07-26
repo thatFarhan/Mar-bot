@@ -73,7 +73,6 @@ async def jadwaljumat(interaction: discord.Interaction):
     content = "## ☀️ Jadwal Muadzin Jum'at"
     embed = discord.Embed(
         title=TEMPAT_TITLE["msu"],
-        description="\n".join(embed_desc), 
-        color=discord.Color.green()
+        description="\n".join(embed_desc)
     )
     await interaction.response.send_message(content=content, embed=embed)

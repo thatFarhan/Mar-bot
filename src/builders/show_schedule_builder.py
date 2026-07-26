@@ -4,8 +4,7 @@ from repository.loader import jadwal
 
 def build_schedule(tempat: str, system_day_name: str):
     schedule=discord.Embed(
-            title=TEMPAT_TITLE[tempat],
-            color=discord.Color.green()
+            title=TEMPAT_TITLE[tempat]
         )
 
     for sholat in jadwal.jadwal_rawatib[system_day_name][tempat]:

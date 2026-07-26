@@ -20,18 +20,8 @@ async def on_sale_noti(requested_schedule: Schedule, emergency=False, selected_m
     jadwal_harian = jadwal.presensi_rawatib[tanggal]
     hari = NAMA_HARI[to_datetime(tanggal).weekday()]
 
-    sold_jadwal = Schedule(tanggal, requested_schedule.tugas, sholat, tempat)
-
-    id_anggota = sold_jadwal.get_pic_id()
-
-    nama_petugas_sebelumnya = jadwal.anggota[id_anggota]['nama']
-    alasan_harian = jadwal.alasan_absen.get(tanggal)
-    alasan = alasan_harian.get(str(id_anggota))
-    embed_desc=f"Hari: {hari}\nTanggal: {to_indo_date_format(tanggal)}\nTugas: {tugas}\nSholat: {sholat.capitalize()}\nTempat: {tempat.upper()}\nPetugas Sebelumnya: {nama_petugas_sebelumnya}\n\nAlasan:\n>>> {alasan}"
-
     embed=discord.Embed(
-        title="Detail Jadwal", 
-        color=discord.Color.red() if emergency else discord.Color.gold(),
+        title="Detail Jadwal",
         description=requested_schedule.get_reasoned_desc("Petugas Sebelumnya")
     )
 

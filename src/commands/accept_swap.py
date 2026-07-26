@@ -1,13 +1,12 @@
 import discord
 from config import NAMA_HARI, bot
 from server_config import SUB_REQUESTS_CHANNEL
-from mission_util import to_datetime, to_indo_date_format
 from repository.updater import update_to_claim
 from repository.loader import jadwal, save_presence
 from repository.persistent_loader import persistent_vars, save_persistent
 from events.update_schedule_message import update_daily_schedule
 from models.Schedule import Schedule
-from events.purge_transaction import purge_offerers, purge_requestors
+from events.purge_transaction import purge_offerers, purge_requestors, delete_sell_noti
 
 async def accept(interaction: discord.Interaction, requested_schedule: Schedule, offered_schedule: Schedule):
     id_penawar = offered_schedule.get_pic_id()
@@ -22,30 +21,13 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
 
     await save_presence()
 
-    embeds = []
-
-    embed_permintaan=discord.Embed(
-        title="Jadwal yang Akan Diserahkan", 
-        color=discord.Color.green(),
-        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya:")
-    )
-    embeds.append(embed_permintaan)
-
-    embed_tawaran=discord.Embed(
-        title="Jadwal yang Akan Diterima", 
-        color=discord.Color.green(),
-        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya:")
-    )
-    embeds.append(embed_tawaran)
-
     content=f"**✅ Tawaran Diterima**"
 
-    await interaction.response.edit_message(content=content, embeds=embeds, view=None)
+    await interaction.response.edit_message(content=content, view=None)
     await update_daily_schedule()
 
     embed_accepted_swap = discord.Embed(
-        title="Detail Penukaran Jadwal",
-        color=discord.Color.green()
+        title="Detail Penukaran Jadwal"
     )
 
     nama_penawar = jadwal.anggota[id_penawar]['nama']
@@ -92,6 +74,8 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
     await dm_message.delete()
 
     persistent_vars["swap_notification_ids"].pop(f"{requested_schedule.get_key()}_{offered_schedule.get_key()}", None)
+    persistent_vars["swap_notification_ids"].pop(requested_schedule.get_key(), None)
+    await delete_sell_noti(requested_schedule.get_key(), "🤷 Jadwal Telah Ditukarkan")
     await purge_requestors(offered_schedule, "🤷 Jadwal yang Ditawarkan Telah Diambil Oleh Anggota Lain")
     await purge_offerers(requested_schedule, "🤷 Tawaran yang Lain Telah Diterima")
     await save_persistent()

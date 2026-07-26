@@ -31,8 +31,7 @@ async def jadwalsholat(interaction: discord.Interaction, tanggal: str):
         return
 
     embed=discord.Embed(
-        title=f"🕌 Jadwal Sholat {jadwal.jadwal_sholat[target_date]['hari']}, {jadwal.jadwal_sholat[target_date]['tanggal_lengkap']}",
-        color=discord.Color.green()
+        title=f"🕌 Jadwal Sholat {jadwal.jadwal_sholat[target_date]['hari']}, {jadwal.jadwal_sholat[target_date]['tanggal_lengkap']}"
     )
 
     for sholat in SHOLAT_TITLE:

@@ -83,14 +83,7 @@ async def purge_expireds():
 
             if noti_datetime >= global_datetime: continue
             
-            channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-            noti_id = persistent_vars["notification_ids"][noti_key]
-            try:
-                message = await channel.fetch_message(noti_id)
-                await message.edit(content="⌛ **Jadwal Kadaluarsa**", view=None)
-            except Exception:
-                pass
-            persistent_vars["notification_ids"].pop(noti_key, None)
+            await delete_sell_noti(noti_key, "⌛ Jadwal Kadaluarsa")
         except Exception:
             continue
 
@@ -105,13 +98,7 @@ async def purge_expireds():
             if noti_datetime >= global_datetime: continue
 
             if len(noti_detail) == 4:
-                channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-                noti_id = persistent_vars["swap_notification_ids"][noti_key]["message_id"]
-                try:
-                    message = await channel.fetch_message(noti_id)
-                    await message.edit(content="⌛ **Jadwal Kadaluarsa**", view=None)
-                except Exception:
-                    pass
+                await delete_swap_noti(noti_key, "⌛ Jadwal Kadaluarsa")
             else:
                 requestor_channel_id = persistent_vars["swap_notification_ids"][noti_key]["requestor_channel_id"]
                 requestor_message_id = persistent_vars["swap_notification_ids"][noti_key]["requestor_message_id"]
@@ -140,7 +127,31 @@ async def purge_expireds():
                     # TODO: make the logic for this
                     pass
 
-            persistent_vars["swap_notification_ids"].pop(noti_key, None)
+                persistent_vars["swap_notification_ids"].pop(noti_key, None)
 
         except Exception:
             continue
+
+async def delete_swap_noti(noti_key: str, content: str):
+    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
+    noti = persistent_vars["swap_notification_ids"].get(noti_key)
+
+    if noti is None: return
+    
+    noti_id = noti.get("message_id")
+    try:
+        message = await channel.fetch_message(noti_id)
+        await message.edit(content=f"**{content}**", view=None)
+    except Exception:
+        pass
+    persistent_vars["swap_notification_ids"].pop(noti_key, None)
+
+async def delete_sell_noti(noti_key: str, content: str):
+    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
+    noti_id = persistent_vars["notification_ids"].get(noti_key)
+    try:
+        message = await channel.fetch_message(noti_id)
+        await message.edit(content=f"**{content}**", view=None)
+    except Exception:
+        pass
+    persistent_vars["notification_ids"].pop(noti_key, None)
