@@ -9,12 +9,11 @@ from repository.loader import jadwal
 from mission_util import next_weekday
 
 async def export_json(target: discord.Webhook):
-    json_file = open("src/data/presensi_rawatib.json", "rb")
-    await target.send(
-        content="## 📃 File json presensi keseluruhan",
-        file=discord.File(json_file)
-    )
-    json_file.close
+    with open("src/data/presensi_rawatib.json", "rb") as json_file:
+        await target.send(
+            content="## 📃 File json presensi keseluruhan",
+            file=discord.File(json_file)
+        )
 
 def export_next_monday():
     MONDAY = 0
@@ -53,21 +52,18 @@ async def export_to_excel(target: discord.Webhook, export_range):
 
     week_number = (datetime.now(SYSTEM_TIMEZONE) - timedelta(days=1)).strftime("%W") # -1 hari karena dikirim hari senin minggu depannya
 
-    report_file = open("ExcelReport.xlsx", "rb")
+    with open("ExcelReport.xlsx", "rb") as report_file:
+        if export_range == 8:
+            content=f"## 📋 Rekapitulasi Presensi Minggu-{week_number}"
+            filename=f"Laporan_Minggu-{week_number}.xlsx"
+        else:
+            content=f"## 📋 Rekapitulasi Presensi {export_range - 1} Hari ke Belakang"
+            filename=f"Laporan_{global_vars.system_date}.xlsx"
 
-    if export_range == 8:
-        content=f"## 📋 Rekapitulasi Presensi Minggu-{week_number}"
-        filename=f"Laporan_Minggu-{week_number}.xlsx"
-    else:
-        content=f"## 📋 Rekapitulasi Presensi {export_range - 1} Hari ke Belakang"
-        filename=f"Laporan_{global_vars.system_date}.xlsx"
-
-    await target.send(
-        content=content,
-        file=discord.File(report_file, filename=filename)
-    )
-
-    report_file.close()
+        await target.send(
+            content=content,
+            file=discord.File(report_file, filename=filename)
+        )
 
 def export_presensi(tempat: str, workbook: xlsxwriter.Workbook, formats: dict, export_range):
     JUMLAH_TUGAS_SHOLAT = {
@@ -134,14 +130,16 @@ def export_presensi(tempat: str, workbook: xlsxwriter.Workbook, formats: dict, e
                 confirmed = jadwal.presensi_rawatib[tanggal][tempat][sholat][tugas]['confirmed']
                 id_sub = jadwal.presensi_rawatib[tanggal][tempat][sholat][tugas]['id_sub']
 
-                anggota = jadwal.anggota[id_anggota]
+                if id_sub == 0:
+                    anggota = jadwal.anggota[id_anggota]
+                else:
+                    anggota = jadwal.anggota[id_sub]
                     
                 if confirmed:
                     if id_sub == 0:
                         color_format = formats["green"]
                     else:
                         color_format = formats["blue"]
-                        anggota = jadwal.anggota[id_sub]
                 elif anggota['uid'] == 0:
                     color_format = formats["grey"]
                 else:

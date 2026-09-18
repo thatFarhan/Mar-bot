@@ -29,11 +29,13 @@ async def sellweekmodal(interaction: discord.Interaction):
 
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
+    if not persistent_vars["bot_config"]["autosell"]: return
+
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
     id_petugas = jadwal_harian[tempat][sholat][tugas]["id_anggota"]
     alasan = "Gagal konfirmasi tepat waktu"
     alasan_dict = {id_petugas: alasan}
-    jadwal.alasan_absen[global_vars.system_date][id_petugas] = alasan_dict
+    jadwal.alasan_absen[global_vars.system_date] = alasan_dict
     await save_reason()
 
     schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)

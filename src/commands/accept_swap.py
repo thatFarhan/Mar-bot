@@ -30,10 +30,9 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
         title="Detail Penukaran Jadwal"
     )
 
-    nama_penawar = jadwal.anggota[id_penawar]['nama']
     embed_accepted_swap.add_field(
         name="Jadwal A",
-        value=requested_schedule.get_unreasoned_desc("Petugas Pengganti", nama_penawar),
+        value=requested_schedule.get_unreasoned_desc("Petugas Pengganti"),
         inline=False
     )
 
@@ -43,10 +42,9 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
         inline=False
     )
 
-    nama_peminta = jadwal.anggota[id_peminta]['nama']
     embed_accepted_swap.add_field(
         name="Jadwal B",
-        value=offered_schedule.get_unreasoned_desc("Petugas Pengganti", nama_peminta),
+        value=offered_schedule.get_unreasoned_desc("Petugas Pengganti"),
         inline=False
     )
 

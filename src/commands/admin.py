@@ -4,6 +4,7 @@ from server_config import GUILD_ID
 from events.daily_schedule import send_daily_schedule, write_todays_pic
 from events.reminder import send_reminder, reset_reminder_sent, set_reminders
 from views.edit_schedule_view import EditScheduleView
+from views.botconfig_modal import BotConfigModal
 from builders.edit_schedule_builder import build_schedule
 from repository.loader import jadwal
 from repository.export import export_to_excel, export_json
@@ -52,3 +53,8 @@ async def export(interaction: discord.Interaction, export_range: int = 7):
 async def exportjson(interaction: discord.Interaction):
     await interaction.response.defer()
     await export_json(interaction.followup)
+
+@bot.tree.command(name="botconfig", description="[ADMIN] Mengatur konfigurasi bot", guild=GUILD_ID)
+@app_commands.checks.has_role("Marbot Mar-bot")
+async def botconfig(interaction: discord.Interaction):
+    await interaction.response.send_modal(BotConfigModal())

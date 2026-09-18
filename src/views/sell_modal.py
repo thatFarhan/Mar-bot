@@ -14,6 +14,7 @@ class SellModal(discord.ui.Modal):
     def __init__(self, uid: int):
         super().__init__(title="Request Pengganti Hari Ini")
         self.uid = uid
+        self.id_requestor = None
 
         select_options = []
         jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
@@ -36,10 +37,9 @@ class SellModal(discord.ui.Modal):
                         continue
 
                     if detail_petugas['uid'] == uid:
-                        global id_requestor
-                        id_requestor = petugas['id_anggota']
+                        self.id_requestor = petugas['id_anggota']
                     elif detail_pengganti['uid'] == uid:
-                        id_requestor = petugas['id_sub']
+                        self.id_requestor = petugas['id_sub']
 
                     select_options.append(discord.SelectOption(label=f"{tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{tempat}_{sholat}_{tugas}"))
 
@@ -81,7 +81,7 @@ class SellModal(discord.ui.Modal):
     
     async def on_submit(self, interaction):
         alasan = self.find_item(1).component.value
-        alasan_dict = {str(id_requestor): alasan}
+        alasan_dict = {str(self.id_requestor): alasan}
 
         jadwal.alasan_absen[global_vars.system_date] = alasan_dict
 
@@ -105,6 +105,7 @@ class SellWeekModal(discord.ui.Modal):
     def __init__(self, uid: int):
         super().__init__(title="Request Pengganti Pekan Ini")
         self.uid = uid
+        self.id_requestor = None
 
         select_options = []
         for i in range(7):
@@ -131,10 +132,9 @@ class SellWeekModal(discord.ui.Modal):
                             continue
 
                         if detail_petugas['uid'] == uid:
-                            global id_requestor
-                            id_requestor = petugas['id_anggota']
+                            self.id_requestor = petugas['id_anggota']
                         elif detail_pengganti['uid'] == uid:
-                            id_requestor = petugas['id_sub']
+                            self.id_requestor = petugas['id_sub']
 
                         select_options.append(discord.SelectOption(label=f"({day_name}) {tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{str_iterated_date}_{tempat}_{sholat}_{tugas}"))
 
@@ -177,7 +177,7 @@ class SellWeekModal(discord.ui.Modal):
     
     async def on_submit(self, interaction):
         alasan = self.find_item(1).component.value
-        alasan_dict = {str(id_requestor): alasan}
+        alasan_dict = {str(self.id_requestor): alasan}
 
         sold_dates = set()
 

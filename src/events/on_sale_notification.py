@@ -2,7 +2,7 @@ import discord
 from config import bot, mention_everyone, NAMA_HARI
 from server_config import SUB_REQUESTS_CHANNEL
 from global_vars import global_vars
-from mission_util import to_datetime, to_indo_date_format
+from mission_util import to_datetime
 from repository.loader import jadwal
 from repository.persistent_loader import persistent_vars, save_persistent
 from views.claim_button import ClaimButton

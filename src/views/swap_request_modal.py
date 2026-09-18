@@ -13,6 +13,7 @@ class SwapRequestModal(discord.ui.Modal):
     def __init__(self, uid: int):
         super().__init__(title="Request Penukaran Jadwal Hari Ini")
         self.uid = uid
+        self.id_requestor = None
 
         select_options = []
         jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
@@ -35,10 +36,9 @@ class SwapRequestModal(discord.ui.Modal):
                         continue
 
                     if detail_petugas['uid'] == uid:
-                        global id_requestor
-                        id_requestor = petugas['id_anggota']
+                        self.id_requestor = petugas['id_anggota']
                     elif detail_pengganti['uid'] == uid:
-                        id_requestor = petugas['id_sub']
+                        self.id_requestor = petugas['id_sub']
 
                     select_options.append(discord.SelectOption(label=f"{tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{tempat}_{sholat}_{tugas}"))
 
@@ -80,7 +80,7 @@ class SwapRequestModal(discord.ui.Modal):
     
     async def on_submit(self, interaction):
         alasan = self.find_item(1).component.value
-        alasan_dict = {str(id_requestor): alasan}
+        alasan_dict = {str(self.id_requestor): alasan}
 
         jadwal.alasan_absen[global_vars.system_date] = alasan_dict
 
@@ -104,6 +104,7 @@ class SwapRequestWeekModal(discord.ui.Modal):
     def __init__(self, uid: int):
         super().__init__(title="Request Penukaran Jadwal Pekan Ini")
         self.uid = uid
+        self.id_requestor = None
 
         select_options = []
         for i in range(7):
@@ -130,10 +131,9 @@ class SwapRequestWeekModal(discord.ui.Modal):
                             continue
 
                         if detail_petugas['uid'] == uid:
-                            global id_requestor
-                            id_requestor = petugas['id_anggota']
+                            self.id_requestor = petugas['id_anggota']
                         elif detail_pengganti['uid'] == uid:
-                            id_requestor = petugas['id_sub']
+                            self.id_requestor = petugas['id_sub']
 
                         select_options.append(discord.SelectOption(label=f"({day_name}) {tugas.capitalize()} Sholat {sholat.capitalize()} di {tempat.upper()}", value=f"{str_iterated_date}_{tempat}_{sholat}_{tugas}"))
 
@@ -176,7 +176,7 @@ class SwapRequestWeekModal(discord.ui.Modal):
     
     async def on_submit(self, interaction):
         alasan = self.find_item(1).component.value
-        alasan_dict = {str(id_requestor): alasan}
+        alasan_dict = {str(self.id_requestor): alasan}
 
         for swapped_jadwal in self.find_item(0).component.values:
             detail_jadwal = swapped_jadwal.split("_")

@@ -1,12 +1,15 @@
 {
     "reminder_sent": {
         "subuh": false,
-        "dzuhur": false,
+        "dzuhur": true,
         "ashar": false,
         "maghrib": false,
         "isya": false
     },
     "notification_ids": {},
     "swap_notification_ids": {},
-    "current_daily_schedule_id": 0
+    "current_daily_schedule_id": 0,
+    "bot_config": {
+        "autosell": false
+    }
 }
