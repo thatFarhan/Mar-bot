@@ -85,7 +85,7 @@ class EditModal(discord.ui.Modal):
             new_pic = child.component.value.lower()
 
             if new_pic not in id_petugas:
-                new_pic = "kosong"
+                new_pic = "-"
 
             jadwal.jadwal_rawatib[f'{self.day_name}'][self.tempat_chosen][self.sholat_chosen][tugas]['id_anggota'] = id_petugas[new_pic]
 
