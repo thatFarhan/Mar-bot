@@ -21,3 +21,12 @@ async def update_daily_schedule():
     message = await daily_schedule_channel.fetch_message(persistent_vars["current_daily_schedule_id"])
 
     await message.edit(embeds=embeds)
+
+async def remove_buttons_from_daily_schedule():
+    if persistent_vars["current_daily_schedule_id"] == 0:
+        return
+
+    daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
+    message = await daily_schedule_channel.fetch_message(persistent_vars["current_daily_schedule_id"])
+
+    await message.edit(view=None)

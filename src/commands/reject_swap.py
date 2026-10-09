@@ -31,7 +31,7 @@ async def reject(interaction: discord.Interaction, requested_schedule: Schedule,
 
     try:
         dm_message = await dm_channel.fetch_message(offerer_message_id)
-        await dm_message.edit(content="**❌ Afwan, Tawaran Antum Ditolak.**", view=None)
+        await dm_message.edit(content="**❌ Afwan, Tawaran Anda Ditolak.**", view=None)
     except Exception:
         pass
 

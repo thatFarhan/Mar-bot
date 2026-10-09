@@ -10,8 +10,10 @@ from events.update_schedule_message import update_daily_schedule
 from events.purge_transaction import purge_requestors, purge_offerers, delete_swap_noti
 from models.Schedule import Schedule
 
-@bot.tree.command(name="forceclaim", description="[ADMIN] Mengklaim suatu jadwal yang perlu pengganti untuk seseorang", guild=GUILD_ID)
+@bot.tree.command(name="forceklaim", description="[ADMIN] Mengklaim suatu jadwal yang perlu pengganti untuk seseorang", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
 async def forceclaim(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum, pengganti: discord.Member):
     await interaction.response.defer(ephemeral=True)
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
@@ -67,7 +69,7 @@ async def claim(interaction: discord.Interaction, requested_schedule: Schedule):
             break
     # for else = will run when for is completed without break
     else:
-        await interaction.response.send_message("Akun antum belum teregistrasi sebagai akun anggota", ephemeral=True)
+        await interaction.response.send_message("Akun Anda belum teregistrasi sebagai akun anggota", ephemeral=True)
         return
 
     await save_presence()

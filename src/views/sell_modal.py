@@ -12,7 +12,7 @@ from models.Schedule import Schedule
 
 class SellModal(discord.ui.Modal):
     def __init__(self, uid: int):
-        super().__init__(title="Request Pengganti Hari Ini")
+        super().__init__(title="Minta Pengganti Hari Ini")
         self.uid = uid
         self.id_requestor = None
 
@@ -103,7 +103,7 @@ class SellModal(discord.ui.Modal):
 
 class SellWeekModal(discord.ui.Modal):
     def __init__(self, uid: int):
-        super().__init__(title="Request Pengganti Pekan Ini")
+        super().__init__(title="Minta Pengganti Pekan Ini")
         self.uid = uid
         self.id_requestor = None
 

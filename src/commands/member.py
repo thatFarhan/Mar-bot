@@ -4,8 +4,10 @@ from config import bot
 from server_config import GUILD_ID
 from repository.loader import jadwal, save_json
 
-@bot.tree.command(name="unregister", description="[ADMIN] Unregisters a member", guild=GUILD_ID)
+@bot.tree.command(name="undaftar", description="[ADMIN] Membatalkan pendaftaran seorang member", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
 async def unregister(interaction: discord.Interaction, member: discord.Member):
     for id in range(1, len(jadwal.anggota)):
         if member.id == jadwal.anggota[id]['uid']:
@@ -21,14 +23,16 @@ async def unregister(interaction: discord.Interaction, member: discord.Member):
     else:
         await interaction.response.send_message("Akun tersebut belum teregistrasi sebagai akun anggota", ephemeral=True)
 
-@bot.tree.command(name="removeuid", description="[ADMIN] Hanya hapus UID dari anggota.", guild=GUILD_ID)
+@bot.tree.command(name="hapusuid", description="[ADMIN] Hanya hapus UID dari anggota.", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def removeuid(interaction: discord.Interaction, nama: int):
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def hapusuid(interaction: discord.Interaction, nama: int):
     jadwal.anggota[nama]['uid'] = 0
     await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menghapus UID atas nama {jadwal.anggota[nama]['nama_lengkap']}.", ephemeral=True)
 
-@removeuid.autocomplete("nama")
+@hapusuid.autocomplete("nama")
 async def nama_autocomplete(interaction: discord.Interaction, nama: int):
     choices = []
     for i in range(1, len(jadwal.anggota)):
@@ -37,9 +41,11 @@ async def nama_autocomplete(interaction: discord.Interaction, nama: int):
 
     return choices
 
-@bot.tree.command(name="addmember", description="[ADMIN] Menambah anggota baru.", guild=GUILD_ID)
+@bot.tree.command(name="tambahanggota", description="[ADMIN] Menambah anggota baru.", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def addmember(interaction: discord.Interaction, nama_panggilan: str, nama_lengkap: str):
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def tambahanggota(interaction: discord.Interaction, nama_panggilan: str, nama_lengkap: str):
     for i in range(1, len(jadwal.anggota)):
         if jadwal.anggota[i]['nama'] != "":
             continue
@@ -60,9 +66,11 @@ async def addmember(interaction: discord.Interaction, nama_panggilan: str, nama_
     await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menambah anggota baru dengan id_anggota = {i}.", ephemeral=True)
 
-@bot.tree.command(name="removemember", description="[ADMIN] Menghapus anggota.", guild=GUILD_ID)
+@bot.tree.command(name="hapusanggota", description="[ADMIN] Menghapus anggota.", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def removemember(interaction: discord.Interaction, nama: int):
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def hapusanggota(interaction: discord.Interaction, nama: int):
     if nama == len(jadwal.anggota) - 1:
         jadwal.anggota.pop(nama)
     else:
@@ -72,7 +80,7 @@ async def removemember(interaction: discord.Interaction, nama: int):
     await save_json("src/data/anggota.json", jadwal.anggota)
     await interaction.response.send_message(content=f"Berhasil menghapus anggota dengan id_member = {nama}.", ephemeral=True)
 
-@removemember.autocomplete("nama")
+@hapusanggota.autocomplete("nama")
 async def nama_autocomplete(interaction: discord.Interaction, nama: int):
     choices = []
     for i in range(1, len(jadwal.anggota)):

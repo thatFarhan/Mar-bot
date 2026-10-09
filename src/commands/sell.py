@@ -11,7 +11,7 @@ from views.sell_modal import SellModal, SellWeekModal
 from global_vars import global_vars
 from models.Schedule import Schedule
 
-@bot.tree.command(name="ganti", description="Merequest pengganti untuk jadwal yang antum pilih di pekan ini", guild=GUILD_ID)
+@bot.tree.command(name="ganti", description="Meminta pengganti untuk jadwal yang Anda pilih di pekan ini", guild=GUILD_ID)
 async def sellweek(interaction: discord.Interaction):
     await sellweekmodal(interaction)
 
@@ -19,13 +19,13 @@ async def sellmodal(interaction: discord.Interaction):
     try:
         await interaction.response.send_modal(SellModal(interaction.user.id))
     except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa direquest pengganti", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa diminta pengganti", ephemeral=True)
 
 async def sellweekmodal(interaction: discord.Interaction):
     try:
         await interaction.response.send_modal(SellWeekModal(interaction.user.id))
     except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa direquest pengganti", ephemeral=True)
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa diminta pengganti", ephemeral=True)
 
 # failed to confirm on time
 async def emergency_sell(tugas: str, sholat: str, tempat: str):
@@ -43,8 +43,10 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     await save_presence()
     await on_sale_noti(schedule, emergency=True)
 
-@bot.tree.command(name="forcerequest", description="[ADMIN] Merequest pengganti untuk suatu jadwal", guild=GUILD_ID)
+@bot.tree.command(name="forceganti", description="[ADMIN] Meminta pengganti untuk suatu jadwal", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
 async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
     if sholat.value not in jadwal_harian[tempat.value] or tugas.value not in jadwal_harian[tempat.value][sholat.value]:

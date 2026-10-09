@@ -12,10 +12,10 @@ class QuickConfirmationButtons(discord.ui.View):
     async def button_confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         await quick_confirm(interaction, self.sholat)
 
-    @discord.ui.button(label="Request Pengganti", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="Minta Pengganti", style=discord.ButtonStyle.red)
     async def button_sell(self, interaction: discord.Interaction, button: discord.ui.Button):
         await sellmodal(interaction)
 
-    @discord.ui.button(label="Tukar Jadwal", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="Minta Tukar", style=discord.ButtonStyle.primary)
     async def button_swap(self, interaction: discord.Interaction, button: discord.ui.Button):
         await swaprequestmodal(interaction)

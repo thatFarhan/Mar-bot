@@ -60,7 +60,7 @@ async def accept(interaction: discord.Interaction, requested_schedule: Schedule,
     dm_channel = bot.get_channel(offerer_channel_id)
 
     try:
-        await dm_channel.send(content="✅ Tawaran Antum Diterima!", embed=embed_accepted_swap)
+        await dm_channel.send(content="✅ Tawaran Anda Diterima!", embed=embed_accepted_swap)
     except Exception:
         # TODO: make the logic for this
         pass

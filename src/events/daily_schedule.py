@@ -10,8 +10,10 @@ from events.on_sale_notification import on_sale_noti
 from mission_util import to_datetime, to_indo_date_format
 from datetime import timedelta
 from models.Schedule import Schedule
+from events.update_schedule_message import remove_buttons_from_daily_schedule
 
 async def send_daily_schedule():
+    await remove_buttons_from_daily_schedule()
     embeds=[]
     tags=set()
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
@@ -44,7 +46,7 @@ async def send_daily_schedule():
 
     daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
     message = await daily_schedule_channel.send(
-        content=f"📜 Antum ada jadwal esok hari!\n\n{' '.join(tags)}\n# 📌 {global_vars.system_day_name} ({to_indo_date_format(global_vars.system_date)})",
+        content=f"📜 Anda ada jadwal esok hari!\n\n{' '.join(tags)}\n# 📌 {global_vars.system_day_name} ({to_indo_date_format(global_vars.system_date)})",
         embeds=embeds,
         view=ConfirmationButtons()
     )

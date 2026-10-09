@@ -11,7 +11,7 @@ from models.Schedule import Schedule
 
 class SwapRequestModal(discord.ui.Modal):
     def __init__(self, uid: int):
-        super().__init__(title="Request Penukaran Jadwal Hari Ini")
+        super().__init__(title="Minta Penukaran Jadwal Hari Ini")
         self.uid = uid
         self.id_requestor = None
 
@@ -102,7 +102,7 @@ class SwapRequestModal(discord.ui.Modal):
 
 class SwapRequestWeekModal(discord.ui.Modal):
     def __init__(self, uid: int):
-        super().__init__(title="Request Penukaran Jadwal Pekan Ini")
+        super().__init__(title="Minta Penukaran Jadwal Pekan Ini")
         self.uid = uid
         self.id_requestor = None
 
@@ -198,5 +198,5 @@ class SwapRequestWeekModal(discord.ui.Modal):
 
         await save_reason()
         await save_presence()
-        await interaction.response.send_message("Berhasil meminta pengganti untuk jadwal yang telah dipilih", ephemeral=True)
+        await interaction.response.send_message("Berhasil meminta penukaran jadwal untuk jadwal yang telah dipilih", ephemeral=True)
         await update_daily_schedule()

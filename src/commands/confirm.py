@@ -9,7 +9,7 @@ from views.confirm_modal import ConfirmModal
 from global_vars import global_vars
 from models.Schedule import Schedule
 
-@bot.tree.command(name="konfirmasi", description="Mengonfirmasi presensi untuk jadwal yang antum pilih di hari ini", guild=GUILD_ID)
+@bot.tree.command(name="konfirmasi", description="Mengonfirmasi presensi untuk jadwal yang Anda pilih di hari ini", guild=GUILD_ID)
 async def confirm(interaction: discord.Interaction):
     select_options = []
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
@@ -57,7 +57,7 @@ async def confirm_all(interaction: discord.Interaction):
         
     if confirmed_anything:
         await save_presence()
-        await interaction.followup.send(content="Berhasil mengonfirmasi jadwal antum hari ini, Syukran Jazilan 🙏", ephemeral=True)
+        await interaction.followup.send(content="Berhasil mengonfirmasi jadwal Anda hari ini, Syukran Jazilan 🙏", ephemeral=True)
         await update_daily_schedule()
     else:
         await interaction.followup.send(content="Tidak ada jadwal yang bisa dikonfirmasi", ephemeral=True)
@@ -87,11 +87,13 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
         await interaction.followup.send(f"Berhasil mengonfirmasi jadwal Sholat {sholat.capitalize()} hari ini, Syukran Jazilan 🙏", ephemeral=True)    
         await update_daily_schedule()
     else:
-        await interaction.followup.send(f"Antum tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
+        await interaction.followup.send(f"Anda tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
 
-@bot.tree.command(name="forceconfirm", description="[ADMIN] Mengonfirmasi presensi suatu jadwal", guild=GUILD_ID)
+@bot.tree.command(name="forcekonfirmasi", description="[ADMIN] Mengonfirmasi presensi suatu jadwal", guild=GUILD_ID)
 @app_commands.checks.has_role("Marbot Mar-bot")
-async def forceconfirm(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def forcekonfirmasi(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
     jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
     if sholat.value not in jadwal_harian[tempat.value] or tugas.value not in jadwal_harian[tempat.value][sholat.value]:
         await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
