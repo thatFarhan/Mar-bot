@@ -1,3 +1,5 @@
+import discord
+
 from config import bot
 from server_config import DAILY_SCHEDULE_CHANNEL
 from repository.loader import jadwal
@@ -27,6 +29,9 @@ async def remove_buttons_from_daily_schedule():
         return
 
     daily_schedule_channel=bot.get_channel(DAILY_SCHEDULE_CHANNEL)
-    message = await daily_schedule_channel.fetch_message(persistent_vars["current_daily_schedule_id"])
+    try:
+        message = await daily_schedule_channel.fetch_message(persistent_vars["current_daily_schedule_id"])
+    except discord.NotFound:
+        return
 
     await message.edit(view=None)
