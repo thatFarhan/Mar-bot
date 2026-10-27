@@ -9,10 +9,10 @@ from views.botconfig_modal import BotConfigModal
 from builders.edit_schedule_builder import build_schedule
 from repository.loader import jadwal
 from repository.export import export_to_excel, export_json
+from database.discord_server import ChannelTypeEnum, update_channel
 import discord
 
 @bot.tree.command(name="jadwalharian", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def jadwalharian(interaction: discord.Interaction):
@@ -23,7 +23,6 @@ async def jadwalharian(interaction: discord.Interaction):
     await reset_reminder_sent()
 
 @bot.tree.command(name="tulisulang", description="[ADMIN] Menulis ulang jadwal hari ini", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def refreshtoday(interaction: discord.Interaction):
@@ -33,7 +32,6 @@ async def refreshtoday(interaction: discord.Interaction):
     await update_daily_schedule()
 
 @bot.tree.command(name="kirimreminder", description="[ADMIN] Mengirim reminder untuk jadwal sholat yang ditentukan",guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def testreminder(interaction: discord.Interaction, sholat: SholatEnum):
@@ -41,7 +39,6 @@ async def testreminder(interaction: discord.Interaction, sholat: SholatEnum):
     await send_reminder(sholat.value)
 
 @bot.tree.command(name="editjadwal", description="[ADMIN] Menampilkan interface untuk mengedit jadwal rawatib", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def editschedule(interaction: discord.Interaction):
@@ -52,7 +49,6 @@ async def editschedule(interaction: discord.Interaction):
     await interaction.response.send_message(content="# `📝 Edit jadwal hari Senin`", embeds=embeds, view=EditScheduleView(day_name="Senin", sholat_chosen="subuh", tempat_chosen="msu"))
 
 @bot.tree.command(name="export", description="[ADMIN] Mengekspor data presensi dari seminggu terakhir", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 @app_commands.describe(export_range="Berapa hari ke belakang yang di export")
@@ -61,7 +57,6 @@ async def export(interaction: discord.Interaction, export_range: int = 7):
     await export_to_excel(interaction.followup, export_range + 1)
 
 @bot.tree.command(name="exportjson", description="[ADMIN] Mengekspor data presensi keseluruhan dalam bentuk json", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def exportjson(interaction: discord.Interaction):
@@ -69,8 +64,14 @@ async def exportjson(interaction: discord.Interaction):
     await export_json(interaction.followup)
 
 @bot.tree.command(name="botconfig", description="[ADMIN] Mengatur konfigurasi bot", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def botconfig(interaction: discord.Interaction):
     await interaction.response.send_modal(BotConfigModal())
+
+@bot.tree.command(name="setchannel", description="[ADMIN] Mengatur channel ini menjadi channel yang dipilih", guild=GUILD_ID)
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def setchannel(interaction: discord.Interaction, channel_type: ChannelTypeEnum):
+    await update_channel(channel_type.value, interaction.guild_id, interaction.channel_id)
+    await interaction.response.send_message(content=f"Berhasil mengatur channel ini menjadi channel {channel_type.name}", ephemeral=True)

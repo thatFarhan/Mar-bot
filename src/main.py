@@ -1,8 +1,11 @@
+import asyncio
+
 import discord
 from datetime import datetime, timedelta
 
 # file imports
 from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, token
+from database.connection import init_database, DatabaseError
 from server_config import GUILD_ID
 from global_vars import global_vars
 from repository.loader import jadwal
@@ -15,6 +18,7 @@ from events.new_prayer_schedule import get_new_schedule
 from mission_util import to_datetime
 
 from commands import admin, confirm, extras, sell, register, claim, member, jumat_schedule, swap
+from database import discord_server
 
 @bot.event
 async def on_ready():
@@ -51,4 +55,22 @@ async def on_ready():
     export_next_monday()
     set_reminders()
 
-bot.run(token)
+async def main():
+    try:
+        bot.db = await init_database()
+    except DatabaseError as e:
+        print("Aborting startup: ", e)
+        return  # never connects to Discord
+
+    try:
+        async with bot:
+            await bot.start(token)
+    finally:
+        bot.db.close()
+        await bot.db.wait_closed()
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Shut down by user. Bye!")

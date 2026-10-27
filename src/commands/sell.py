@@ -44,7 +44,6 @@ async def emergency_sell(tugas: str, sholat: str, tempat: str):
     await on_sale_noti(schedule, emergency=True)
 
 @bot.tree.command(name="forceganti", description="[ADMIN] Meminta pengganti untuk suatu jadwal", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):

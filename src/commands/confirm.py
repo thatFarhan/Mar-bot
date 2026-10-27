@@ -90,7 +90,6 @@ async def quick_confirm(interaction: discord.Interaction, sholat: str):
         await interaction.followup.send(f"Anda tidak memiliki jadwal untuk Sholat {sholat.capitalize()} hari ini", ephemeral=True)
 
 @bot.tree.command(name="forcekonfirmasi", description="[ADMIN] Mengonfirmasi presensi suatu jadwal", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def forcekonfirmasi(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):

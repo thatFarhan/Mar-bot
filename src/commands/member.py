@@ -5,7 +5,6 @@ from server_config import GUILD_ID
 from repository.loader import jadwal, save_json
 
 @bot.tree.command(name="undaftar", description="[ADMIN] Membatalkan pendaftaran seorang member", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def unregister(interaction: discord.Interaction, member: discord.Member):
@@ -24,7 +23,6 @@ async def unregister(interaction: discord.Interaction, member: discord.Member):
         await interaction.response.send_message("Akun tersebut belum teregistrasi sebagai akun anggota", ephemeral=True)
 
 @bot.tree.command(name="hapusuid", description="[ADMIN] Hanya hapus UID dari anggota.", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def hapusuid(interaction: discord.Interaction, nama: int):
@@ -42,7 +40,6 @@ async def nama_autocomplete(interaction: discord.Interaction, nama: int):
     return choices
 
 @bot.tree.command(name="tambahanggota", description="[ADMIN] Menambah anggota baru.", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def tambahanggota(interaction: discord.Interaction, nama_panggilan: str, nama_lengkap: str):
@@ -67,7 +64,6 @@ async def tambahanggota(interaction: discord.Interaction, nama_panggilan: str, n
     await interaction.response.send_message(content=f"Berhasil menambah anggota baru dengan id_anggota = {i}.", ephemeral=True)
 
 @bot.tree.command(name="hapusanggota", description="[ADMIN] Menghapus anggota.", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def hapusanggota(interaction: discord.Interaction, nama: int):

@@ -47,7 +47,6 @@ async def nama_autocomplete(interaction: discord.Interaction, nama: int):
     return choices
 
 @bot.tree.command(name="forcedaftar", description="[ADMIN] Memasukkan UID Discord seorang member ke dalam sistem", guild=GUILD_ID)
-@app_commands.checks.has_role("Marbot Mar-bot")
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def forcedaftar(interaction: discord.Interaction, member: discord.Member, nama: int):
