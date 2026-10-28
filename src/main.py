@@ -17,7 +17,7 @@ from views.confirmation_buttons import ConfirmationButtons
 from events.new_prayer_schedule import get_new_schedule
 from mission_util import to_datetime
 
-from commands import admin, confirm, extras, sell, register, claim, member, jumat_schedule, swap
+from commands import admin, confirm, extras, sell, claim, member, jumat_schedule, swap
 from database import discord_server
 
 @bot.event
