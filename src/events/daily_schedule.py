@@ -8,9 +8,13 @@ from repository.persistent_loader import persistent_vars, save_persistent
 from builders.daily_schedule_builder import build_schedule_and_tags
 from events.on_sale_notification import on_sale_noti
 from mission_util import to_datetime, to_indo_date_format
-from datetime import timedelta
+from datetime import timedelta, date
 from models.Schedule import Schedule
 from events.update_schedule_message import remove_buttons_from_daily_schedule
+
+from database.presensi import tanggal_and_masjid_exists_in_presensi, insert_many_presensi
+from database.masjid import get_all_id_masjid_and_is_weekly
+from database.jadwal_tetap import get_id_jadwal_tetap_on_day
 
 async def send_daily_schedule():
     await remove_buttons_from_daily_schedule()
@@ -71,29 +75,23 @@ async def write_todays_pic():
 
     await save_new_schedule(jadwal_harian, global_vars.system_date)
 
-async def write_pic(date: str):
-    datetime_object = to_datetime(date)
-    day_name = NAMA_HARI[datetime_object.weekday()]
-    jadwal_sehari = copy.deepcopy(jadwal.jadwal_rawatib[day_name])
-
-    if day_name == "Jum'at":
-        if date in jadwal.jadwal_jumat:
-            jadwal_sehari["msu"]["dzuhur"] = {"Muadzin": {"id_anggota": jadwal.jadwal_jumat[date]}}
-
-    for tempat in jadwal_sehari:
-        for sholat in jadwal_sehari[tempat]:
-            for tugas in jadwal_sehari[tempat][sholat]:
-                # additional attributes
-                petugas=jadwal_sehari[tempat][sholat][tugas]
-                petugas['confirmed'] = False
-                petugas['need_sub'] = False
-                petugas['id_sub'] = 0
-    
-    await save_new_schedule(jadwal_sehari, date)
-
 async def write_pics_weekahead():
+    pics = []
+    masjids = await get_all_id_masjid_and_is_weekly()
     for i in range(7):
-        iterated_date = to_datetime(global_vars.system_date) + timedelta(i)
-        str_iterated_date = str(iterated_date.date())
-        if str_iterated_date not in jadwal.presensi_rawatib:
-            await write_pic(str_iterated_date)
+        iterated_date = (to_datetime(global_vars.system_date) + timedelta(days=i)).date()
+        for masjid in masjids:
+            if await tanggal_and_masjid_exists_in_presensi(iterated_date, masjid["id_masjid"]):
+                continue
+
+            if masjid["is_weekly"]:
+                hari = iterated_date.weekday()
+            else:
+                hari = iterated_date.day
+
+            jadwal_ids = await get_id_jadwal_tetap_on_day(hari, masjid["id_masjid"])
+            for jadwal_id in jadwal_ids:
+                pics.append((iterated_date, jadwal_id))
+
+    if pics:   
+        await insert_many_presensi(pics)

@@ -1,10 +1,7 @@
-import re
 from pathlib import Path
 
 import aiomysql
-
-class DatabaseError(Exception):
-    """Raised when the database can't be reached or set up."""
+from aiomysql import DatabaseError
 
 async def init_database() -> aiomysql.Pool:
 

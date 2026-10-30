@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS anggota (
 CREATE TABLE IF NOT EXISTS masjid (
     id_masjid BIGINT AUTO_INCREMENT PRIMARY KEY,
     nama_masjid VARCHAR(255),
-    alamat_masjid VARCHAR(255),
     region VARCHAR(255),
     is_weekly BOOLEAN DEFAULT TRUE,
     masjid_enabled BOOLEAN DEFAULT FALSE,

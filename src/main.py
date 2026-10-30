@@ -42,9 +42,7 @@ async def on_ready():
     if jadwal.data_sholat["bulan"] != datetime.now(SYSTEM_TIMEZONE).month:
         await get_new_schedule()
 
-    date_next_week = str(to_datetime(global_vars.system_date) + timedelta(6))
-    if date_next_week not in jadwal.presensi_rawatib:
-        await write_pics_weekahead()
+    await write_pics_weekahead()
 
     if not new_system_day.is_running():
         new_system_day.start()
