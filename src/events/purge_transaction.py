@@ -1,157 +1,61 @@
+import time
+
 from config import bot
-from server_config import SUB_REQUESTS_CHANNEL
-from repository.persistent_loader import persistent_vars, save_persistent
 from repository.loader import global_vars
 from models.Schedule import Schedule
-from mission_util import to_datetime
 
-async def purge_requestors(offered_schedule: Schedule, content: str):
-    for key in dict(persistent_vars["swap_notification_ids"]):
-        noti_detail = key.split("_")
-        if len(noti_detail) < 5: continue
+from database.notifikasi import get_related_notis, delete_related_notis, get_swap_offer_noti, delete_noti_by_id, get_offers_from_request, delete_notis_by_ids, get_expired_notis, delete_expireds
 
-        noti_tanggal = noti_detail[4]
-        noti_tugas = noti_detail[5]
-        noti_sholat = noti_detail[6]
-        noti_tempat = noti_detail[7]
+async def delete_offer(requested_schedule: Schedule, offered_schedule: Schedule):
+    id_requested_schedule = requested_schedule.id_presensi
+    id_offered_schedule = offered_schedule.id_presensi
 
-        if f"{noti_tanggal}_{noti_tugas}_{noti_sholat}_{noti_tempat}" != offered_schedule.get_key(): continue
+    swap_offer_noti = await get_swap_offer_noti(id_requested_schedule, id_offered_schedule)
 
-        requestor_channel_id = persistent_vars["swap_notification_ids"][key]["requestor_channel_id"]
-        requestor_message_id = persistent_vars["swap_notification_ids"][key]["requestor_message_id"]
-        dm_channel = bot.get_channel(requestor_channel_id)
+    await edit_to_disable_message(swap_offer_noti["requestor_channel_id"], swap_offer_noti["requestor_message_id"], "❌ Tawaran Dibatalkan Oleh Penawar")
+    await delete_noti_by_id(swap_offer_noti["id_notifikasi"])
 
-        if dm_channel is None:
-            dm_channel = await bot.fetch_channel(requestor_channel_id)
+async def delete_request(requested_schedule: Schedule):
+    id_requested_schedule = requested_schedule.id_presensi
 
-        try:
-            dm_message = await dm_channel.fetch_message(requestor_message_id)
-            await dm_message.edit(content=f"**{content}**", view=None)
-        except Exception:
-            # TODO: make the logic for this
-            pass
+    offers = await get_offers_from_request(id_requested_schedule)
+    noti_ids = []
 
-        persistent_vars["swap_notification_ids"].pop(key, None)
+    for offer in offers:
+        await edit_to_disable_message(offer["offerer_channel_id"], offer["offerer_message_id"], "❌ Permintaan Dibatalkan")
+        await edit_to_disable_message(offer["requestor_channel_id"], offer["requestor_message_id"], "❌ Permintaan Dibatalkan")
+        noti_ids.append(offer["id_notifikasi"])
 
-async def purge_offerers(requested_schedule: Schedule, content: str):
-    for key in dict(persistent_vars["swap_notification_ids"]):
-        noti_detail = key.split("_")
-        if len(noti_detail) < 5: continue
-
-        noti_tanggal = noti_detail[0]
-        noti_tugas = noti_detail[1]
-        noti_sholat = noti_detail[2]
-        noti_tempat = noti_detail[3]
-
-        if f"{noti_tanggal}_{noti_tugas}_{noti_sholat}_{noti_tempat}" != requested_schedule.get_key(): continue
-
-        requestor_channel_id = persistent_vars["swap_notification_ids"][key]["requestor_channel_id"]
-        requestor_message_id = persistent_vars["swap_notification_ids"][key]["requestor_message_id"]
-        offerer_channel_id = persistent_vars["swap_notification_ids"][key]["offerer_channel_id"]
-        offerer_message_id = persistent_vars["swap_notification_ids"][key]["offerer_message_id"]
-        requestor_dm_channel = bot.get_channel(requestor_channel_id)
-        offerer_dm_channel = bot.get_channel(offerer_channel_id)
-
-        if requestor_dm_channel is None:
-            requestor_dm_channel = await bot.fetch_channel(requestor_channel_id)
-
-        if offerer_dm_channel is None:
-            offerer_dm_channel = await bot.fetch_channel(offerer_channel_id)
-
-        try:
-            dm_message = await requestor_dm_channel.fetch_message(requestor_message_id)
-            await dm_message.edit(content=f"**{content}**", view=None)
-        except Exception:
-            # TODO: make the logic for this
-            pass
-
-        try:
-            dm_message = await offerer_dm_channel.fetch_message(offerer_message_id)
-            await dm_message.edit(content=f"**{content}**", view=None)
-        except Exception:
-            # TODO: make the logic for this
-            pass
-
-        persistent_vars["swap_notification_ids"].pop(key, None)
+    await delete_notis_by_ids(noti_ids)
 
 async def purge_expireds():
-    for noti_key in list(persistent_vars["notification_ids"].keys()):
-        noti_date = noti_key.split("_")[0]
-        try:
-            noti_datetime = to_datetime(noti_date)
-            global_datetime = to_datetime(global_vars.system_date)
-
-            if noti_datetime >= global_datetime: continue
-            
-            await delete_sell_noti(noti_key, "⌛ Jadwal Kadaluarsa")
-        except Exception:
-            continue
-
-    for noti_key in list(persistent_vars["swap_notification_ids"].keys()):
-        noti_detail = noti_key.split("_")
-        noti_date = persistent_vars["swap_notification_ids"][noti_key]["expiry_date"]
-
-        try:
-            noti_datetime = to_datetime(noti_date)
-            global_datetime = to_datetime(global_vars.system_date)
-
-            if noti_datetime >= global_datetime: continue
-
-            if len(noti_detail) == 4:
-                await delete_swap_noti(noti_key, "⌛ Jadwal Kadaluarsa")
-            else:
-                requestor_channel_id = persistent_vars["swap_notification_ids"][noti_key]["requestor_channel_id"]
-                requestor_message_id = persistent_vars["swap_notification_ids"][noti_key]["requestor_message_id"]
-                offerer_channel_id = persistent_vars["swap_notification_ids"][noti_key]["offerer_channel_id"]
-                offerer_message_id = persistent_vars["swap_notification_ids"][noti_key]["offerer_message_id"]
-                requestor_dm_channel = bot.get_channel(requestor_channel_id)
-                offerer_dm_channel = bot.get_channel(offerer_channel_id)
-
-                if requestor_dm_channel is None:
-                    requestor_dm_channel = await bot.fetch_channel(requestor_channel_id)
-
-                if offerer_dm_channel is None:
-                    offerer_dm_channel = await bot.fetch_channel(offerer_channel_id)
-
-                try:
-                    dm_message = await requestor_dm_channel.fetch_message(requestor_message_id)
-                    await dm_message.edit(content=f"⌛ **Jadwal Kadaluarsa**", view=None)
-                except Exception:
-                    # TODO: make the logic for this
-                    pass
-
-                try:
-                    dm_message = await offerer_dm_channel.fetch_message(offerer_message_id)
-                    await dm_message.edit(content=f"⌛ **Jadwal Kadaluarsa**", view=None)
-                except Exception:
-                    # TODO: make the logic for this
-                    pass
-
-                persistent_vars["swap_notification_ids"].pop(noti_key, None)
-
-        except Exception:
-            continue
-
-async def delete_swap_noti(noti_key: str, content: str):
-    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-    noti = persistent_vars["swap_notification_ids"].get(noti_key)
-
-    if noti is None: return
+    expired_notis = await get_expired_notis(global_vars.system_date)
+    for expired_noti in expired_notis:
+        await edit_to_disable_message(expired_noti["offerer_channel_id"], expired_noti["offerer_message_id"], "⌛ Jadwal Kadaluarsa")
+        await edit_to_disable_message(expired_noti["requestor_channel_id"], expired_noti["requestor_message_id"], "⌛ Jadwal Kadaluarsa")
+        time.sleep(1)
     
-    noti_id = noti.get("message_id")
-    try:
-        message = await channel.fetch_message(noti_id)
-        await message.edit(content=f"**{content}**", view=None)
-    except Exception:
-        pass
-    persistent_vars["swap_notification_ids"].pop(noti_key, None)
+    await delete_expireds(global_vars.system_date)
 
-async def delete_sell_noti(noti_key: str, content: str):
-    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-    noti_id = persistent_vars["notification_ids"].get(noti_key)
+async def purge_related_notifications(id_presensi: int):
+    related_notis = await get_related_notis(id_presensi)
+    for related_noti in related_notis:
+        match related_noti["type"]:
+            case "sub_request":
+                await edit_to_disable_message(related_noti["requestor_channel_id"], related_noti["requestor_message_id"], "🤷 Jadwal Telah Diisi")
+            case "swap_request":
+                await edit_to_disable_message(related_noti["requestor_channel_id"], related_noti["requestor_message_id"], "🤷 Jadwal Telah Diisi")
+            case "swap_offer":
+                await edit_to_disable_message(related_noti["offerer_channel_id"], related_noti["offerer_message_id"], "🤷 Jadwal Telah Diisi")
+                await edit_to_disable_message(related_noti["requestor_channel_id"], related_noti["requestor_message_id"], "🤷 Jadwal Telah Diisi")
+    
+    await delete_related_notis(id_presensi)
+
+async def edit_to_disable_message(channel_id: int, message_id: int, content: str):
+    if channel_id is None or message_id is None: return
+    channel = bot.get_channel(channel_id)
     try:
-        message = await channel.fetch_message(noti_id)
+        message = await channel.fetch_message(message_id)
         await message.edit(content=f"**{content}**", view=None)
     except Exception:
         pass
-    persistent_vars["notification_ids"].pop(noti_key, None)

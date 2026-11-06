@@ -1,24 +1,28 @@
 import asyncio
 
 import discord
-from datetime import datetime, timedelta
+import traceback
+import logging
+from datetime import datetime
 
 # file imports
 from config import bot, SYSTEM_TIMEZONE, ACTUAL_TIMEZONE, token
 from database.connection import init_database, DatabaseError
 from server_config import GUILD_ID
-from global_vars import global_vars
 from repository.loader import jadwal
-from repository.export import export_next_monday
 from events.daily_tasks import new_system_day
 from events.daily_schedule import write_pics_weekahead
 from events.reminder import set_reminders, scheduler
 from views.confirmation_buttons import ConfirmationButtons
 from events.new_prayer_schedule import get_new_schedule
-from mission_util import to_datetime
 
 from commands import admin, confirm, extras, sell, claim, member, jumat_schedule, swap
-from database import discord_server
+from database.discord_server import get_all_servers
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
 
 @bot.event
 async def on_ready():
@@ -50,8 +54,25 @@ async def on_ready():
     if not scheduler.running:
         scheduler.start()
 
-    export_next_monday()
-    set_reminders()
+    # export_next_monday()
+    servers = await get_all_servers()
+    for server in servers:
+        await set_reminders(server["id_server"])
+
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    if isinstance(error, discord.app_commands.MissingPermissions):
+        msg = "Kamu tidak punya izin untuk menggunakan command ini."
+    else:
+        # Unwrap so you see the real aiomysql error, not just "CommandInvokeError"
+        original = getattr(error, "original", error)
+        traceback.print_exception(type(original), original, original.__traceback__)
+        msg = "Terjadi kesalahan saat memproses command."
+
+    if interaction.response.is_done():
+        await interaction.followup.send(msg, ephemeral=True)
+    else:
+        await interaction.response.send_message(msg, ephemeral=True)
 
 async def main():
     try:

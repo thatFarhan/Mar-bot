@@ -18,8 +18,7 @@ async def export_json(target: discord.Webhook):
 def export_next_monday():
     MONDAY = 0
     EXPORT_RANGE = 8
-    datetime_object = datetime.strptime(global_vars.system_date, "%Y-%m-%d")
-    run_date = next_weekday(datetime_object, MONDAY)
+    run_date = next_weekday(global_vars.system_date, MONDAY)
     target = bot.get_channel(ADMIN_CHANNEL)
     scheduler.add_job(func=export_to_excel, args=[target, EXPORT_RANGE], trigger="date", run_date=run_date, id="weekly_export", replace_existing=True, misfire_grace_time=60)
 
@@ -100,9 +99,8 @@ def export_presensi(tempat: str, workbook: xlsxwriter.Workbook, formats: dict, e
 
     petugas_col = 2
 
-    datetime_object = datetime.strptime(global_vars.system_date, "%Y-%m-%d")
     for i in range(1, export_range):
-        tanggal = str(datetime.date(datetime_object - timedelta(days=i)))
+        tanggal = str(global_vars.system_date - timedelta(days=i))
         if tanggal not in jadwal.presensi_rawatib: continue
         if tempat not in jadwal.presensi_rawatib[tanggal]: continue
 
@@ -164,11 +162,9 @@ def export_alasan_absen(workbook: xlsxwriter.Workbook, formats: dict, export_ran
     sheet_absen.set_column(TANGGAL_COL, NAMA_COL, width=12)
     sheet_absen.set_column(ALASAN_COL, ALASAN_COL, width=50)
 
-
-    datetime_object = datetime.strptime(global_vars.system_date, "%Y-%m-%d")
     start_row = 1
     for i in range(1, export_range):
-        tanggal = str(datetime.date(datetime_object - timedelta(days=i)))
+        tanggal = str(global_vars.system_date - timedelta(days=i))
         if tanggal not in jadwal.alasan_absen: continue
 
         current_row = int(start_row)

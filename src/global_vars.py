@@ -12,7 +12,7 @@ global_vars = GlobalVars()
 
 global_vars.system_day = datetime.now(SYSTEM_TIMEZONE).date().day-1
 
-global_vars.system_date = str(datetime.now(SYSTEM_TIMEZONE).date())
+global_vars.system_date = datetime.now(SYSTEM_TIMEZONE).date()
 
 global_vars.system_day_name = NAMA_HARI[datetime.now(SYSTEM_TIMEZONE).date().weekday()]
 

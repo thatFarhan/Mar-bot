@@ -4,7 +4,7 @@ from config import bot
 from server_config import GUILD_ID, WELCOME_CHANNEL
 from views.add_member_modal import AddMemberModal
 from views.name_picker import NamePicker, ConfirmDeletionView, ConfirmUnregisterView, ConfirmRegisterView, ForceRegisterView
-from database.anggota import update_to_remove_uid_using_details, get_all_anggota_from_server, get_all_registered_anggota_from_server, check_anggota_exists, get_all_unregistered_anggota_from_server
+from database.anggota import update_to_remove_uid_using_details, get_all_anggota_from_server, get_all_registered_anggota_from_server, get_anggota_by_guild_and_uid, get_all_unregistered_anggota_from_server
 
 
 class RegisterButton(discord.ui.View):
@@ -35,7 +35,7 @@ async def daftar(interaction: discord.Interaction):
     await register(interaction)
 
 async def register(interaction: discord.Interaction):
-    already_registered = await check_anggota_exists(interaction.guild_id, interaction.user.id)
+    already_registered = await get_anggota_by_guild_and_uid(interaction.guild_id, interaction.user.id)
     if already_registered:
         await interaction.response.send_message("Anda sudah terdaftar", ephemeral=True)
         return

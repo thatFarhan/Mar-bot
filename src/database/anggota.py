@@ -65,14 +65,15 @@ async def get_all_registered_anggota_from_server(guild_id: int):
             )
             return await cur.fetchall()
 
-async def check_anggota_exists(guild_id: int, discord_uid: int):
+async def get_anggota_by_guild_and_uid(guild_id: int, discord_uid: int):
     async with bot.db.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute(
                 "SELECT id_anggota FROM anggota WHERE id_server = %s AND discord_uid = %s",
                 (guild_id, discord_uid)
             )
-            return await cur.fetchone()
+            row = await cur.fetchone()
+            return row["id_anggota"]
 
 # DELETE
 

@@ -1,25 +1,26 @@
 import discord
-from commands.cancel_swap_request import cancel_swap_request
-from views.swap_offer_modal import SwapOfferModal
+
 from models.Schedule import Schedule
-from repository.loader import jadwal
+from commands.cancel_swap_request import cancel_swap_request
+from commands.offer_swap import offer_swap
+
+from database.presensi import get_schedule_by_id
 
 class OfferButton(discord.ui.View):
-    def __init__(self, requested_schedule: Schedule):
+    def __init__(self, id_presensi):
         super().__init__(timeout=None)
-        self.requested_schedule = requested_schedule
+        self.id_presensi = id_presensi
 
     @discord.ui.button(label="Tawarkan Penukaran", style=discord.ButtonStyle.primary)
     async def button_offer(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user.id == jadwal.anggota[self.requested_schedule.get_pic_id()]["uid"]:
-            await interaction.response.send_message("Tidak bisa menawarkan penukaran ke jadwal sendiri.", ephemeral=True)
-            return
-        
-        try:
-            await interaction.response.send_modal(SwapOfferModal(interaction.user.id, self.requested_schedule))
-        except discord.errors.HTTPException:
-            await interaction.response.send_message(content="Tidak ada jadwal yang bisa ditawarkan", ephemeral=True)
+        requested_schedule = await get_schedule_by_id(self.id_presensi)
+        requested_schedule_obj = Schedule(requested_schedule)
+
+        await offer_swap(interaction, requested_schedule_obj)
 
     @discord.ui.button(label="Batalkan", style=discord.ButtonStyle.red)
     async def button_cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await cancel_swap_request(interaction, self.requested_schedule)
+        requested_schedule = await get_schedule_by_id(self.id_presensi)
+        requested_schedule_obj = Schedule(requested_schedule)
+        
+        await cancel_swap_request(interaction, requested_schedule_obj)

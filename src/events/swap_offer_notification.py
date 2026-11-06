@@ -1,91 +1,72 @@
 import discord
 from config import bot, mention_everyone
-from server_config import SUB_REQUESTS_CHANNEL
-from mission_util import to_datetime
-from repository.loader import jadwal
-from repository.persistent_loader import persistent_vars, save_persistent
+
 from models.Schedule import Schedule
 from views.accept_offer_button import AcceptButton
 from views.cancel_button import CancelButton
+from builders.swap_schedule_builder import build_swap_embeds
+from global_vars import global_vars
 
-async def swap_offer_noti(interaction: discord.Interaction, requested_schedule: Schedule, offered_schedule: Schedule):
-    if offered_schedule.tugas == 'Hadits' or offered_schedule.tugas == 'Badal': return
+from database.presensi import get_schedule_by_id
+from database.discord_server import get_channel
+from database.notifikasi import insert_swap_offer_noti
 
-    id_peminta = requested_schedule.get_pic_id()
-    id_penawar = offered_schedule.get_pic_id()
-        
-    nama_peminta = jadwal.anggota[id_peminta]['nama']
-    nama_penawar = jadwal.anggota[id_penawar]['nama']
+async def swap_offer_noti(interaction: discord.Interaction, requested_schedule: dict, offered_schedule_id: str):
+    offered_schedule = await get_schedule_by_id(offered_schedule_id)
 
-    embeds_penawar = []
+    requested_schedule_obj = Schedule(requested_schedule)
+    offered_schedule_obj = Schedule(offered_schedule)
 
-    embed_tawaran2=discord.Embed(
-        title="Jadwal yang Akan Diserahkan",
-        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya")
-    )
-    embeds_penawar.append(embed_tawaran2)
+    offerer_embeds = build_swap_embeds(offered_schedule, requested_schedule)
 
-    embed_permintaan2=discord.Embed(
-        title="Jadwal yang Akan Diterima",
-        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya")
-    )
-    embeds_penawar.append(embed_permintaan2)
+    offerer_content=f"🔁 Berhasil Mengirim Tawaran ke {requested_schedule_obj.nama_petugas}!"
 
-    content2=f"🔁 Berhasil Mengirim Tawaran ke {nama_peminta}!"
+    uid_offerer = offered_schedule_obj.uid_petugas
+    user_offerer = bot.get_user(uid_offerer)
 
-    uid_penawar = jadwal.anggota[id_penawar]['uid']
-    user_penawar = bot.get_user(uid_penawar)
+    if user_offerer is None:
+        user_offerer = await bot.fetch_user(uid_offerer)
 
-    if user_penawar is None:
-        user_penawar = await bot.fetch_user(uid_penawar)
-
-    store_noti_id = dict()
-    store_noti_id["expiry_date"] = requested_schedule.tanggal if to_datetime(requested_schedule.tanggal) < to_datetime(offered_schedule.tanggal) else offered_schedule.tanggal
+    expiry_date = requested_schedule_obj.tanggal if requested_schedule_obj.tanggal < offered_schedule_obj.tanggal else offered_schedule_obj.tanggal
 
     try:
-        message2 = await user_penawar.send(content=content2, view=CancelButton(requested_schedule, offered_schedule), embeds=embeds_penawar)
+        offerer_message = await user_offerer.send(content=offerer_content, view=CancelButton(requested_schedule_obj, offered_schedule_obj), embeds=offerer_embeds)
         await interaction.response.send_message("Berhasil menawarkan jadwal untuk ditukar", ephemeral=True)
-
-        store_noti_id["offerer_channel_id"] = message2.channel.id
-        store_noti_id["offerer_message_id"] = message2.id
     except discord.Forbidden:
-        await interaction.response.send_message(content=content2, view=CancelButton(requested_schedule, offered_schedule), embeds=embeds_penawar, ephemeral=True)
+        offerer_message = await interaction.response.send_message(content=offerer_content, view=CancelButton(requested_schedule_obj, offered_schedule_obj), embeds=offerer_embeds, ephemeral=True)
 
-    embeds_peminta = []
+    offerer_channel_id = offerer_message.channel.id
+    offerer_message_id = offerer_message.id
 
-    embed_permintaan1=discord.Embed(
-        title="Jadwal yang Akan Diserahkan",
-        description=requested_schedule.get_unreasoned_desc("Petugas Sebelumnya")
-    )
-    embeds_peminta.append(embed_permintaan1)
+    requestor_embeds = build_swap_embeds(requested_schedule, offered_schedule)
 
-    embed_tawaran1=discord.Embed(
-        title="Jadwal yang Akan Diterima",
-        description=offered_schedule.get_unreasoned_desc("Petugas Sebelumnya")
-    )
-    embeds_peminta.append(embed_tawaran1)
+    requestor_content=f"🔁 Ada Tawaran dari {offered_schedule_obj.nama_petugas}!"
 
-    content1=f"🔁 Ada Tawaran dari {nama_penawar}!"
+    uid_requestor = requested_schedule_obj.uid_petugas
+    user_requestor = bot.get_user(uid_requestor)
 
-    uid_peminta = jadwal.anggota[id_peminta]['uid']
-    user_peminta = bot.get_user(uid_peminta)
-
-    if user_peminta is None:
-        user_peminta = await bot.fetch_user(uid_peminta)
+    if user_requestor is None:
+        user_requestor = await bot.fetch_user(uid_requestor)
 
     try:
-        message = await user_peminta.send(content=content1, embeds=embeds_peminta, view=AcceptButton(requested_schedule, offered_schedule))
+        requestor_message = await user_requestor.send(content=requestor_content, embeds=requestor_embeds, view=AcceptButton(requested_schedule_obj, offered_schedule_obj, interaction.guild_id))
 
     except discord.Forbidden:
-        target=bot.get_channel(SUB_REQUESTS_CHANNEL)
-        content1=f"🔁 Ada Tawaran dari {nama_penawar}!\n<@{uid_peminta}>"
-        message = await target.send(content=content1, embeds=embeds_peminta, view=AcceptButton(requested_schedule, offered_schedule), allowed_mentions=mention_everyone)
+        sub_requests_channel_id = await get_channel("sub_requests_channel", interaction.guild_id)
+        target=bot.get_channel(sub_requests_channel_id)
+        requestor_content=f"🔁 Ada Tawaran dari {offered_schedule_obj.nama_petugas}!\n<@{uid_requestor}>"
+        requestor_message = await target.send(content=requestor_content, embeds=requestor_embeds, view=AcceptButton(requested_schedule_obj, offered_schedule_obj, interaction.guild_id), allowed_mentions=mention_everyone)
         
-    store_noti_id["requestor_channel_id"] = message.channel.id
-    store_noti_id["requestor_message_id"] = message.id
+    requestor_channel_id = requestor_message.channel.id
+    requestor_message_id = requestor_message.id
 
-    key = f"{requested_schedule.get_key()}_{offered_schedule.get_key()}"
-
-    persistent_vars["swap_notification_ids"][key] = store_noti_id
-
-    await save_persistent()
+    await insert_swap_offer_noti(
+        sent_date=global_vars.system_date, 
+        expiry_date=expiry_date, 
+        requestor_message_id=requestor_message_id, 
+        requestor_channel_id=requestor_channel_id, 
+        offerer_message_id=offerer_message_id, 
+        offerer_channel_id=offerer_channel_id, 
+        id_requested_schedule=requested_schedule_obj.id_presensi, 
+        id_offered_schedule=offered_schedule_id
+    )

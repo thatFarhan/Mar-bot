@@ -1,16 +1,21 @@
 import discord
 from datetime import datetime, timedelta
 from repository.loader import jadwal
-from repository.persistent_loader import persistent_vars, save_persistent
 from global_vars import global_vars, scheduler
-from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, TEMPAT_TITLE, bot, SHOLAT_TUPLE
-from server_config import REMINDERS_CHANNEL, SUB_REQUESTS_CHANNEL
+from config import SHOLAT_TITLE, ACTUAL_TIMEZONE, bot, SHOLAT_TUPLE, SHOLAT_NUMBER
 from views.quick_confirmation_buttons import QuickConfirmationButtons
-from events.on_sale_notification import on_sale_noti
+from events.update_schedule_message import update_daily_schedule
+from events.resend_notification import resend_request_noti
 from commands.sell import emergency_sell
-from models.Schedule import Schedule
 
-def set_reminders():
+from database.presensi import get_reminder
+from database.masjid import get_enabled_masjids_from_server
+from database.discord_server import get_channel, get_bot_config, update_reminders_sent
+
+async def set_reminders(id_server: int):
+    bot_config = await get_bot_config(id_server)
+    reminder_send_time = bot_config["reminder_send_time"]
+    auto_sell_time = bot_config["auto_sell_time"]
     for sholat in SHOLAT_TUPLE:
         date=jadwal.jadwal_sholat[global_vars.system_day]['tanggal_lengkap'].split('-')
         time=jadwal.jadwal_sholat[global_vars.system_day][sholat].split(':')
@@ -18,17 +23,14 @@ def set_reminders():
         year, month, day = int(date[0]), int(date[1]), int(date[2])
         hour, minute = int(time[0]), int(time[1])
 
-        run_date=datetime(year=year, month=month, day=day, hour=hour, minute=minute) - timedelta(minutes=30)
+        run_date=datetime(year=year, month=month, day=day, hour=hour, minute=minute) - timedelta(minutes=reminder_send_time)
 
-        scheduler.add_job(func=send_reminder, args=[sholat], trigger='date', run_date=run_date, id=f"reminder_{sholat}", replace_existing=True, misfire_grace_time=60)
+        scheduler.add_job(func=send_reminder, args=[sholat, id_server, reminder_send_time, auto_sell_time], trigger='date', run_date=run_date, id=f"reminder_{sholat}_{id_server}", replace_existing=True, misfire_grace_time=60)
     
     for schedule in scheduler.get_jobs():
         print(schedule)
 
-async def send_reminder(sholat: str):
-    persistent_vars["reminder_sent"][sholat] = True
-    await save_persistent()
-
+async def send_reminder(sholat: str, id_server: int, reminder_send_time: int = "Test", auto_sell_time: int = 0):
     if global_vars.system_day_name == "Jum'at" and sholat == "dzuhur":
         sholat_title = "jum'at"
     else:
@@ -41,78 +43,102 @@ async def send_reminder(sholat: str):
     embed.set_footer(text="* Indikator kehadiran tidak diperbarui secara langsung (real-time). Untuk pembaruan langsung, lihat jadwal harian.")
 
     tags_need_confirmation=set()
-
     tags=set()
-    jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
-    for tempat in jadwal_harian:
-        if sholat not in jadwal_harian[tempat]: continue
+    field_values = dict()
 
-        list_petugas=[]
-        for tugas in jadwal_harian[tempat][sholat]:
-            petugas = jadwal_harian[tempat][sholat][tugas]
+    reminder_sholat = await get_reminder(global_vars.system_date, sholat.capitalize(), id_server)
 
-            if petugas["id_anggota"] == 0 and petugas["id_sub"] == 0: continue
+    masjids = await get_enabled_masjids_from_server(id_server)
+    for masjid in masjids:
+        field_values[masjid["nama_masjid"]] = []
 
-            confirmed = petugas['confirmed']
-            need_sub = petugas['need_sub']
-            id_sub = petugas['id_sub']
+    for schedule in reminder_sholat:
+        nama_reg = schedule["nama_reg"]
+        if nama_reg is None: continue
 
-            id_anggota = petugas['id_anggota']
-            anggota = jadwal.anggota[id_anggota]
+        id_presensi = schedule["id_presensi"]
+        tugas = schedule["tugas"]
+        confirmed = schedule["confirmed"]
+        need_sub = schedule["need_sub"]
+        swap_requested = schedule["swap_requested"]
+        nama_pic = schedule["nama_pic"]
+        uid_reg = schedule["uid_reg"]
+        uid_pic = schedule["uid_pic"]
+        
+        display_nama = nama_pic if nama_pic is not None else nama_reg
+        display_uid = uid_pic if uid_pic is not None else uid_reg
+        
+        if nama_reg == nama_pic and confirmed:
+            emoji = "✅"
+        elif nama_reg != nama_pic and confirmed:
+            emoji = "☑️"
+        elif need_sub:
+            emoji = "⚠️"
+        elif swap_requested:
+            emoji = "🔁"
+        else:
             emoji = "⬛"
+        
+        field_values[schedule["nama_masjid"]].append(f"{emoji} {tugas}: **{display_nama}**")
+        
+        if display_uid is not None and not need_sub and not swap_requested: 
+            tags.add(f"<@{display_uid}>")
 
-            if confirmed and id_sub == 0:
-                emoji = "✅"
-            if id_sub != 0:
-                anggota = jadwal.anggota[id_sub]
-                if confirmed:
-                    emoji = "☑️"
-            if need_sub:
-                emoji = "⚠️"
+        if not confirmed and not need_sub and not swap_requested:
+            tags_need_confirmation.add(f"<@{display_uid}>")
 
-            if not confirmed and not need_sub and anggota['uid'] != 0:
-                tags_need_confirmation.add(f"<@{anggota['uid']}>")
+            if auto_sell_time > 0:
+                run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=auto_sell_time)
+            
+                scheduler.add_job(
+                    func=emergency_sell, 
+                    args=[id_server, id_presensi], 
+                    trigger='date', 
+                    run_date=run_date, 
+                    id=f"emergency_{id_presensi}", 
+                    replace_existing=True,
+                    misfire_grace_time=60
+                )
 
-                # auto sell after 10 minutes if there's no confirmation
-                run_date=datetime.now(ACTUAL_TIMEZONE) + timedelta(minutes=10)
+        if need_sub:
+            await resend_request_noti(id_presensi, id_server, is_sub=True)
 
-                if tugas != "Hadits" and tugas != "Badal`":
-                    scheduler.add_job(func=emergency_sell, args=[tugas, sholat, tempat], trigger='date', run_date=run_date, id=f"emergency_{tugas}_{sholat}_{tempat}", replace_existing=True, misfire_grace_time=60)
-                    
-            elif petugas['need_sub']:
-                key = f"{global_vars.system_date}_{tugas}_{sholat}_{tempat}"
-                if key in persistent_vars["notification_ids"]:
-                    channel = bot.get_channel(SUB_REQUESTS_CHANNEL)
-                    noti_id = persistent_vars["notification_ids"][key]
-                    message = await channel.fetch_message(noti_id)
+        if swap_requested:
+            await resend_request_noti(id_presensi, id_server, is_sub=False)
 
-                    await message.delete()
-                
-                schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
-                await on_sale_noti(schedule, emergency=True)
-
-            list_petugas.append(f"{emoji} {tugas}: **{anggota['nama']}**")
-
-            if anggota['uid'] != 0 and not need_sub:
-                tags.add(f"<@{anggota['uid']}>")
-
-        if list_petugas:
+    for masjid in field_values:
+        if field_values[masjid]:
             embed.add_field(
-                name=TEMPAT_TITLE[tempat],
-                value="\n".join(list_petugas),
+                name=f"🕌 {masjid}",
+                value="\n".join(field_values[masjid]),
                 inline=True
             )
 
-    content=f"⏰ 30 Menit Menjelang Sholat {sholat_title.capitalize()}\n\n{' '.join(tags)}"
+    reminder_content=f"⏰ {reminder_send_time} Menit Menjelang Sholat {sholat_title.capitalize()}\n\n{' '.join(tags)}"
 
-    reminders_channel=bot.get_channel(REMINDERS_CHANNEL)
-    await reminders_channel.send(content=content, embed=embed, view=QuickConfirmationButtons(sholat))
+    reminders_channel_id = await get_channel("reminders_channel", id_server)
+    reminders_channel = bot.get_channel(reminders_channel_id)
+    await reminders_channel.send(content=reminder_content, embed=embed, view=QuickConfirmationButtons(sholat))
+    
     if tags_need_confirmation:
-        unix_timestamp=int(run_date.timestamp())
-        await reminders_channel.send(content=f"⚠️ Nama di bawah ini belum melakukan konfirmasi.\n\nHarap untuk melakukan konfirmasi <t:{unix_timestamp}:R>\n{' '.join(tags_need_confirmation)}")
+        need_confirmation_content = f"⚠️ Nama di bawah ini belum melakukan konfirmasi.\n{' '.join(tags_need_confirmation)}"
 
-async def reset_reminder_sent():
-    for sholat in SHOLAT_TUPLE:
-        persistent_vars["reminder_sent"][sholat] = False
+        if auto_sell_time > 0:
+            scheduler.add_job(
+                func=update_daily_schedule, 
+                args=[id_server], 
+                trigger='date', 
+                run_date=run_date + timedelta(seconds=5), 
+                id=f"refresh_schedule_{id_server}", 
+                replace_existing=True,
+                misfire_grace_time=60
+            )
 
-    await save_persistent()
+            unix_timestamp=int(run_date.timestamp())
+            need_confirmation_content += f"\n\nHarap untuk melakukan konfirmasi <t:{unix_timestamp}:R>"
+
+        await reminders_channel.send(
+            content=need_confirmation_content
+        )
+
+    await update_reminders_sent(id_server, SHOLAT_NUMBER[sholat])

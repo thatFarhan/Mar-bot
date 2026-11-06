@@ -1,15 +1,14 @@
 from discord import app_commands
 from config import bot, SholatEnum
-from events.update_schedule_message import update_daily_schedule
 from server_config import GUILD_ID
-from events.daily_schedule import send_daily_schedule, write_todays_pic
-from events.reminder import send_reminder, reset_reminder_sent, set_reminders
+from events.daily_schedule import send_daily_schedule
+from events.reminder import send_reminder
 from views.edit_schedule_view import EditScheduleView
 from views.botconfig_modal import BotConfigModal
 from builders.edit_schedule_builder import build_schedule
 from repository.loader import jadwal
 from repository.export import export_to_excel, export_json
-from database.discord_server import ChannelTypeEnum, update_channel
+from database.discord_server import ChannelTypeEnum, update_channel, get_channel, get_bot_config
 import discord
 
 @bot.tree.command(name="jadwalharian", description="[ADMIN] Mengirim ulang jadwal harian", guild=GUILD_ID)
@@ -17,26 +16,16 @@ import discord
 @app_commands.checks.has_permissions(administrator=True)
 async def jadwalharian(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
-    await send_daily_schedule()
+    daily_schedule_channel = await get_channel("daily_schedule_channel", interaction.guild_id)
+    await send_daily_schedule(interaction.guild_id, daily_schedule_channel)
     await interaction.followup.send(content="Daily schedule sent", ephemeral=True)
-    set_reminders()
-    await reset_reminder_sent()
-
-@bot.tree.command(name="tulisulang", description="[ADMIN] Menulis ulang jadwal hari ini", guild=GUILD_ID)
-@app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(administrator=True)
-async def refreshtoday(interaction: discord.Interaction):
-    await interaction.response.defer(ephemeral=True)
-    await write_todays_pic()
-    await interaction.followup.send("presensi_rawatib.json telah ditulis ulang", ephemeral=True)
-    await update_daily_schedule()
 
 @bot.tree.command(name="kirimreminder", description="[ADMIN] Mengirim reminder untuk jadwal sholat yang ditentukan",guild=GUILD_ID)
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def testreminder(interaction: discord.Interaction, sholat: SholatEnum):
-    await interaction.response.send_message(content=f"Test reminder sholat {sholat}", ephemeral=True)
-    await send_reminder(sholat.value)
+    await interaction.response.send_message(content=f"Test reminder sholat {sholat.value}", ephemeral=True)
+    await send_reminder(sholat.value, interaction.guild_id)
 
 @bot.tree.command(name="editjadwal", description="[ADMIN] Menampilkan interface untuk mengedit jadwal rawatib", guild=GUILD_ID)
 @app_commands.default_permissions(administrator=True)
@@ -67,7 +56,8 @@ async def exportjson(interaction: discord.Interaction):
 @app_commands.default_permissions(administrator=True)
 @app_commands.checks.has_permissions(administrator=True)
 async def botconfig(interaction: discord.Interaction):
-    await interaction.response.send_modal(BotConfigModal())
+    bot_config = await get_bot_config(interaction.guild_id)
+    await interaction.response.send_modal(BotConfigModal(bot_config))
 
 @bot.tree.command(name="setchannel", description="[ADMIN] Mengatur channel ini menjadi channel yang dipilih", guild=GUILD_ID)
 @app_commands.default_permissions(administrator=True)

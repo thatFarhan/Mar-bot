@@ -37,6 +37,14 @@ TEMPAT_TITLE={
     "tult": "🗼 TULT"
 }
 
+SHOLAT_NUMBER={
+    "subuh": 1, 
+    "dzuhur": 2,
+    "ashar": 3, 
+    "maghrib": 4, 
+    "isya": 5
+}
+
 # options for single actions
 class TugasEnum(str, Enum):
     Imam = "Imam"

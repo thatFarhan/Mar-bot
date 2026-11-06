@@ -1,62 +1,46 @@
 import discord
-from discord import app_commands
-from config import bot, TugasEnum, SholatEnum, TempatEnum
+from config import bot
 from server_config import GUILD_ID
-from repository.loader import jadwal, save_presence, save_reason
-from repository.updater import update_to_sell
 from events.on_sale_notification import on_sale_noti
-from events.update_schedule_message import update_daily_schedule
-from repository.persistent_loader import persistent_vars
-from views.sell_modal import SellModal, SellWeekModal
+from views.sell_modal import RequestModal
 from global_vars import global_vars
-from models.Schedule import Schedule
+
+from database.presensi import get_all_my_unsold_schedule_today, get_all_my_unsold_schedule_thisweek, update_to_request_sub_by_ids, get_schedule_by_id
+from database.discord_server import get_bot_config
 
 @bot.tree.command(name="ganti", description="Meminta pengganti untuk jadwal yang Anda pilih di pekan ini", guild=GUILD_ID)
 async def sellweek(interaction: discord.Interaction):
     await sellweekmodal(interaction)
 
 async def sellmodal(interaction: discord.Interaction):
-    try:
-        await interaction.response.send_modal(SellModal(interaction.user.id))
-    except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa diminta pengganti", ephemeral=True)
+    schedules = await get_all_my_unsold_schedule_today(global_vars.system_date, interaction.guild_id, interaction.user.id)
+
+    if schedules:
+        await interaction.response.send_modal(RequestModal(schedules, is_sub=True, is_week=False))
+    else:
+        await sellweekmodal(interaction)
 
 async def sellweekmodal(interaction: discord.Interaction):
-    try:
-        await interaction.response.send_modal(SellWeekModal(interaction.user.id))
-    except discord.errors.HTTPException:
-        await interaction.response.send_message(content="Tidak ada jadwal yang bisa diminta pengganti", ephemeral=True)
+    schedules = await get_all_my_unsold_schedule_thisweek(global_vars.system_date, interaction.guild_id, interaction.user.id)
+
+    if schedules:
+        await interaction.response.send_modal(RequestModal(schedules, is_sub=True, is_week=True))
+    else:
+        await interaction.response.send_message(content="Tidak ada jadwal yang bisa diminta pengganti pekan ini", ephemeral=True)
 
 # failed to confirm on time
-async def emergency_sell(tugas: str, sholat: str, tempat: str):
-    if not persistent_vars["bot_config"]["autosell"]: return
+async def emergency_sell(id_server: int, id_presensi: int):
+    bot_config = await get_bot_config(id_server)
+    auto_sell_time = bot_config["auto_sell_time"]
+    if auto_sell_time <= 0: return
 
-    jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
-    id_petugas = jadwal_harian[tempat][sholat][tugas]["id_anggota"]
-    alasan = "Gagal konfirmasi tepat waktu"
-    alasan_dict = {id_petugas: alasan}
-    jadwal.alasan_absen[global_vars.system_date] = alasan_dict
-    await save_reason()
+    schedule = await get_schedule_by_id(id_presensi)
+    confirmed = schedule["confirmed"]
+    need_sub = schedule["need_sub"]
+    swap_requested = schedule["swap_requested"]
+    if confirmed or need_sub or swap_requested: return
 
-    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
-    update_to_sell(schedule)
-    await save_presence()
-    await on_sale_noti(schedule, emergency=True)
+    await on_sale_noti(id_server, schedule, "Gagal konfirmasi tepat waktu")
+    await update_to_request_sub_by_ids([id_presensi])
 
-@bot.tree.command(name="forceganti", description="[ADMIN] Meminta pengganti untuk suatu jadwal", guild=GUILD_ID)
-@app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(administrator=True)
-async def forcesell(interaction: discord.Interaction, tugas: TugasEnum, sholat: SholatEnum, tempat: TempatEnum):
-    jadwal_harian = jadwal.presensi_rawatib[global_vars.system_date]
-    if sholat.value not in jadwal_harian[tempat.value] or tugas.value not in jadwal_harian[tempat.value][sholat.value]:
-        await interaction.response.send_message(f"Jadwal {tugas.name} Sholat {sholat.name} di {tempat.name} tidak ada", ephemeral=True)
-        return
-
-    schedule = Schedule(global_vars.system_date, tugas, sholat, tempat)
-    update_to_sell(schedule)
-    emergency = persistent_vars["reminder_sent"][sholat.value]
-    await on_sale_noti(schedule, emergency=emergency)
-    await save_presence()
-
-    await interaction.response.send_message(f"Berhasil meminta pengganti untuk {tugas.name} Sholat {sholat.name} di {tempat.name}", ephemeral=True)
-    await update_daily_schedule()
+# TODO: Figure out force commands

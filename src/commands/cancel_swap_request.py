@@ -1,21 +1,18 @@
 import discord
-from config import NAMA_HARI
-from repository.loader import jadwal
-from repository.persistent_loader import save_persistent, persistent_vars
 from models.Schedule import Schedule
-from events.purge_transaction import purge_offerers
+from events.purge_transaction import delete_request
+
+from database.presensi import update_to_unswap
 
 async def cancel_swap_request(interaction: discord.Interaction, requested_schedule: Schedule):
-    id_peminta = requested_schedule.get_pic_id()
-    uid_peminta = jadwal.anggota[id_peminta]['uid']
+    uid_requestor = requested_schedule.uid_petugas
 
-    if interaction.user.id != uid_peminta:
+    if interaction.user.id != uid_requestor:
         await interaction.response.send_message("Lau sape mpruy? 🫵😂", ephemeral=True)
         return
 
     content=f"❌ **Permintaan Dibatalkan**"
 
     await interaction.response.edit_message(content=content, view=None)
-    persistent_vars["swap_notification_ids"].pop(requested_schedule.get_key(), None)
-    await purge_offerers(requested_schedule, "❌ Permintaan Dibatalkan")
-    await save_persistent()
+    await update_to_unswap(requested_schedule.id_presensi)
+    await delete_request(requested_schedule)

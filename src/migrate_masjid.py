@@ -1,23 +1,20 @@
-import asyncio
-import sys
-
 from server_config import WELCOME_CHANNEL, DAILY_SCHEDULE_CHANNEL, SUB_REQUESTS_CHANNEL, REMINDERS_CHANNEL, ADMIN_CHANNEL
 
 REGION = "Jawa Barat_Kota Bandung"
 
 INSERT_SERVER = (
-    "INSERT INTO discord_server (id_server, welcome_channel, daily_schedule_channel, sub_requests_channel, reminders_channel, admin_channel)"
-    "VALUES (%s, %s, %s, %s, %s, %s)"
+    "INSERT INTO discord_server (id_server, welcome_channel, daily_schedule_channel, sub_requests_channel, reminders_channel, admin_channel, region)"
+    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
 )
 
 MASJID_ROWS = [
-    ("Masjid Syamsul 'Ulum", REGION, True, True),
-    ("Masjid TULT", REGION, True, True),
+    ("Masjid Syamsul 'Ulum", True, True),
+    ("Masjid TULT", True, True),
 ]
 
 INSERT_MASJID = (
-    "INSERT INTO masjid (nama_masjid, region, is_weekly, masjid_enabled, id_server) "
-    "VALUES (%s, %s, %s, %s, %s)"
+    "INSERT INTO masjid (nama_masjid, is_weekly, masjid_enabled, id_server) "
+    "VALUES (%s, %s, %s, %s)"
 )
 
 
@@ -41,7 +38,7 @@ async def main():
         async with conn.cursor() as cur:
             await cur.execute(
                 INSERT_SERVER,
-                (id_server, WELCOME_CHANNEL, DAILY_SCHEDULE_CHANNEL, SUB_REQUESTS_CHANNEL, REMINDERS_CHANNEL, ADMIN_CHANNEL)
+                (id_server, WELCOME_CHANNEL, DAILY_SCHEDULE_CHANNEL, SUB_REQUESTS_CHANNEL, REMINDERS_CHANNEL, ADMIN_CHANNEL, REGION)
             )
             await cur.execute("ALTER TABLE masjid AUTO_INCREMENT = 1")
             await cur.execute("SELECT COUNT(*) FROM masjid")
