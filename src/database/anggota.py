@@ -73,7 +73,10 @@ async def get_anggota_by_guild_and_uid(guild_id: int, discord_uid: int):
                 (guild_id, discord_uid)
             )
             row = await cur.fetchone()
-            return row["id_anggota"]
+            if row:
+                return row["id_anggota"]
+            else:
+                return None
 
 # DELETE
 

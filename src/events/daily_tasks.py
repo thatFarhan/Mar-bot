@@ -18,8 +18,6 @@ async def new_system_day():
     global_vars.system_date = datetime.now(SYSTEM_TIMEZONE).date()
     global_vars.system_day_name = NAMA_HARI[datetime.now(SYSTEM_TIMEZONE).date().weekday()]
 
-    await purge_expireds()
-
     if jadwal.data_sholat["bulan"] != datetime.now(SYSTEM_TIMEZONE).month:
         await get_new_schedule()
 
@@ -33,3 +31,5 @@ async def new_system_day():
         await set_reminders(server["id_server"])
         await send_daily_schedule(server["id_server"], server["daily_schedule_channel"])
         await update_reminders_sent(server["id_server"], 0)
+
+    await purge_expireds()

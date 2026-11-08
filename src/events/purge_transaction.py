@@ -1,7 +1,7 @@
 import time
 
 from config import bot
-from repository.loader import global_vars
+from global_vars import global_vars
 from models.Schedule import Schedule
 
 from database.notifikasi import get_related_notis, delete_related_notis, get_swap_offer_noti, delete_noti_by_id, get_offers_from_request, delete_notis_by_ids, get_expired_notis, delete_expireds

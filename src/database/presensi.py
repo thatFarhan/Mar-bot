@@ -28,7 +28,8 @@ async def update_to_confirm_all(tanggal: date, id_server: int, uid_anggota: int)
                 """
                 UPDATE presensi pr
                 INNER JOIN jadwal_tetap jt ON pr.id_jadwal_tetap = jt.id_jadwal_tetap
-                SET pr.confirmed = TRUE, pr.id_pic = jt.id_anggota
+                SET pr.id_pic = IFNULL(pr.id_pic, jt.id_anggota),
+                pr.confirmed = TRUE
                 WHERE id_presensi IN (
                     SELECT id_presensi
                     FROM presensi p
@@ -58,7 +59,7 @@ async def update_to_confirm_by_ids(id_presensi: list):
                 f"""
                 UPDATE presensi pr
                 INNER JOIN jadwal_tetap jt ON pr.id_jadwal_tetap = jt.id_jadwal_tetap
-                SET pr.id_pic = jt.id_anggota,
+                SET pr.id_pic = IFNULL(pr.id_pic, jt.id_anggota),
                 pr.confirmed = TRUE, 
                 pr.need_sub = FALSE,
                 pr.swap_requested = FALSE
@@ -75,7 +76,10 @@ async def update_to_confirm_from_reminder(tanggal: date, id_server: int, sholat:
                 """
                 UPDATE presensi pr
                 INNER JOIN jadwal_tetap jt ON pr.id_jadwal_tetap = jt.id_jadwal_tetap
-                SET pr.confirmed = TRUE, pr.need_sub = FALSE, pr.swap_requested = FALSE, pr.id_pic = jt.id_anggota
+                SET pr.id_pic = IFNULL(pr.id_pic, jt.id_anggota),
+                pr.confirmed = TRUE,
+                pr.need_sub = FALSE,
+                pr.swap_requested = FALSE
                 WHERE id_presensi IN (
                     SELECT p.id_presensi
                     FROM presensi p
@@ -104,6 +108,21 @@ async def update_to_claim_by_id(id_presensi: int, id_pic: int, is_today: bool):
                 WHERE id_presensi = %s
                 """,
                 (is_today, id_pic, id_presensi)
+            )
+            return cur.rowcount
+
+async def update_to_claim_by_ids(id_presensi: list, id_pic: int):
+    if not id_presensi: return 0
+
+    placeholders = ",".join(["%s"] * len(id_presensi))
+    async with bot.db.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(
+                f"""
+                UPDATE presensi SET confirmed = TRUE, need_sub = FALSE, swap_requested = FALSE, id_pic = %s
+                WHERE id_presensi IN ({placeholders})
+                """,
+                (id_pic, *id_presensi)
             )
             return cur.rowcount
 
@@ -159,7 +178,10 @@ async def tanggal_and_masjid_exists_in_presensi(tanggal: date, id_masjid: int):
                 (tanggal, id_masjid)
             )
             row = await cur.fetchone()
-            return row["total"] > 0
+            if row:
+                return row["total"] > 0
+            else:
+                return None
 
 
 async def get_daily_schedule_for_masjid(tanggal: date, id_masjid: int):
@@ -415,5 +437,66 @@ async def get_reminder(tanggal: date, sholat: str, id_server: int):
                 j.tugas_order ASC;
                 """,
                 (tanggal, id_server, sholat)
+            )
+            return await cur.fetchall()
+
+# for force confirming
+async def get_all_unconfirmed_schedule_today(tanggal: date, id_server: int):
+    async with bot.db.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(
+                """
+                SELECT p.id_presensi, p.tanggal, j.sholat, j.tugas, m.nama_masjid,
+                reg.nama_panggilan AS nama_reg,
+                pic.nama_panggilan AS nama_pic
+                FROM presensi p
+                JOIN jadwal_tetap j ON p.id_jadwal_tetap = j.id_jadwal_tetap
+                JOIN masjid m ON j.id_masjid = m.id_masjid
+                LEFT JOIN anggota reg ON j.id_anggota = reg.id_anggota
+                LEFT JOIN anggota pic ON p.id_pic = pic.id_anggota
+                WHERE p.tanggal = %s 
+                AND p.confirmed = FALSE
+                AND m.id_server = %s
+                ORDER BY j.id_masjid ASC,
+                CASE j.sholat
+                    WHEN 'Subuh' THEN 1
+                    WHEN 'Dzuhur' THEN 2
+                    WHEN 'Ashar' THEN 3
+                    WHEN 'Maghrib' THEN 4
+                    ELSE 5
+                END ASC,
+                j.tugas_order ASC
+                """,
+                (tanggal, id_server)
+            )
+            return await cur.fetchall()
+
+# for force claiming
+async def get_all_schedule_today(tanggal: date, id_server: int):
+    async with bot.db.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(
+                """
+                SELECT p.id_presensi, p.tanggal, j.sholat, j.tugas, m.nama_masjid,
+                reg.nama_panggilan AS nama_reg,
+                pic.nama_panggilan AS nama_pic
+                FROM presensi p
+                JOIN jadwal_tetap j ON p.id_jadwal_tetap = j.id_jadwal_tetap
+                JOIN masjid m ON j.id_masjid = m.id_masjid
+                LEFT JOIN anggota reg ON j.id_anggota = reg.id_anggota
+                LEFT JOIN anggota pic ON p.id_pic = pic.id_anggota
+                WHERE p.tanggal = %s
+                AND m.id_server = %s
+                ORDER BY j.id_masjid ASC,
+                CASE j.sholat
+                    WHEN 'Subuh' THEN 1
+                    WHEN 'Dzuhur' THEN 2
+                    WHEN 'Ashar' THEN 3
+                    WHEN 'Maghrib' THEN 4
+                    ELSE 5
+                END ASC,
+                j.tugas_order ASC
+                """,
+                (tanggal, id_server)
             )
             return await cur.fetchall()

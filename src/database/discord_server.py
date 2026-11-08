@@ -57,7 +57,10 @@ async def get_channel(channel_type: str, guild_id: int):
         async with conn.cursor() as cur:
             await cur.execute(f"SELECT {channel_type} FROM discord_server WHERE id_server = %s", (guild_id))
             row = await cur.fetchone()
-            return row[channel_type]
+            if row:
+                return row[channel_type]
+            else:
+                return None
         
 async def get_channel_from_all_servers(channel_type: str):
     async with bot.db.acquire() as conn:
@@ -76,14 +79,17 @@ async def get_reminders_sent(guild_id: int):
         async with conn.cursor() as cur:
             await cur.execute("SELECT reminders_sent FROM discord_server WHERE id_server = %s", (guild_id))
             row = await cur.fetchone()
-            return row["reminders_sent"]
+            if row:
+                return row["reminders_sent"]
+            else:
+                return None
 
 async def get_daily_schedule_message_id(guild_id: int):
     async with bot.db.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute("SELECT id_daily_schedule_message FROM discord_server WHERE id_server = %s", (guild_id))
             row = await cur.fetchone()
-            return row["id_daily_schedule_message"]
-
-
-
+            if row:
+                return row["id_daily_schedule_message"]
+            else:
+                return None

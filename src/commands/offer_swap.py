@@ -1,7 +1,7 @@
 import discord
 
 from database.presensi import get_all_my_schedule_thisweek
-import global_vars
+from global_vars import global_vars
 from models.Schedule import Schedule
 from views.confirm_modal import TakeRespModal
 
